@@ -326,7 +326,7 @@ load_datasus <- function(dataset,
 
   if(param$dataset == "datasus_sinasc") {
 
-    geo <- datazoom.amazonia::municipalities %>%
+    geo <- datazoom.saude::municipalities %>%
       dplyr::select(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
       dplyr::mutate(code_muni_6 = as.character(as.integer(code_muni / 10))) %>%
       dplyr::distinct(code_muni_6, .keep_all = TRUE) # Only keeps municipalities uniquely identified by the 6 digits
@@ -459,7 +459,7 @@ load_datasus <- function(dataset,
 
   if (stringr::str_detect(param$dataset, "datasus_sih")) {
     # Adding municipality data
-    geo <- datazoom.amazonia::municipalities %>%
+    geo <- datazoom.saude::municipalities %>%
       dplyr::select(
         code_muni,
         name_muni,
@@ -545,7 +545,7 @@ load_datasus <- function(dataset,
 
     # formatando dados
 
-    geo <- datazoom.amazonia::municipalities %>%
+    geo <- datazoom.saude::municipalities %>%
       dplyr::select(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
       dplyr::mutate(code_muni_6 = as.integer(code_muni / 10)) %>%
       dplyr::distinct(code_muni_6, .keep_all = TRUE) # Only keeps municipalities uniquely identified by the 6 digits
@@ -592,7 +592,7 @@ load_datasus <- function(dataset,
         )
       )
 
-    geo <- datazoom.amazonia::municipalities %>%
+    geo <- datazoom.saude::municipalities %>%
       dplyr::select(
         code_muni,
         name_muni,
