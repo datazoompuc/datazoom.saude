@@ -55,6 +55,7 @@ dbc2dbf_wrapper <- function(input.file, output.file) {
   if (!file.exists(input.file)) {
     stop("Input file does not exist.")
   }
-  out <- .C("dbc2dbf", input = as.character(path.expand(input.file)), output = as.character(path.expand(output.file)), PACKAGE = "datazoom.saude")
+  out <- .C("dbc2dbf", input = as.character(path.expand(input.file)),
+            output = as.character(path.expand(output.file)), PACKAGE = "datazoom.saude")
   file.exists(output.file)
 }
