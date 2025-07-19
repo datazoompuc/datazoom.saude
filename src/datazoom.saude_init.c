@@ -1,7 +1,7 @@
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
 
-/* FIXME: 
+/* FIXME:
    Check these declarations against the C/Fortran source code.
 */
 
@@ -13,7 +13,7 @@ static const R_CMethodDef CEntries[] = {
     {NULL, NULL, 0}
 };
 
-void R_init_datazoom_amazonia(DllInfo *dll)
+void R_init_datazoom_saude(DllInfo *dll)
 {
     R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
