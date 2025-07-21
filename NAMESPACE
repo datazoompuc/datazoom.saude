@@ -2,4 +2,4 @@
 
 export(load_datasus)
 importFrom(magrittr,"%>%")
-useDynLib(datazoom.saude, .registration = TRUE)
+useDynLib(datazoom.amazonia, .registration = TRUE)
