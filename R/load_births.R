@@ -54,7 +54,8 @@ load_births <- function(time_period,
   # Declare global variables to avoid check notes
 
   . <- abbrev_state <- code_muni <- code_muni_6 <- code_state <- var_code <- NULL
-  . <- file_name <- dataset <- label_pt <- label_eng <- NULL
+  . <- file_name <- dataset <- label_pt <- label_eng <- link <- dtnascmae <- NULL
+  . <- dtultmenst <- name_pt <- name_eng <- codmunnasc <- NULL
 
   # Create param list with specific parameters for SINASC
   param <- list()
@@ -78,20 +79,6 @@ load_births <- function(time_period,
   if (!requireNamespace("RCurl", quietly = TRUE)) {
     stop("Package \"RCurl\" must be installed to use this function.", call. = FALSE)
   }
-
-  ##############################
-  ## Binding Global Variables ##
-  ##############################
-
-  # Variables used in data.table operations
-  . <- abbrev_state <- code_muni <- code_muni_6 <- code_state <- NULL
-  name_muni <- legal_amazon <- link <- file_name <- NULL
-
-  # SINASC specific variables
-  origem <- locnasc <- estcivmae <- escmae <- semagestac <- gravidez <- parto <- NULL
-  consprenat <- sexo <- racacor <- idanomal <- escmae2010 <- dtnascmae <- NULL
-  racacormae <- dtultmenst <- tpmetestim <- tpapresent <- sttrabpart <- NULL
-  stcesparto <- tpnascassi <- codmunnasc <- NULL
 
   #############################
   ## Downloading SINASC Data ##
@@ -156,12 +143,6 @@ load_births <- function(time_period,
     purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
     dplyr::bind_rows() %>%
     janitor::clean_names()
-
-  # SINASC specific processing
-  geo <- datazoom.saude::municipalities %>%
-    dplyr::select(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
-    dplyr::mutate(code_muni_6 = as.character(as.integer(code_muni / 10))) %>%
-    dplyr::distinct(code_muni_6, .keep_all = TRUE) # Only keeps municipalities uniquely identified by the 6 digits
 
   labels <- tibble::tribble(
     ~ var_code, ~ value, ~ label_pt, ~ label_eng,
@@ -282,9 +263,7 @@ load_births <- function(time_period,
       dtnascmae = lubridate::dmy(as.character(dtnascmae)),
       dtultmenst = lubridate::dmy(as.character(dtultmenst)),
       codmunnasc = as.numeric(as.character(codmunnasc))
-    ) %>%
-    dplyr::rename("code_muni_6" = "codmunnasc") %>%
-    dplyr::left_join(geo, by = "code_muni_6")
+      )
 
   ###############
   ## Labelling ##
@@ -296,11 +275,11 @@ load_births <- function(time_period,
 
   if (param$language == "pt") {
     dic <- dic %>%
-      dplyr::select(label_pt)
+      dplyr::select(var_code, name_pt, label_pt)
   }
   if (param$language == "eng") {
     dic <- dic %>%
-      dplyr::select(label_eng)
+      dplyr::select(var_code, name_eng, label_eng)
   }
 
   labels <- dic %>%
@@ -318,7 +297,6 @@ load_births <- function(time_period,
   ################################
 
   dat_mod <- dat %>%
-    dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
     tibble::as_tibble()
 
   if (param$language == "pt") {

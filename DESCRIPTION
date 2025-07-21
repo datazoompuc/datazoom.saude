@@ -1,6 +1,6 @@
 Package: datazoom.saude
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Version: 0.0.1.9000
 Authors@R: 
     person("João Paulo", "dos Santos P. Barbosa", , "joao.31582129@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
@@ -33,6 +33,7 @@ Suggests:
     RCurl,
     rmarkdown,
     terra,
+    testthat (>= 3.0.0),
     units
 LinkingTo: 
     Rcpp
@@ -42,3 +43,4 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Config/testthat/edition: 3
