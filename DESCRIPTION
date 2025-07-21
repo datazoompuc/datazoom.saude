@@ -19,7 +19,6 @@ Imports:
     readxl,
     sf,
     sidrar,
-    stringi,
     stringr,
     tibble,
     tidyr,
@@ -27,7 +26,6 @@ Imports:
     XML,
     lubridate,
     tidyselect,
-    rlang
 Suggests: 
     foreign,
     googledrive,
