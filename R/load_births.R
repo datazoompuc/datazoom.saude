@@ -15,6 +15,25 @@ load_births <- function(time_period,
                         states = "all",
                         raw_data = FALSE,
                         language = "eng") {
+  # Argument checks (basic)
+  if (!is.numeric(time_period)) {
+    stop("`time_period` must be a numeric value or vector of years.")
+  }
 
+  if (!is.character(states)) {
+    stop("`states` must be a character vector (e.g., 'SP' or c('SP', 'RJ')).")
+  }
 
+  if (!is.logical(raw_data)) {
+    stop("`raw_data` must be either TRUE or FALSE.")
+  }
+
+  if (!language %in% c("eng", "pt")) {
+    stop("`language` must be either 'eng' or 'pt'.")
+  }
+
+  # Placeholder for implementation
+  message("The function `load_births()` has been created but is not implemented yet.")
+
+  return(invisible(NULL))
 }
