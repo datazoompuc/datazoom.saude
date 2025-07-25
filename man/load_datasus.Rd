@@ -14,7 +14,7 @@ load_datasus(
 )
 }
 \arguments{
-\item{dataset}{A dataset name, can be one of ("datasus_sim_do", "datasus_sih", "datasus_cnes_lt", "datasus_sinasc","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.}
+\item{dataset}{A dataset name, can be one of ("datasus_sim_do", "datasus_sih", "datasus_cnes_lt","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.}
 
 \item{time_period}{A numeric value or vector indicating the year(s) of the data to be downloaded. For example, \code{2020} or \code{2015:2020}.}
 
