@@ -1,3 +1,37 @@
 # datazoom.saude
 
-# datazoom.saude <img src="https://img.shields.io/badge/R-package-blue" align="right" />
+**`datazoom.saude`** is an R package that provides simple, direct, and reliable functions to import, organize, and explore public health databases in Brazil.  
+The package is part of the **`datazoom`** ecosystem, designed to simplify access to and analysis of national data.
+
+## Installation
+```r
+# Install the 'devtools' package if you don't have it yet
+install.packages("devtools")
+
+# Install datazoom.saude
+devtools::install_github("datazoompuc/datazoom.saude")
+```
+## Main features
+
+- **Raw data import** with a single line of code.
+- **Automatic variable name standardization.**
+- Access to datasets organized by year, state (UF), and data source.
+- Initial support for the SUS Oncology Panel (PO).
+
+## Supported databases
+
+- **Oncology Panel (PO):** Cancer cases registered in the SUS by diagnosis location, treatment location, and cancer type.
+- **Births (SINAS):** Live birth records in Brazil.
+
+Coming soon: SIM, SIH/SUS, and other Brazilian health datasets.
+
+## 🛠️ Instalação
+
+Você pode instalar a versão em desenvolvimento diretamente do GitHub:
+
+```r
+# Instale o pacote 'devtools' se ainda não tiver
+install.packages("devtools")
+
+# Instale o datazoom.saude
+devtools::install_github("seu_usuario/datazoom.saude")
