@@ -1,2 +1,4 @@
+^data-raw$
+^docs$
 ^datazoom\.saude\.Rproj$
 ^\.Rproj\.user$

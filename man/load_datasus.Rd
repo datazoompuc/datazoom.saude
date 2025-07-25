@@ -14,11 +14,17 @@ load_datasus(
 )
 }
 \arguments{
-\item{dataset}{A dataset name, can be one of ("datasus_sim_do", "datasus_sih", "datasus_cnes_lt", "datasus_sinasc","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.}
+\item{dataset}{A dataset name, can be one of ("datasus_sim_do", "datasus_sih", "datasus_cnes_lt","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.}
+
+\item{time_period}{A numeric value or vector indicating the year(s) of the data to be downloaded. For example, \code{2020} or \code{2015:2020}.}
 
 \item{states}{A \code{string} specifying for which states to download the data. It is "all" by default, but can be a single state such as "AC" or any vector such as c("AC", "AM").}
 
+\item{raw_data}{Logical. If \code{TRUE}, returns the raw data exactly as provided by DATASUS. If \code{FALSE} (default), returns a cleaned and standardized version of the dataset.}
+
 \item{keep_all}{A \code{boolean} choosing whether to aggregate the data by municipality, in turn losing individual-level variables (\code{FALSE}) or to keep all the original variables. Only applies when raw_data is \code{TRUE}.}
+
+\item{language}{A string indicating the desired language of variable names and labels. Accepts \code{"eng"} (default) for English or \code{"pt"} for Portuguese.}
 }
 \value{
 A \code{tibble}.

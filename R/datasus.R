@@ -2,9 +2,11 @@
 #'
 #' @description Loads DATASUS data on health establishments, mortality, access to health services and several health indicators.
 #'
-#' @param dataset A dataset name, can be one of ("datasus_sim_do", "datasus_sih", "datasus_cnes_lt", "datasus_sinasc","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.
-#' @inheritParams load_baci
+#' @param dataset A dataset name, can be one of ("datasus_sim_do", "datasus_sih", "datasus_cnes_lt","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.
+#' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded. For example, `2020` or `2015:2020`.
 #' @param states A \code{string} specifying for which states to download the data. It is "all" by default, but can be a single state such as "AC" or any vector such as c("AC", "AM").
+#' @param raw_data Logical. If `TRUE`, returns the raw data exactly as provided by DATASUS. If `FALSE` (default), returns a cleaned and standardized version of the dataset.
+#' @param language A string indicating the desired language of variable names and labels. Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
 #' @param keep_all A \code{boolean} choosing whether to aggregate the data by municipality, in turn losing individual-level variables (\code{FALSE}) or to keep all the original variables. Only applies when raw_data is \code{TRUE}.
 #'
 #' @examples
@@ -132,7 +134,7 @@ load_datasus <- function(dataset,
   file_years <- NULL
   file_years_yy <- NULL
 
-  if (param$dataset %in% c("datasus_sim_do", "datasus_sinasc", "datasus_po")) {
+  if (param$dataset %in% c("datasus_sim_do", "datasus_po")) {
     file_years <- filenames %>%
       substr(5, 8)
   }
@@ -186,7 +188,7 @@ load_datasus <- function(dataset,
 
   file_state <- NULL
 
-  if (param$dataset %in% c("datasus_sim_do", "datasus_sinasc") | stringr::str_detect(param$dataset, "datasus_cnes|datasus_sih|datasus_siasus")) {
+  if (param$dataset %in% c("datasus_sim_do") | stringr::str_detect(param$dataset, "datasus_cnes|datasus_sih|datasus_siasus")) {
     file_state <- filenames %>%
       substr(3, 4)
   } else if (paste0(param$states, collapse = "") != "all") {
@@ -324,99 +326,6 @@ load_datasus <- function(dataset,
       )
   }
 
-  if(param$dataset == "datasus_sinasc") {
-
-    geo <- datazoom.saude::municipalities %>%
-      dplyr::select(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
-      dplyr::mutate(code_muni_6 = as.character(as.integer(code_muni / 10))) %>%
-      dplyr::distinct(code_muni_6, .keep_all = TRUE) # Only keeps municipalities uniquely identified by the 6 digits
-
-    labels <- tibble::tribble(
-      ~ var_code, ~ value, ~ label_pt, ~ label_eng,
-      "origem", 1, "oracle", "oracle",
-      "origem", 2, "ftp", "ftp",
-      "origem", 3, "sead", "sead",
-      "locnasc", 1, "hospital", "hospital",
-      "locnasc", 2, "outros estabelecimentos de saude", "other health establishments",
-      "locnasc", 3, "domicilio", "home",
-      "locnasc", 4, "outros", "other",
-      "locnasc", 5, "aldeia indigena", "indigenous village",
-      "locnasc", 9, "ignorado", "unknown",
-      "estcivmae", 1, "solteira", "single",
-      "estcivmae", 2, "casada", "married",
-      "estcivmae", 3, "viuva", "widowed",
-      "estcivmae", 4, "divorciada", "divorced",
-      "estcivmae", 5, "uniao estavel", "civil union",
-      "estcivmae", 9, "ignorado", "unknown",
-      "escmae", 1, "nenhuma", "none",
-      "escmae", 2, "1 a 2 anos", "1 to 2 years",
-      "escmae", 3, "4 a 7 anos", "4 to 7 years",
-      "escmae", 4, "8 a 11 anos", "8 to 11 years",
-      "escmae", 5, "12 e mais", "12 or more years",
-      "escmae", 9, "ignorado", "unknown",
-      "semagestac", 1, "menos de 22 semanas", "less than 22 weeks",
-      "semagestac", 2, "22 a 27 semanas", "22 to 27 weeks",
-      "semagestac", 3, "28 a 31 semanas", "28 to 31 weeks",
-      "semagestac", 4, "32 a 36 semanas", "32 to 36 weeks",
-      "semagestac", 5, "37 a 41 semanas", "37 to 41 weeks",
-      "semagestac", 6, "42 semanas e mais", "42 weeks or more",
-      "semagestac", 9, "ignorado", "unknown",
-      "gravidez", 1, "unica", "single",
-      "gravidez", 2, "dupla", "twin",
-      "gravidez", 3, "tripla ou mais", "triplet or more",
-      "gravidez", 9, "ignorado", "unknown",
-      "parto", 1, "vaginal", "vaginal",
-      "parto", 2, "cesario", "cesarean",
-      "parto", 9, "ignorado", "unknown",
-      "consprenat", 1, "nenhuma", "none",
-      "consprenat", 2, "de 1 a 3", "1 to 3",
-      "consprenat", 3, "de 4 a 6", "4 to 6",
-      "consprenat", 4, "7 e mais", "7 or more",
-      "consprenat", 9, "ignorado", "unknown",
-      "sexo", 0, "ignorado", "unknown",
-      "sexo", 1, "masculino", "male",
-      "sexo", 2, "feminino", "female",
-      "racacor", 1, "branca", "white",
-      "racacor", 2, "preta", "black",
-      "racacor", 3, "amarela", "yellow",
-      "racacor", 4, "parda", "brown",
-      "racacor", 5, "indigena", "indigenous",
-      "idanomal", 1, "ignorado", "unknown",
-      "idanomal", 2, "sim", "yes",
-      "idanomal", 9, "nao", "no",
-      "escmae2010", 0, "sem escolaridade", "no education",
-      "escmae2010", 1, "fundamental 1", "elementary 1",
-      "escmae2010", 2, "fundamental 2", "elementary 2",
-      "escmae2010", 3, "medio", "high school",
-      "escmae2010", 4, "superior incompleto", "incomplete higher education",
-      "escmae2010", 5, "superior completo", "complete higher education",
-      "escmae2010", 9, "ignorado", "unknown",
-      "racacormae", 1, "branca", "white",
-      "racacormae", 2, "preta", "black",
-      "racacormae", 3, "amarela", "yellow",
-      "racacormae", 4, "parda", "brown",
-      "racacormae", 5, "indigena", "indigenous",
-      "tpmetestim", 1, "exame fisico", "physical exam",
-      "tpmetestim", 2, "outro metodo", "other method",
-      "tpmetestim", 9, "ignorado", "unknown",
-      "tpapresent", 1, "cefalica", "cephalic",
-      "tpapresent", 2, "pelvica ou podalica", "breech or footling",
-      "tpapresent", 3, "transversa", "transverse",
-      "tpapresent", 9, "ignorado", "unknown",
-      "sttrabpart", 1, "sim", "yes",
-      "sttrabpart", 2, "nao", "no",
-      "sttrabpart", 9, "ignorado", "unknown",
-      "stcesparto", 1, "sim", "yes",
-      "stcesparto", 2, "nao", "no",
-      "stcesparto", 3, "nao se aplica", "not applicable",
-      "stcesparto", 9, "ignorado", "unknown",
-      "tpnascassi", 1, "medico", "doctor",
-      "tpnascassi", 2, "enfermeira obstetriz", "obstetric nurse",
-      "tpnascassi", 3, "parteira", "midwife",
-      "tpnascassi", 4, "outros", "other",
-      "tpnascassi", 9, "ignorado", "unknown"
-    )
-
     # adicionando factor labels
 
     dat <- dat %>%
@@ -445,17 +354,6 @@ load_datasus <- function(dataset,
           }
         )
       )
-
-    # formatando dados
-
-    dat <- dat %>%
-      dplyr::mutate(
-        dtnascmae = lubridate::dmy(as.character(dtnascmae)),
-        dtultmenst = lubridate::dmy(as.character(dtultmenst)),
-        codmunnasc = as.numeric(as.character(codmunnasc))
-      ) %>%
-      dplyr::rename("code_muni_6" = "codmunnasc")
-  }
 
   if (stringr::str_detect(param$dataset, "datasus_sih")) {
     # Adding municipality data
@@ -686,7 +584,7 @@ load_datasus <- function(dataset,
       dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon, dtobito) %>%
       tibble::as_tibble()
   }
-  if (stringr::str_detect(param$dataset, "datasus_cnes|datasus_sinasc|datasus_po")) {
+  if (stringr::str_detect(param$dataset, "datasus_cnes|datasus_po")) {
     dat_mod <- dat %>%
       dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
       tibble::as_tibble()
