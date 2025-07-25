@@ -270,7 +270,6 @@ load_births <- function(time_period,
     dplyr::mutate(
       dtcadastro = lubridate::dmy(as.character(dtcadastro)),
       dtrecebim = lubridate::dmy(as.character(dtrecebim)),
-
       dtnascmae = lubridate::dmy(as.character(dtnascmae)),
       dtultmenst = lubridate::dmy(as.character(dtultmenst)),
       dtdeclarac = lubridate::dmy(as.character(dtdeclarac)),
@@ -288,11 +287,11 @@ load_births <- function(time_period,
 
   if (param$language == "pt") {
     dic <- dic %>%
-      dplyr::select(var_code)
+      dplyr::select(var_code, name_pt, label_pt)
   }
   if (param$language == "eng") {
     dic <- dic %>%
-      dplyr::select(var_code)
+      dplyr::select(var_code, name_eng, label_eng)
   }
 
   labels <- dic %>%
