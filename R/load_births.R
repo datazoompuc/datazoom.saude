@@ -58,13 +58,6 @@ load_births <- function(time_period,
     stop("the language must be 'eng' or 'pt'. By default it is 'eng'.")
   }
 
-  # Declare global variables to avoid check notes
-
-  . <- abbrev_state <- code_muni <- code_muni_6 <- code_state <- var_code <- NULL
-  . <- file_name <- dataset <- label_pt <- label_eng <- link <- dtnascmae <- NULL
-  . <- dtultmenst <- name_pt <- name_eng <- codmunnasc <- dtcadastro <- dtnasc<- NULL
-  . <- dtrecebim <- dtdeclarac <- NULL
-
   # Create param list with specific parameters for SINASC
   param <- list()
 
@@ -78,15 +71,6 @@ load_births <- function(time_period,
   param$time_period_yy <- substr(time_period, 3, 4)
 
   param$states <- ifelse(states == "all", "all", toupper(states))
-
-  # Check if required packages are installed
-  if (!requireNamespace("foreign", quietly = TRUE)) {
-    stop("Package \"foreign\" must be installed to use this function.", call. = FALSE)
-  }
-
-  if (!requireNamespace("RCurl", quietly = TRUE)) {
-    stop("Package \"RCurl\" must be installed to use this function.", call. = FALSE)
-  }
 
   #############################
   ## Downloading SINASC Data ##

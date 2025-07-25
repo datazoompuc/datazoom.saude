@@ -2,5 +2,6 @@
 
 export(load_births)
 export(load_datasus)
+export(load_oncology_case)
 importFrom(magrittr,"%>%")
 useDynLib(datazoom.saude, .registration = TRUE)
