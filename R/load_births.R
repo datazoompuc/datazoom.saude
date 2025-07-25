@@ -288,11 +288,11 @@ load_births <- function(time_period,
 
   if (param$language == "pt") {
     dic <- dic %>%
-      dplyr::select(var_code, name_pt, label_pt)
+      dplyr::select(var_code)
   }
   if (param$language == "eng") {
     dic <- dic %>%
-      dplyr::select(var_code, name_eng, label_eng)
+      dplyr::select(var_code)
   }
 
   labels <- dic %>%
