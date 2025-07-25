@@ -10,6 +10,13 @@
 #'
 #' @return A data frame containing birth records from SINASC for the specified period and states.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' load_births(time_period = 2023,
+#'             states = "RJ",
+#'             raw_data = FALSE)
+#' }
 
 load_births <- function(time_period,
                         states = "all",
@@ -40,22 +47,23 @@ load_births <- function(time_period,
   }
 
   if (!is.character(states)) {
-    stop("states must be a character vector (e.g., 'SP' or c('SP', 'RJ')).")
+    stop("states must be a character vector (e.g., 'SP' or c('SP', 'RJ')). By default, it is all.")
   }
 
   if (!is.logical(raw_data)) {
-    stop("raw_data must be either TRUE or FALSE.")
+    stop("raw_data must be TRUE or FALSE. By default, it is FALSE.")
   }
 
   if (!language %in% c("eng", "pt")) {
-    stop("language must be either 'eng' or 'pt'.")
+    stop("the language must be 'eng' or 'pt'. By default it is 'eng'.")
   }
 
   # Declare global variables to avoid check notes
 
   . <- abbrev_state <- code_muni <- code_muni_6 <- code_state <- var_code <- NULL
   . <- file_name <- dataset <- label_pt <- label_eng <- link <- dtnascmae <- NULL
-  . <- dtultmenst <- name_pt <- name_eng <- codmunnasc <- NULL
+  . <- dtultmenst <- name_pt <- name_eng <- codmunnasc <- dtcadastro <- dtnasc<- NULL
+  . <- dtrecebim <- dtdeclarac <- NULL
 
   # Create param list with specific parameters for SINASC
   param <- list()
@@ -167,13 +175,13 @@ load_births <- function(time_period,
     "escmae", 4, "8 a 11 anos", "8 to 11 years",
     "escmae", 5, "12 e mais", "12 or more years",
     "escmae", 9, "ignorado", "unknown",
-    "semagestac", 1, "menos de 22 semanas", "less than 22 weeks",
-    "semagestac", 2, "22 a 27 semanas", "22 to 27 weeks",
-    "semagestac", 3, "28 a 31 semanas", "28 to 31 weeks",
-    "semagestac", 4, "32 a 36 semanas", "32 to 36 weeks",
-    "semagestac", 5, "37 a 41 semanas", "37 to 41 weeks",
-    "semagestac", 6, "42 semanas e mais", "42 weeks or more",
-    "semagestac", 9, "ignorado", "unknown",
+    "gestacao", 1, "menos de 22 semanas", "less than 22 weeks",
+    "gestacao", 2, "22 a 27 semanas", "22 to 27 weeks",
+    "gestacao", 3, "28 a 31 semanas", "28 to 31 weeks",
+    "gestacao", 4, "32 a 36 semanas", "32 to 36 weeks",
+    "gestacao", 5, "37 a 41 semanas", "37 to 41 weeks",
+    "gestacao", 6, "42 semanas e mais", "42 weeks or more",
+    "gestacao", 9, "ignorado", "unknown",
     "gravidez", 1, "unica", "single",
     "gravidez", 2, "dupla", "twin",
     "gravidez", 3, "tripla ou mais", "triplet or more",
@@ -181,11 +189,11 @@ load_births <- function(time_period,
     "parto", 1, "vaginal", "vaginal",
     "parto", 2, "cesario", "cesarean",
     "parto", 9, "ignorado", "unknown",
-    "consprenat", 1, "nenhuma", "none",
-    "consprenat", 2, "de 1 a 3", "1 to 3",
-    "consprenat", 3, "de 4 a 6", "4 to 6",
-    "consprenat", 4, "7 e mais", "7 or more",
-    "consprenat", 9, "ignorado", "unknown",
+    "consultas", 1, "nenhuma", "none",
+    "consultas", 2, "de 1 a 3", "1 to 3",
+    "consultas", 3, "de 4 a 6", "4 to 6",
+    "consultas", 4, "7 e mais", "7 or more",
+    "consultas", 9, "ignorado", "unknown",
     "sexo", 0, "ignorado", "unknown",
     "sexo", 1, "masculino", "male",
     "sexo", 2, "feminino", "female",
@@ -194,9 +202,9 @@ load_births <- function(time_period,
     "racacor", 3, "amarela", "yellow",
     "racacor", 4, "parda", "brown",
     "racacor", 5, "indigena", "indigenous",
-    "idanomal", 1, "ignorado", "unknown",
+    "idanomal", 1, "nao","no",
     "idanomal", 2, "sim", "yes",
-    "idanomal", 9, "nao", "no",
+    "idanomal", 9, "ignorado", "unknown",
     "escmae2010", 0, "sem escolaridade", "no education",
     "escmae2010", 1, "fundamental 1", "elementary 1",
     "escmae2010", 2, "fundamental 2", "elementary 2",
@@ -260,8 +268,13 @@ load_births <- function(time_period,
   # Formatting data
   dat <- dat %>%
     dplyr::mutate(
+      dtcadastro = lubridate::dmy(as.character(dtcadastro)),
+      dtrecebim = lubridate::dmy(as.character(dtrecebim)),
+
       dtnascmae = lubridate::dmy(as.character(dtnascmae)),
       dtultmenst = lubridate::dmy(as.character(dtultmenst)),
+      dtdeclarac = lubridate::dmy(as.character(dtdeclarac)),
+      dtnasc = lubridate::dmy(as.character(dtnasc)),
       codmunnasc = as.numeric(as.character(codmunnasc))
       )
 

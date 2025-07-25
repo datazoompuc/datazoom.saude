@@ -22,3 +22,10 @@ A data frame containing birth records from SINASC for the specified period and s
 This function downloads and organizes data from SINASC (Live Birth Information System),
 part of DATASUS, used in public health analyses.
 }
+\examples{
+\dontrun{
+load_births(time_period = 2023,
+            states = "RJ",
+            raw_data = FALSE)
+}
+}
