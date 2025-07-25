@@ -21,17 +21,7 @@ devtools::install_github("datazoompuc/datazoom.saude")
 ## Supported databases
 
 - **Oncology Panel (PO):** Cancer cases registered in the SUS by diagnosis location, treatment location, and cancer type.
-- **Births (SINAS):** Live birth records in Brazil.
+- **Births (SINASC):** Live birth records in Brazil.
 
 Coming soon: SIM, SIH/SUS, and other Brazilian health datasets.
 
-## 🛠️ Instalação
-
-Você pode instalar a versão em desenvolvimento diretamente do GitHub:
-
-```r
-# Instale o pacote 'devtools' se ainda não tiver
-install.packages("devtools")
-
-# Instale o datazoom.saude
-devtools::install_github("seu_usuario/datazoom.saude")
