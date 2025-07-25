@@ -335,11 +335,6 @@ load_dictionary <- function(dataset) {
 
       # Painel de Oncologia
 
-      "code_muni",    "code_muni",         "code_muni",            "Codigo IBGE do municipio",                                          "IBGE Municipality code",
-      "name_muni",    "name_muni",         "name_muni",            "Nome do municipio",                                                "City name",
-      "code_state",   "code_state",        "code_state",           "Codigo do estado",                                                 "State code",
-      "abbrev_state", "abbrev_state",      "abbrev_state",         "Sigla do estado",                                                  "State abbreviation",
-      "legal_amazon", "legal_amazon",      "legal_amazon",         "Amazonia Legal",                                                   "Legal Amazon",
       "ano_diagn",    "ano_diagnostico",   "year_diagnosis",       "Ano de diagnostico",                                               "Year of diagnosis",
       "anomes_dia",   "ano_mes_diagnostico", "year_month_diagnosis","Ano e mes do diagnostico",                                        "Year and month of diagnosis",
       "ano_tratam",   "ano_tratamento",     "year_treatment",      "Ano do primeiro tratamento registrado",                            "Year of first recorded treatment",
