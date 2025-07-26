@@ -230,11 +230,6 @@ load_dictionary <- function(dataset) {
 
       # DATASUS SIH RD
 
-      "code_muni", "code_muni", "code_muni", "Codigo IBGE do municipio", "IBGE Municipality code",
-      "name_muni", "name_muni", "name_muni", "Nome do municipio", "City name",
-      "code_state", "code_state", "code_state", "Codigo do estado", "State code",
-      "abbrev_state", "abbrev_state", "abbrev_state", "Sigla do estado", "State abbreviation",
-      "legal_amazon", "legal_amazon", "legal_amazon", "Amazonia Legal", "Legal Amazon",
       "uf_zi", "uf_gestor", "uf_manager", "municipio do gestor", "municipality of the manager",
       "ano_cmpt", "ano_processamento", "processing_year", "ano de processamento da aih", "aih processing year",
       "mes_cmpt", "mes_processamento", "processing_month", "mes de processamento da aih", "aih processing month",

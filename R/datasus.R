@@ -2,7 +2,7 @@
 #'
 #' @description Loads DATASUS data on health establishments, mortality, access to health services and several health indicators.
 #'
-#' @param dataset A dataset name, can be one of ("datasus_sim_do", "datasus_sih", "datasus_cnes_lt","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.
+#' @param dataset A dataset name, can be one of ("datasus_sim_do", "datasus_cnes_lt","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded. For example, `2020` or `2015:2020`.
 #' @param states A \code{string} specifying for which states to download the data. It is "all" by default, but can be a single state such as "AC" or any vector such as c("AC", "AM").
 #' @param raw_data Logical. If `TRUE`, returns the raw data exactly as provided by DATASUS. If `FALSE` (default), returns a cleaned and standardized version of the dataset.
@@ -143,7 +143,7 @@ load_datasus <- function(dataset,
       stringr::str_extract("\\d+")
     # In this case, the position varies
   }
-  if (stringr::str_detect(param$dataset, "datasus_cnes|datasus_sih")) {
+  if (param$dataset == "datasus_cnes_lt") {
     file_years_yy <- filenames %>%
       substr(5, 6)
   }
@@ -188,14 +188,14 @@ load_datasus <- function(dataset,
 
   file_state <- NULL
 
-  if (param$dataset %in% c("datasus_sim_do") | stringr::str_detect(param$dataset, "datasus_cnes|datasus_sih|datasus_siasus")) {
+  if (param$dataset %in% c("datasus_sim_do") | stringr::str_detect(param$dataset, "datasus_cnes|datasus_siasus")) {
     file_state <- filenames %>%
       substr(3, 4)
   } else if (paste0(param$states, collapse = "") != "all") {
     base::message("Filtering by state not supported for all datasets. Data for other states will be included.")
   }
 
-  if (stringr::str_detect(param$dataset, "datasus_cnes|datasus_sih|datasus_siasus")) {
+  if (stringr::str_detect(param$dataset, "datasus_cnes|datasus_siasus")) {
     if (param$dataset %in% siasus_two_digits) {
       file_state <- filenames %>%
         substr(3, 4)
@@ -218,8 +218,8 @@ load_datasus <- function(dataset,
     filenames <- filenames[stringr::str_detect(filenames, suffix)]
   }
 
-  if(stringr::str_detect(param$dataset, "datasus_sih|datasus_siasus_")) {
-    suffix <- stringr::str_remove(param$dataset, "datasus_sih_|datasus_siasus_") %>%
+  if(stringr::str_detect(param$dataset, "datasus_siasus_")) {
+    suffix <- stringr::str_remove(param$dataset, "datasus_siasus_") %>%
       toupper()
 
     filenames <- filenames[stringr::str_starts(filenames, suffix)]
@@ -312,7 +312,7 @@ load_datasus <- function(dataset,
       dplyr::rename("code_muni_6" = "codmunocor")
   }
 
-  if (stringr::str_detect(param$dataset, "datasus_cnes")) {
+  if (param$dataset == "datasus_cnes_lt") {
     dat <- dat %>%
       dplyr::mutate(codufmun = as.numeric(as.character(codufmun))) %>%
       dplyr::rename("code_muni_6" = "codufmun")
@@ -354,40 +354,7 @@ load_datasus <- function(dataset,
           }
         )
       )
-
-  if (stringr::str_detect(param$dataset, "datasus_sih")) {
-    # Adding municipality data
-    geo <- datazoom.saude::municipalities %>%
-      dplyr::select(
-        code_muni,
-        name_muni,
-        code_state,
-        abbrev_state,
-        legal_amazon
-      )
-    # Original data only has 6 IBGE digits instead of 7
-    geo <- geo %>%
-      dplyr::mutate(code_muni_6 = as.character(as.integer(code_muni / 10))) %>%
-      dplyr::distinct(code_muni_6, .keep_all = TRUE) # Only keeps municipalities uniquely identified by the 6 digits
-
-    if(param$dataset %in% c("datasus_sih_rd", "datasus_sih_rj")){
-      dat <- dat %>%
-        dplyr::mutate(munic_res = as.character(munic_res)) %>%
-        dplyr::left_join(geo, by = c("munic_res" = "code_muni_6"))
-
-    } else if(param$dataset == "datasus_sih_er"){
-      dat <- dat %>%
-        dplyr::mutate(mun_res = as.character(mun_res)) %>%
-        dplyr::left_join(geo, by = c("mun_res" = "code_muni_6"))
-
-    } else if(param$dataset == "datasus_sih_sp") {
-      dat <- dat %>%
-        dplyr::mutate(sp_m_hosp = as.character(sp_m_hosp)) %>%
-        dplyr::left_join(geo, by = c("sp_m_hosp" = "code_muni_6"))
-
-    }
-  }
-
+    
   if(stringr::str_detect(param$dataset,"datasus_siasus")){
 
     dat <- dat %>%
@@ -514,16 +481,9 @@ load_datasus <- function(dataset,
       dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon, dtobito) %>%
       tibble::as_tibble()
   }
-  if (stringr::str_detect(param$dataset, "datasus_cnes")) {
+  if (param$dataset == "datasus_cnes_lt") {
     dat_mod <- dat %>%
       dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
-      tibble::as_tibble()
-  }
-  if (stringr::str_detect(param$dataset, "datasus_sih")) {
-
-    dat_mod <- dat %>%
-      dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
-      dplyr::select(tidyselect::where(~ !(all(is.na(.)) || all(. == 0, na.rm = TRUE)))) %>% # Remove colunas que so possuem 0 e NA
       tibble::as_tibble()
   }
 
