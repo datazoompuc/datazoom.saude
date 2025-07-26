@@ -134,7 +134,7 @@ load_datasus <- function(dataset,
   file_years <- NULL
   file_years_yy <- NULL
 
-  if (param$dataset %in% c("datasus_sim_do")) {
+  if (param$dataset == "datasus_sim_do") {
     file_years <- filenames %>%
       substr(5, 8)
   }
@@ -354,7 +354,7 @@ load_datasus <- function(dataset,
           }
         )
       )
-
+    
   if(stringr::str_detect(param$dataset,"datasus_siasus")){
 
     dat <- dat %>%
