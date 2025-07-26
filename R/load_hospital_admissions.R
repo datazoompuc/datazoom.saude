@@ -148,5 +148,59 @@ load_hospital_admissions <- function(dataset,
     dplyr::select(tidyselect::where(~ !(all(is.na(.)) || all(. == 0, na.rm = TRUE)))) %>% # Remove colunas que so possuem 0 e NA
     tibble::as_tibble()
 
+  ###############
+  ## Labelling ##
+  ###############
+
+  dic <- load_dictionary(param$dataset)
+
+  row_numbers <- match(names(dat), dic$var_code)
+
+  if (param$language == "pt") {
+    dic <- dic %>%
+      dplyr::select(label_pt)
+  }
+  if (param$language == "eng") {
+    dic <- dic %>%
+      dplyr::select(label_eng)
+  }
+
+  labels <- dic %>%
+    dplyr::slice(row_numbers) %>%
+    unlist()
+
+  # Making sure 'labels' is the same length as the number of columns
+  labels_full <- character(length = ncol(dat))
+
+  labels_full[which(!is.na(row_numbers))] <- labels
+
+  Hmisc::label(dat) <- as.list(labels_full)
+
+  ################################
+  ## Harmonizing Variable Names ##
+  ################################
+
+  dat_mod <- dat %>% tibble::as_tibble()
+
+  dic <- load_dictionary(param$dataset)
+
+  if (param$language == "pt") {
+    var_names <- dic$name_pt
+  }
+  if (param$language == "eng") {
+    var_names <- dic$name_eng
+  }
+
+  names(var_names) <- dic$var_code
+
+  dat_mod <- dat_mod %>%
+    dplyr::rename_with(
+      ~ dplyr::recode(., !!!var_names)
+    )
+
+  ####################
+  ## Returning Data ##
+  ####################
+
   return(dat_mod)
   }

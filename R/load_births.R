@@ -271,11 +271,11 @@ load_births <- function(time_period,
 
   if (param$language == "pt") {
     dic <- dic %>%
-      dplyr::select(var_code, name_pt, label_pt)
+      dplyr::select(label_pt)
   }
   if (param$language == "eng") {
     dic <- dic %>%
-      dplyr::select(var_code, name_eng, label_eng)
+      dplyr::select(label_eng)
   }
 
   labels <- dic %>%
@@ -284,6 +284,7 @@ load_births <- function(time_period,
 
   # Making sure 'labels' is the same length as the number of columns
   labels_full <- character(length = ncol(dat))
+
   labels_full[which(!is.na(row_numbers))] <- labels
 
   Hmisc::label(dat) <- as.list(labels_full)
@@ -292,8 +293,9 @@ load_births <- function(time_period,
   ## Harmonizing Variable Names ##
   ################################
 
-  dat_mod <- dat %>%
-    tibble::as_tibble()
+  dat_mod <- dat %>% tibble::as_tibble()
+
+  dic <- load_dictionary(param$dataset)
 
   if (param$language == "pt") {
     var_names <- dic$name_pt
