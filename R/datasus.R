@@ -143,7 +143,7 @@ load_datasus <- function(dataset,
       stringr::str_extract("\\d+")
     # In this case, the position varies
   }
-  if (stringr::str_detect(param$dataset, "datasus_cnes")) {
+  if (param$dataset == "datasus_cnes_lt") {
     file_years_yy <- filenames %>%
       substr(5, 6)
   }
@@ -312,7 +312,7 @@ load_datasus <- function(dataset,
       dplyr::rename("code_muni_6" = "codmunocor")
   }
 
-  if (stringr::str_detect(param$dataset, "datasus_cnes")) {
+  if (param$dataset == "datasus_cnes_lt") {
     dat <- dat %>%
       dplyr::mutate(codufmun = as.numeric(as.character(codufmun))) %>%
       dplyr::rename("code_muni_6" = "codufmun")
@@ -481,7 +481,7 @@ load_datasus <- function(dataset,
       dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon, dtobito) %>%
       tibble::as_tibble()
   }
-  if (stringr::str_detect(param$dataset, "datasus_cnes")) {
+  if (param$dataset == "datasus_cnes_lt") {
     dat_mod <- dat %>%
       dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
       tibble::as_tibble()
