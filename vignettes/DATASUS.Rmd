@@ -78,7 +78,7 @@ Below is an example of downloading the raw data, and also using the `raw_data = 
 **Examples:**
 
 ```{r, eval = FALSE}
-library(datazoom.amazonia)
+library(datazoom.saude)
 
 # download raw data for the year 2010 in the state of AM.
 data <- load_datasus(
@@ -115,7 +115,7 @@ Raw data is avaliable for all of them using the dataset option `datasus_cnes_lt,
 **Examples:**
 
 ```{r, eval = FALSE}
-library(datazoom.amazonia)
+library(datazoom.saude)
 
 # download treated data with the number of avaliable beds in AM and PA.
 data <- load_datasus(
@@ -146,7 +146,7 @@ All SIH datasets are available by state and time period. By using the `raw_data 
 **Examples:**
 
 ```{r, eval = FALSE}
-library(datazoom.amazonia)
+library(datazoom.saude)
 
 # Download of raw data for Reduced AIH (AIH Reduzida) – State of Amazonas, 2010
 data_rd_raw <- load_datasus(
@@ -225,7 +225,7 @@ Focuses on outpatient care provided at patients' homes, often involving chronic 
 **Examples:**
 
 ```{r, eval = FALSE}
-library(datazoom.amazonia)
+library(datazoom.saude)
 
 # ABO – Post-Bariatric Surgery Follow-Up
 teste_abo <- load_datasus(
@@ -344,7 +344,7 @@ The raw data is available through the `raw_data = TRUE` parameter in the `datasu
 **Examples:**
 
 ```{r, eval = FALSE}
-library(datazoom.amazonia)
+library(datazoom.saude)
 
 # download raw data
 data <- load_datasus(
