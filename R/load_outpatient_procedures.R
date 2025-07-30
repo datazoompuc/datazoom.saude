@@ -16,8 +16,13 @@ load_outpatient_procedures <- function(dataset,
                                        raw_data = FALSE,
                                        language = "eng") {
 
-  if (!requireNamespace("foreign", quietly = TRUE)) stop("Package 'foreign' required.", call. = FALSE)
-  if (!requireNamespace("RCurl", quietly = TRUE)) stop("Package 'RCurl' required.", call. = FALSE)
+  if (!requireNamespace("foreign", quietly = TRUE)) {
+    stop("Package 'foreign' required.", call. = FALSE)
+  }
+
+  if (!requireNamespace("RCurl", quietly = TRUE)) {
+    stop("Package 'RCurl' required.", call. = FALSE)
+  }
 
   . <- abbrev_state <- code_muni <- code_muni_6 <- code_state <- codmunocor <- NULL
   codufmun <- file_name <- value <- year <- month <- NULL
@@ -57,26 +62,24 @@ load_outpatient_procedures <- function(dataset,
   ### filtering by suffix
   filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
 
-
-  ### Filtering by year and states
   siasus_two_digits <- c("datasus_siasus_ab","datasus_siasus_ad","datasus_siasus_am","datasus_siasus_an",
                          "datasus_siasus_aq","datasus_siasus_ar","datasus_siasus_pa","datasus_siasus_ps")
   siasus_two_digits_alt <- c("datasus_siasus_abo","datasus_siasus_acf","datasus_siasus_atd","datasus_siasus_sad")
+
+  ### Filtering by year
 
   file_years_yy <- NULL
   file_state <- NULL
 
   if (param$dataset %in% siasus_two_digits) {
     file_years_yy <- substr(filenames, 5, 6)
-    file_state <- substr(filenames, 3, 4)
   } else if (param$dataset %in% siasus_two_digits_alt) {
     file_years_yy <- substr(filenames, 6, 7)
-    file_state <- substr(filenames, 4, 5)
-  } else {
-    stop("Unsupported SIASUS dataset.")
   }
 
   filenames <- filenames[file_years_yy %in% param$time_period_yy]
+
+  filenames <- filenames[file_state %in% param$states]
 
   if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
     filenames <- filenames[file_state %in% param$states]
