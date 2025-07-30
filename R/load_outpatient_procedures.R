@@ -1,15 +1,70 @@
-#' @title Load Outpatient Procedures (SIASUS)
+#' Loads outpatient procedure data from Brazil provided by 'SIASUS' (Ambulatory Information System)
 #'
-#' @description Downloads and processes outpatient procedure data from DATASUS SIASUS.
+#' This function downloads and organizes public health data from 'SIASUS' – the Ambulatory Information System from Brazil's national health database, 'DATASUS'.
+#' It contains records of outpatient medical procedures performed throughout the country.
 #'
-#' @param dataset A dataset name from SIASUS, e.g. "datasus_siasus_ab", "datasus_siasus_pa", etc.
-#' @param time_period A numeric year or vector of years, e.g. 2015:2020.
-#' @param states A vector of state abbreviations or "all" (default).
-#' @param raw_data Logical. If TRUE, returns the raw list. If FALSE (default), returns a cleaned tibble.
-#' @param language Language for labels and column names: "eng" (default) or "pt".
+#' @param dataset A string indicating the type of SIASUS dataset to download. Accepted values include:
+#' `"ab"`, `"ad"`, `"am"`, `"an"`, `"aq"`, `"ar"`, `"pa"`, `"ps"`, `"abo"`, `"acf"`, `"atd"`, `"sad"`.
+#' See the 'Details' section for descriptions.
+#' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
+#' For example, `2020` or `2015:2020`.
+#' @param states A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded.
+#' Use `"all"` to download data for the entire country. For specific states, use abbreviations like `"SP"`, `"RJ"`, or `c("SP", "RJ")`.
+#' @param raw_data Logical. If `TRUE`, returns the raw data exactly as provided by DATASUS. If `FALSE` (default),
+#' returns a cleaned and standardized version of the dataset.
+#' @param language A string indicating the desired language of variable names and labels. Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
 #'
-#' @return A tibble.
+#' @return A data frame containing outpatient procedure records from SIASUS for the specified period and states.
+#'
+#' @details
+#' SIASUS provides multiple datasets that cover different aspects of outpatient care in Brazil:
+#'
+#' \describe{
+#'   \item{'ab' – Basic Healthcare}{
+#'   General preventive and primary care procedures, such as check-ups and vaccinations.}
+#'
+#'   \item{'ad' – Dentistry}{
+#'   Outpatient dental procedures including extractions, restorations, and preventive services.}
+#'
+#'   \item{'am' – Specialized Ambulatory Services}{
+#'   Higher complexity procedures including specialized consultations and diagnostic exams.}
+#'
+#'   \item{'an' – Neonatal Screening}{
+#'   Procedures related to early-life screening tests, including metabolic and sensory testing.}
+#'
+#'   \item{'aq' – Home Care Services}{
+#'   Outpatient procedures provided through structured home care programs.}
+#'
+#'   \item{'ar' – Rehabilitation Services}{
+#'   Procedures focused on physical, cognitive, and functional rehabilitation.}
+#'
+#'   \item{'pa' – Procedures by Authorization}{
+#'   High-cost procedures that require prior authorization, such as cancer treatment or dialysis.}
+#'
+#'   \item{'ps' – Simplified Procedures}{
+#'   Aggregated or simplified records of outpatient procedures with limited detail.}
+#'
+#'   \item{'abo' – Oral Health Specialized Services}{
+#'   Records from specialized dental centers providing oral health care.}
+#'
+#'   \item{'acf' – Pharmaceutical Care}{
+#'   Data on medication dispensing and pharmaceutical consultations.}
+#'
+#'   \item{'atd' – Therapeutic Support Services}{
+#'   Procedures related to therapies such as chemotherapy and radiotherapy.}
+#'
+#'   \item{'sad' – Home Oxygen Therapy and Specialized Assistance}{
+#'   Home-based specialized care such as oxygen therapy and related services.}
+#' }
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' load_outpatient_procedures(dataset = "ab",
+#'                            time_period = 2021,
+#'                            states = c("SP", "RJ"))
+#' }
 load_outpatient_procedures <- function(dataset,
                                        time_period,
                                        states = "all",
