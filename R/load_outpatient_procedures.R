@@ -79,7 +79,17 @@ load_outpatient_procedures <- function(dataset,
 
   filenames <- filenames[file_years_yy %in% param$time_period_yy]
 
-  filenames <- filenames[file_state %in% param$states]
+  # Filtering for chosen states when possible
+
+  file_state <- NULL
+
+  if (param$dataset %in% siasus_two_digits) {
+    file_state <- filenames %>%
+      substr(3, 4)
+  } else if (param$dataset %in% siasus_two_digits_alt) {
+    file_state <- filenames %>%
+      substr(4, 5)
+  }
 
   if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
     filenames <- filenames[file_state %in% param$states]
