@@ -22,19 +22,37 @@ load_outpatient_procedures <- function(dataset,
   . <- abbrev_state <- code_muni <- code_muni_6 <- code_state <- codmunocor <- NULL
   codufmun <- file_name <- value <- year <- month <- NULL
 
-  param <- list(
-    source = "datasus",
-    dataset = dataset,
-    time_period = time_period,
-    time_period_yy = substr(time_period, 3, 4),
-    states = ifelse(states == "all", "all", toupper(states)),
-    raw_data = raw_data,
-    language = language
-  )
+  # Create param list with specific parameters for SIASUS
+  param <- list()
 
+  param$source <- "datasus"
+  param$dataset <- paste0("datasus_siasus_",dataset)
+  param$raw_data <- raw_data
+  param$language <- language
+  param$suffix <- toupper(dataset)
+
+  param$time_period <- time_period
+  param$time_period_yy <- substr(time_period, 3, 4)
+
+  param$states <- ifelse(states == "all", "all", toupper(states))
+
+  #############################
+  ## Downloading SIASUS Data ##
+  #############################
+
+  # Get dataset source URL
   dat_url <- datasets_link()
-  url <- dat_url %>% dplyr::filter(dataset == param$dataset) %>% dplyr::pull(link)
-  filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>% stringr::str_split("\r*\n") %>% unlist()
+
+  url <- dat_url %>%
+    dplyr::filter(dataset == param$dataset) %>%
+    dplyr::select(link) %>%
+    base::unlist() %>%
+    as.character()
+
+  # Use RCurl to extract the names of all files stored in the server
+  filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
+    stringr::str_split("\r*\n") %>%
+    unlist()
 
   siasus_two_digits <- c("datasus_siasus_ab","datasus_siasus_ad","datasus_siasus_am","datasus_siasus_an",
                          "datasus_siasus_aq","datasus_siasus_ar","datasus_siasus_pa","datasus_siasus_ps")
