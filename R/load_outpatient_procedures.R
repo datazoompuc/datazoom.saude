@@ -54,9 +54,17 @@ load_outpatient_procedures <- function(dataset,
     stringr::str_split("\r*\n") %>%
     unlist()
 
+  ### filtering by suffix
+  filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
+
+
+  ### Filtering by year and states
   siasus_two_digits <- c("datasus_siasus_ab","datasus_siasus_ad","datasus_siasus_am","datasus_siasus_an",
                          "datasus_siasus_aq","datasus_siasus_ar","datasus_siasus_pa","datasus_siasus_ps")
   siasus_two_digits_alt <- c("datasus_siasus_abo","datasus_siasus_acf","datasus_siasus_atd","datasus_siasus_sad")
+
+  file_years_yy <- NULL
+  file_state <- NULL
 
   if (param$dataset %in% siasus_two_digits) {
     file_years_yy <- substr(filenames, 5, 6)
@@ -69,23 +77,28 @@ load_outpatient_procedures <- function(dataset,
   }
 
   filenames <- filenames[file_years_yy %in% param$time_period_yy]
-  if (paste0(param$states, collapse = "") != "all") {
+
+  if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
     filenames <- filenames[file_state %in% param$states]
   }
 
-  suffix <- stringr::str_remove(param$dataset, "datasus_siasus_") %>% toupper()
-  filenames <- filenames[stringr::str_starts(filenames, suffix)]
   param$filenames <- filenames
 
-  dat <- param$filenames %>% purrr::imap(function(file_name, iteration) {
-    message(paste0("Downloading ", file_name, " (", iteration, "/", length(filenames), ")"))
-    external_download(
-      source = param$source,
-      dataset = param$dataset,
-      skip_rows = NULL,
-      file_name = file_name
+  ### Downloading each file in filenames
+  dat <- param$filenames %>%
+    purrr::imap(
+      function(file_name, iteration) {
+        base::message(paste0("Downloading file ", file_name, " (", iteration, " out of ", length(filenames), ")"))
+
+        external_download(
+          source = param$source,
+          dataset = param$dataset,
+          file_name = file_name
+        )
+      }
     )
-  })
+
+  names(dat) <- filenames
 
   names(dat) <- filenames
   if (param$raw_data) return(dat)
