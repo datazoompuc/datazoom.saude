@@ -114,12 +114,17 @@ load_outpatient_procedures <- function(dataset,
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  ### filtering by suffix
-  filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
-
   siasus_two_digits <- c("datasus_siasus_ab","datasus_siasus_ad","datasus_siasus_am","datasus_siasus_an",
                          "datasus_siasus_aq","datasus_siasus_ar","datasus_siasus_pa","datasus_siasus_ps")
   siasus_two_digits_alt <- c("datasus_siasus_abo","datasus_siasus_acf","datasus_siasus_atd","datasus_siasus_sad")
+
+  ### filtering by suffix
+
+  if (param$dataset %in% siasus_two_digits) {
+    filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
+  } else if (param$dataset %in% siasus_two_digits_alt) {
+    filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{3}\\d{4}\\.dbc$"))]
+  }
 
   ### Filtering by year
 
