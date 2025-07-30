@@ -113,18 +113,50 @@ load_outpatient_procedures <- function(dataset,
 
   names(dat) <- filenames
 
-  names(dat) <- filenames
-  if (param$raw_data) return(dat)
+  ## Return Raw Data
 
-  dat <- dat %>% purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>% dplyr::bind_rows() %>% janitor::clean_names()
-  dat <- dat %>% dplyr::mutate(dplyr::across(tidyselect::where(is.factor), as.character))
+  if (param$raw_data) {
+    return(dat)
+  }
 
-  tem_zero_a_esquerda <- function(x) any(grepl("^0", enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))))
-  coluna_numerica_valida <- function(x) all(grepl("^\\d+$", enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))))
+  ######################
+  ## Data Engineering ##
+  ######################
 
-  dat <- dat %>% dplyr::mutate(dplyr::across(tidyselect::where(is.character), ~ {
-    if (!tem_zero_a_esquerda(.x) && coluna_numerica_valida(.x)) suppressWarnings(as.numeric(.x)) else .x
-  }))
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows() %>%
+    janitor::clean_names()
+
+  dat <- dat %>%
+    dplyr::mutate(
+      dplyr::across(tidyselect::where(is.factor), as.character)
+    )
+
+  tem_zero_a_esquerda <- function(x) {
+    # Força o encoding como latin1 → UTF-8 para evitar warnings
+    x <- enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))
+    any(grepl("^0", x))
+  }
+
+  coluna_numerica_valida <- function(x) {
+    x <- enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))
+    all(grepl("^\\d+$", x))
+  }
+
+  dat <- dat %>%
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::where(is.character),
+        ~ {
+          if (!tem_zero_a_esquerda(.x) && coluna_numerica_valida(.x)) {
+            suppressWarnings(as.numeric(.x))
+          } else {
+            .x
+          }
+        }
+      )
+    )
 
   dic <- load_dictionary(param$dataset)
   var_names <- if (param$language == "pt") dic$name_pt else dic$name_eng
