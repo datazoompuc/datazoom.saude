@@ -158,11 +158,62 @@ load_outpatient_procedures <- function(dataset,
       )
     )
 
+  ###############
+  ## Labelling ##
+  ###############
+
   dic <- load_dictionary(param$dataset)
-  var_names <- if (param$language == "pt") dic$name_pt else dic$name_eng
+
+  row_numbers <- match(names(dat), dic$var_code)
+
+  if (param$language == "pt") {
+    dic <- dic %>%
+      dplyr::select(label_pt)
+  }
+  if (param$language == "eng") {
+    dic <- dic %>%
+      dplyr::select(label_eng)
+  }
+
+  labels <- dic %>%
+    dplyr::slice(row_numbers) %>%
+    unlist()
+
+  # Making sure 'labels' is the same length as the number of columns
+
+  labels_full <- character(length = ncol(dat))
+
+  labels_full[which(!is.na(row_numbers))] <- labels
+
+  Hmisc::label(dat) <- as.list(labels_full)
+
+  ################################
+  ## Harmonizing Variable Names ##
+  ################################
+
+  dat_mod <- dat %>%
+    tibble::as_tibble()
+
+  dic <- load_dictionary(param$dataset)
+
+  if (param$language == "pt") {
+    var_names <- dic$name_pt
+  }
+  if (param$language == "eng") {
+    var_names <- dic$name_eng
+  }
+
   names(var_names) <- dic$var_code
 
-  dat <- dat %>% dplyr::rename_with(~ dplyr::recode(., !!!var_names))
+  dat_mod <- dat_mod %>%
+    dplyr::rename_with(
+      ~ dplyr::recode(., !!!var_names)
+    )
 
-  return(dat)
-}
+  ####################
+  ## Returning Data ##
+  ####################
+
+  return(dat_mod)
+
+  }
