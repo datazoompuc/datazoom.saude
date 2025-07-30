@@ -100,22 +100,6 @@ load_outpatient_procedures <- function(dataset,
     if (!tem_zero_a_esquerda(.x) && coluna_numerica_valida(.x)) suppressWarnings(as.numeric(.x)) else .x
   }))
 
-  geo <- datazoom.saude::municipalities %>%
-    dplyr::select(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
-    dplyr::mutate(code_muni_6 = as.integer(code_muni / 10))
-
-  suffix <- if (param$dataset == "datasus_siasus_pa") {
-    "pa_ufmun"
-  } else if (param$dataset %in% c("datasus_siasus_ps", "datasus_siasus_sad")) {
-    "ufmun"
-  } else {
-    "ap_ufmun"
-  }
-
-  dat <- dat %>% dplyr::left_join(geo, by = stats::setNames("code_muni_6", suffix)) %>%
-    dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
-    tibble::as_tibble()
-
   dic <- load_dictionary(param$dataset)
   var_names <- if (param$language == "pt") dic$name_pt else dic$name_eng
   names(var_names) <- dic$var_code
