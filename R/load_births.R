@@ -58,6 +58,12 @@ load_births <- function(time_period,
     stop("the language must be 'eng' or 'pt'. By default it is 'eng'.")
   }
 
+  # Declare global variables to avoid check notes
+
+  . <- file_name <- dataset <- link <- name_eng <- label_eng  <-NULL
+  label_pt <- var_code <- dtnascmae <- dtultmenst <- codmunnasc <- NULL
+  dtcadastro <- dtnasc <- dtrecebim <- dtdeclarac <- name_pt <- NULL
+
   # Create param list with specific parameters for SINASC
   param <- list()
 
@@ -71,6 +77,14 @@ load_births <- function(time_period,
   param$time_period_yy <- substr(time_period, 3, 4)
 
   param$states <- ifelse(states == "all", "all", toupper(states))
+
+  # Auxiliary parameters to be passed to external_download
+
+  param$filenames <- NULL
+
+  # check if dataset and time_period are valid
+
+  check_params(param)
 
   #############################
   ## Downloading SINASC Data ##

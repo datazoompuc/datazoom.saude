@@ -51,6 +51,12 @@ load_oncology_case <- function(time_period,
     stop("the language must be 'eng' or 'pt'. By default it is 'eng'.")
   }
 
+  # Declare global variables to avoid check notes
+
+  . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
+  name_pt <- label_pt <- var_code <- NULL
+  dt_diag <- dt_trat <- dt_nasc <- mun_diag <- NULL
+
   # Create param list with specific parameters for SINASC
   param <- list()
 
@@ -63,6 +69,13 @@ load_oncology_case <- function(time_period,
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
 
+  # Auxiliary parameters to be passed to external_download
+
+  param$filenames <- NULL
+
+  # check if dataset and time_period are valid
+
+  check_params(param)
 
   #############################
   ## Downloading SINASC Data ##
