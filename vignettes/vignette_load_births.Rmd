@@ -1,0 +1,52 @@
+---
+title: "DATASUS - Live Births (SINASC)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DATASUS - Live Births (SINASC)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `load_births` function provides access to the **Live Birth Information System (SINASC)** dataset, which collects and records detailed information about births in Brazil. This data is extracted from Live Birth Certificates (DNVs) and includes information about the newborn, such as sex, weight, and gestational age, as well as data about the mother, such as age, number of children, and health conditions. SINASC is essential for monitoring maternal and child health and generating relevant indicators for public health policy formulation.
+
+***
+The `load_births` function offers the following parameters:
+
+  1. **raw_data**: there are two options:
+      * `TRUE`: If you want the original DATASUS files in their segmented form.
+      * `FALSE`: if you want the treated version of the data.
+  
+  2. **time_period**: Specifies the years for which the data will be downloaded.
+  
+  3. **states**: A vector of states by which to filter the data.
+
+  4. **language**: You can choose between Portuguese `("pt")` and English `("eng")` for variable descriptions when `raw_data = FALSE`.
+  
+**Examples:**
+
+```{r, eval = FALSE}
+library(datazoom.saude)
+
+# Download raw data for the year 2015 in the state of Amazonas (AM).
+data_raw_births <- load_births(
+  time_period = 2015,
+  states = "AM",
+  raw_data = TRUE
+)
+
+# Download processed data for the year 2015 in the state of Amazonas (AM),
+# with variable labels in English.
+data_processed_births <- load_births(
+  time_period = 2015,
+  states = "AM",
+  raw_data = FALSE,
+  language = "eng"
+)
+```
