@@ -120,13 +120,7 @@ load_outpatient_procedures <- function(dataset,
 
   ### filtering by suffix
 
-  if (param$dataset %in% siasus_two_digits) {
-    filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
-
-  } else if (param$dataset %in% siasus_two_digits_alt) {
-
-    filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
-  }
+  filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
 
   ### Filtering by year
 
