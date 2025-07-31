@@ -1,15 +1,52 @@
-
-
-
-
-
-
-
+#' Load monthly data on hospital beds from Brazil's National Health Facilities Registry
+#'
+#' Retrieves and processes structured microdata on hospital beds from the 'CNES' (Cadastro Nacional de Estabelecimentos de Saude),
+#' which is part of the 'DATASUS' system, maintained by the Brazilian Ministry of Health. This dataset includes
+#' information on the availability and distribution of hospital beds in Brazil.
+#'
+#' The data is sourced from the 'CNES-LT' subsystem (Leitos - Beds), which provides monthly information
+#' on beds by establishment and type, and can be filtered by state and time period.
+#'
+#' File downloads are performed via the official DATASUS FTP server. Users can choose to retrieve
+#' raw or pre-processed data, and label variables in English or Portuguese.
+#'
+#' @param time_period A character vector of years (e.g., \code{c("2019", "2020")}) for which data should be loaded.
+#' @param states A character vector of state abbreviations (e.g., \code{c("RJ", "SP")}) to filter the data.
+#'        Use \code{"all"} to include all states. Defaults to \code{"all"}.
+#' @param raw_data Logical. If \code{TRUE}, returns a list of raw data frames (one per file). If \code{FALSE},
+#'        returns a cleaned and labeled data frame. Default is \code{FALSE}.
+#' @param language Character string indicating the variable label language. Options are \code{"pt"} for Portuguese
+#'        or \code{"eng"} for English. Default is \code{"eng"}.
+#'
+#' @return A tibble (if \code{raw_data = FALSE}) containing harmonized monthly hospital bed data from Brazil,
+#'         or a list of raw data frames (if \code{raw_data = TRUE}).
+#'
+#' @details
+#' This function downloads and processes data from the CNES-LT subsystem, which is part of the
+#' Brazilian National Health Facilities Registry. It uses the DATASUS FTP server and handles compressed
+#' data in DBF format, using packages such as \code{foreign} and \code{RCurl}.
+#'
+#' The function labels variables using a built-in dictionary and offers harmonized column names
+#' depending on the selected language. A filter by state and year is applied to reduce file size and processing time.
+#'
+#' @note
+#' The \code{foreign} and \code{RCurl} packages must be installed to use this function. They are listed in \code{Suggests}
+#' to avoid installing them by default.
+#'
+#' @examples
+#' \dontrun{
+#' # Load beds data for RJ and SP in 2020 and 2021
+#' beds <- load_hospital_beds(time_period = c("2020", "2021"), states = c("RJ", "SP"))
+#'
+#' # Load raw data for all states in 2019
+#' raw <- load_hospital_beds(time_period = "2019", raw_data = TRUE)
+#' }
+#'
+#' @export
 
 load_hospital_beds <- function(time_period,
                                states = "all",
                                raw_data = FALSE,
-                               keep_all = FALSE,
                                language = "eng") {
 
   # Checking for foreign package (in Suggests)
@@ -40,7 +77,6 @@ load_hospital_beds <- function(time_period,
   param$dataset <- "datasus_cnes_lt"
   param$raw_data <- raw_data
   param$language <- language
-  param$keep_all <- keep_all
 
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
@@ -192,7 +228,6 @@ load_hospital_beds <- function(time_period,
     dplyr::rename_with(
       ~ dplyr::recode(., !!!var_names)
     )
-
 
   ####################
   ## Returning Data ##
