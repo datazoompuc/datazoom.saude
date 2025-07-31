@@ -3,7 +3,7 @@
 #' This function downloads and organizes public health data from 'SIASUS' – the Ambulatory Information System from Brazil's national health database, 'DATASUS'.
 #' It contains records of outpatient medical procedures performed throughout the country.
 #'
-#' @param dataset A string indicating the type of SIASUS dataset to download. Accepted values include:
+#' @param dataset A string indicating the type of 'SIASUS' dataset to download. Accepted values include:
 #' `"ab"`, `"ad"`, `"am"`, `"an"`, `"aq"`, `"ar"`, `"pa"`, `"ps"`, `"abo"`, `"acf"`, `"atd"`, `"sad"`.
 #' See the 'Details' section for descriptions.
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
