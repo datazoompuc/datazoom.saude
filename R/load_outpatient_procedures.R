@@ -96,6 +96,15 @@ load_outpatient_procedures <- function(dataset,
 
   param$states <- ifelse(states == "all", "all", toupper(states))
 
+  # Auxiliary parameters to be passed to external_download
+
+  param$skip_rows <- NULL
+  param$filenames <- NULL
+
+  # check if dataset and time_period are valid
+
+  check_params(param)
+
   #############################
   ## Downloading SIASUS Data ##
   #############################
