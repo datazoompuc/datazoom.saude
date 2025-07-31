@@ -13,7 +13,7 @@ load_outpatient_procedures(
 )
 }
 \arguments{
-\item{dataset}{A string indicating the type of SIASUS dataset to download. Accepted values include:
+\item{dataset}{A string indicating the type of 'SIASUS' dataset to download. Accepted values include:
 \code{"ab"}, \code{"ad"}, \code{"am"}, \code{"an"}, \code{"aq"}, \code{"ar"}, \code{"pa"}, \code{"ps"}, \code{"abo"}, \code{"acf"}, \code{"atd"}, \code{"sad"}.
 See the 'Details' section for descriptions.}
 

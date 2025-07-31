@@ -2,7 +2,7 @@
 #'
 #' @description Loads DATASUS data on health establishments, mortality, access to health services and several health indicators.
 #'
-#' @param dataset A dataset name, can be one of ("datasus_sim_do", "datasus_cnes_lt","datasus_siasus"), or more. For more details, try \code{vignette("DATASUS")}.
+#' @param dataset A dataset name, can be one of ("datasus_sim_do", "datasus_cnes_lt"), or more. For more details, try \code{vignette("DATASUS")}.
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded. For example, `2020` or `2015:2020`.
 #' @param states A \code{string} specifying for which states to download the data. It is "all" by default, but can be a single state such as "AC" or any vector such as c("AC", "AM").
 #' @param raw_data Logical. If `TRUE`, returns the raw data exactly as provided by DATASUS. If `FALSE` (default), returns a cleaned and standardized version of the dataset.
@@ -148,34 +148,6 @@ load_datasus <- function(dataset,
       substr(5, 6)
   }
 
-  if (stringr::str_detect(param$dataset, "datasus_siasus")) {
-
-    siasus_two_digits <- c(
-      "datasus_siasus_ab",
-      "datasus_siasus_ad",
-      "datasus_siasus_am",
-      "datasus_siasus_an",
-      "datasus_siasus_aq",
-      "datasus_siasus_ar",
-      "datasus_siasus_pa",
-      "datasus_siasus_ps"
-    )
-
-    siasus_two_digits_alt <- c(
-      "datasus_siasus_abo",
-      "datasus_siasus_acf",
-      "datasus_siasus_atd",
-      "datasus_siasus_sad"
-    )
-
-    if (param$dataset %in% siasus_two_digits) {
-      file_years_yy <- substr(filenames, 5, 6)
-    } else if (param$dataset %in% siasus_two_digits_alt) {
-      file_years_yy <- substr(filenames, 6, 7)
-    }
-  }
-
-
   # Only files whose name's year matches a chosen one are kept
   if (!is.null(file_years)) {
     filenames <- filenames[file_years %in% param$time_period]
@@ -188,21 +160,11 @@ load_datasus <- function(dataset,
 
   file_state <- NULL
 
-  if (param$dataset %in% c("datasus_sim_do") | stringr::str_detect(param$dataset, "datasus_cnes|datasus_siasus")) {
+  if (param$dataset %in% c("datasus_sim_do") | stringr::str_detect(param$dataset, "datasus_cnes")) {
     file_state <- filenames %>%
       substr(3, 4)
   } else if (paste0(param$states, collapse = "") != "all") {
     base::message("Filtering by state not supported for all datasets. Data for other states will be included.")
-  }
-
-  if (stringr::str_detect(param$dataset, "datasus_cnes|datasus_siasus")) {
-    if (param$dataset %in% siasus_two_digits) {
-      file_state <- filenames %>%
-        substr(3, 4)
-    } else if (param$dataset %in% siasus_two_digits_alt) {
-      file_state <- filenames %>%
-        substr(4, 5)
-    }
   }
 
   if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
@@ -216,13 +178,6 @@ load_datasus <- function(dataset,
       toupper()
 
     filenames <- filenames[stringr::str_detect(filenames, suffix)]
-  }
-
-  if(stringr::str_detect(param$dataset, "datasus_siasus_")) {
-    suffix <- stringr::str_remove(param$dataset, "datasus_siasus_") %>%
-      toupper()
-
-    filenames <- filenames[stringr::str_starts(filenames, suffix)]
   }
 
   param$filenames <- filenames
@@ -354,62 +309,6 @@ load_datasus <- function(dataset,
           }
         )
       )
-    
-  if(stringr::str_detect(param$dataset,"datasus_siasus")){
-
-    dat <- dat %>%
-      dplyr::mutate(
-        dplyr::across(tidyselect::where(is.factor), as.character)
-      )
-
-    tem_zero_a_esquerda <- function(x) {
-      # Força o encoding como latin1 → UTF-8 para evitar warnings
-      x <- enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))
-      any(grepl("^0", x))
-    }
-
-    coluna_numerica_valida <- function(x) {
-      x <- enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))
-      all(grepl("^\\d+$", x))
-    }
-
-    dat <- dat %>%
-      dplyr::mutate(
-        dplyr::across(
-          tidyselect::where(is.character),
-          ~ {
-            if (!tem_zero_a_esquerda(.x) && coluna_numerica_valida(.x)) {
-              suppressWarnings(as.numeric(.x))
-            } else {
-              .x
-            }
-          }
-        )
-      )
-
-    geo <- datazoom.saude::municipalities %>%
-      dplyr::select(
-        code_muni,
-        name_muni,
-        code_state,
-        abbrev_state,
-        legal_amazon
-      )
-
-    geo <- geo %>%
-      dplyr::mutate(code_muni_6 = as.integer(code_muni / 10))
-
-    suffix <- if (param$dataset == "datasus_siasus_pa") {
-      "pa_ufmun"
-    } else if(param$dataset %in% c("datasus_siasus_ps","datasus_siasus_sad")) {
-      "ufmun"
-    } else {
-      "ap_ufmun"
-    }
-
-    dat <- dat %>%
-      dplyr::left_join(geo, by = stats::setNames("code_muni_6", suffix))
-    }
 
 
   #################
@@ -469,12 +368,6 @@ load_datasus <- function(dataset,
   ################################
   ## Harmonizing Variable Names ##
   ################################
-
-  if (stringr::str_detect(param$dataset, "datasus_siasus")) {
-    dat_mod <- dat %>%
-      dplyr::relocate(code_muni, name_muni, code_state, abbrev_state, legal_amazon) %>%
-      tibble::as_tibble()
-  }
 
   if (stringr::str_detect(param$dataset, "datasus_sim")) {
     dat_mod <- dat %>%
