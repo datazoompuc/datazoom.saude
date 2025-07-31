@@ -79,8 +79,10 @@ load_outpatient_procedures <- function(dataset,
     stop("Package 'RCurl' required.", call. = FALSE)
   }
 
-  . <- abbrev_state <- code_muni <- code_muni_6 <- code_state <- codmunocor <- NULL
-  codufmun <- file_name <- value <- year <- month <- NULL
+  # Declare global variables to avoid check notes
+
+  . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
+  name_pt <- label_pt <- var_code <- NULL
 
   # Create param list with specific parameters for SIASUS
   param <- list()
@@ -98,7 +100,6 @@ load_outpatient_procedures <- function(dataset,
 
   # Auxiliary parameters to be passed to external_download
 
-  param$skip_rows <- NULL
   param$filenames <- NULL
 
   # check if dataset and time_period are valid

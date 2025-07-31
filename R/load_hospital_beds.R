@@ -67,6 +67,11 @@ load_hospital_beds <- function(time_period,
     )
   }
 
+  # Declare global variables to avoid check notes
+
+  . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
+   name_pt <- label_pt <- var_code <- NULL
+
   #############################
   ## Define Basic Parameters ##
   #############################
@@ -85,7 +90,6 @@ load_hospital_beds <- function(time_period,
 
   # Auxiliary parameters to be passed to external_download
 
-  param$skip_rows <- NULL
   param$filenames <- NULL
 
   # check if dataset and time_period are valid
@@ -147,7 +151,6 @@ load_hospital_beds <- function(time_period,
         external_download(
           source = param$source,
           dataset = param$dataset,
-          skip_rows = param$skip_rows,
           file_name = file_name
         )
       }
