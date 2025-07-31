@@ -1,0 +1,79 @@
+---
+title: "DATASUS - Hospital Admissions (SIH)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DATASUS - Hospital Admissions (SIH)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `load_hospital_admissions` function provides access to multiple datasets from the **Hospital Information System (SIH)**, which record detailed information about hospital admissions funded by Brazil's public health system (SUS). Each row corresponds to a Hospital Admission Authorization (AIH), and the files are organized by the type of information they contain.
+  
+***
+The `load_hospital_admissions` function offers the following parameters:
+
+1. **dataset**: Specifies the SIH dataset to download:
+    * SIH hospitalization data is split across four datasets:
+        * `"sih_rd"` – Reduced AIHs (summary of hospitalizations).
+            Contains consolidated information about approved and processed AIHs, including the main procedure performed, related diagnoses, and total costs. This is the most commonly used dataset for statistical and epidemiological analyses.
+        * `"sih_sp"` – Professional Services performed during hospitalization.
+            Provides detailed records of the professional services carried out during hospital stays, including procedures performed, professionals involved (CBO/CNS), and amounts paid for medical and hospital services.
+        * `"sih_rj"` – Rejected AIHs (general reason).
+            Includes consolidated records of AIHs that were rejected, specifying the general reason for the rejection but without detailed error codes. Useful for analyzing the volume and impact of rejections.
+        * `"sih_er"` – Rejected AIHs with specific error codes.
+            Contains AIHs that were rejected due to inconsistencies found during processing. Each rejection includes a specific error code indicating the reason (e.g., invalid patient data, procedure incompatibilities).
+
+  2. **raw_data**: there are two options:
+      * `TRUE`: If you want the original DATASUS files in their segmented form.
+      * `FALSE`: if you want the treated version of the data.
+      
+  3. **time_period**: Specifies the years for which the data will be downloaded.
+  
+  4. **states**: A vector of states by which to filter the data.
+
+  5. **language**: You can choose between Portuguese `("pt")` and English `("eng")` for variable descriptions when `raw_data = FALSE`.
+  
+**Examples:**
+
+```{r, eval = FALSE}
+library(datazoom.saude)
+
+# Download raw data for Reduced AIHs (AIHs Reduzida) – State of Amazonas, 2010.
+data_rd_raw <- load_hospital_admissions(
+  dataset = "sih_rd",
+  time_period = 2010,
+  states = "AM",
+  raw_data = TRUE
+)
+
+# Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010.
+data_er_processed <- load_hospital_admissions(
+  dataset = "sih_er",
+  time_period = 2010,
+  states = "AM",
+  raw_data = FALSE
+)
+
+# Download raw data for Professional Services – State of Acre, 2010.
+data_sp_raw <- load_hospital_admissions(
+  dataset = "sih_sp",
+  time_period = 2010,
+  states = "AC",
+  raw_data = TRUE
+)
+
+# Download processed data for Professional Services – Federal District, 2010.
+data_sp_processed <- load_hospital_admissions(
+  dataset = "sih_sp",
+  time_period = 2010,
+  states = "DF",
+  raw_data = FALSE
+)
+```

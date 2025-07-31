@@ -1,0 +1,94 @@
+---
+title: "DATASUS - Outpatient Procedures (SIASUS)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DATASUS - Outpatient Procedures (SIASUS)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `load_outpatient_procedures` function provides access to various **SIASUS (Ambulatory Information System)** datasets, covering a broad spectrum of outpatient services funded by the public health system (SUS). Each row in these datasets corresponds to a procedure performed at an outpatient level, including clinical, administrative, and financial details. The data is organized by type of service or procedure group.
+
+***
+The `load_outpacient_procedures` function offers the following parameters:
+
+  1. **dataset**: Specifies the SIASUS dataset to download:
+    * SIASUS Ambulatory Care Datasets:
+        * `"siasus_pa"` – Consolidated Outpatient Procedures (Procedimentos Ambulatoriais).
+            Contains records of approved outpatient procedures across all specialties. This is the most comprehensive SIASUS dataset and is often used for general outpatient service analysis.
+        * `"siasus_ab"` – Bariatric Surgery (Cirurgia Bariátrica).
+            Records related to bariatric surgery procedures performed in outpatient settings.
+        * `"siasus_abo"` – Post-Bariatric Surgery Follow-Up (Acompanhamento Bariátrico).
+            Includes follow-up care for patients who have undergone bariatric surgery, focusing on long-term monitoring and outcomes.
+        * `"siasus_acf"` – Vascular Access for Dialysis (Fístula Arteriovenosa).
+            Documents procedures involving the creation or maintenance of arteriovenous fistulas, essential for hemodialysis treatment.
+        * `"siasus_ad"` – Miscellaneous Specialized Procedures (Laudos Diversos)
+            Covers less frequent or highly specialized outpatient procedures not classified in other datasets.
+        * `"siasus_am"` – High-Cost Medications (Medicamentos)
+            Tracks the distribution and usage of outpatient medications that are high-cost and part of specific therapeutic programs.
+        * `"siasus_an"` – Nephrology / Dialysis (Nefrologia)
+            Contains outpatient nephrology procedures, particularly related to the care and monitoring of patients with chronic kidney disease.
+        * `"siasus_atd"` – Dialysis Treatment (Tratamento Dialítico)
+            Includes outpatient dialysis treatment sessions for patients with kidney failure.
+        * `"siasus_ps"` – RAAS Psychosocial Care (RAAS Psicossocial)
+            Part of the Specialized Outpatient Mental Health Services. Records care provided through Psychosocial Care Centers (CAPS), including treatments for severe mental disorders and substance use.
+        * `"siasus_sad"` – RAAS Home Care (RAAS Atenção Domiciliar)
+            Focuses on outpatient care provided at patients' homes, often involving chronic condition management, palliative care, and multi-professional follow-ups.
+
+  2. **raw_data**: there are two options:
+      * `TRUE`: if you want the data as it is originally.
+      * `FALSE`: if you want the treated version of the data. Only effective for SIM-DO and subsets, SIH, and CNES-LT.
+  
+  3. **time_period**: picks the years for which the data will be downloaded
+  
+  4. **states**: a vector of states by which to filter the data. Only works for datasets whose data is provided in separate files by state.
+
+  5. **language**: you can choose between Portuguese `("pt")` and English `("eng")`
+  
+**Examples:**
+
+```{r, eval = FALSE}
+library(datazoom.saude)
+
+# Download processed data for Post-Bariatric Surgery Follow-Up (ABO) – State of Acre, 2012.
+teste_abo <- load_outpatient_procedures(
+  dataset = "siasus_abo",
+  time_period = 2012,
+  raw_data = FALSE,
+  language = "eng",
+  states = "AC"
+)
+
+# Download processed data for Consolidated Outpatient Procedures (PA) – State of Acre, 2022.
+teste_pa <- load_outpatient_procedures(
+  dataset = "siasus_pa",
+  time_period = 2022,
+  raw_data = FALSE,
+  language = "eng",
+  states = "AC"
+)
+
+# Download raw data for High-Cost Medications (AM) for the year 2021 in Pernambuco (PE).
+teste_am_raw <- load_outpatient_procedures(
+  dataset = "siasus_am",
+  time_period = 2021,
+  raw_data = TRUE,
+  states = "PE"
+)
+
+# Download processed data for Psychosocial Care (PS) for the year 2022 in Acre (AC).
+teste_ps <- load_outpatient_procedures(
+  dataset = "siasus_ps",
+  time_period = 2022,
+  raw_data = FALSE,
+  language = "eng",
+  states = "AC"
+)
+```
