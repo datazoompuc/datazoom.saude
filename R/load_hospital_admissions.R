@@ -88,7 +88,7 @@ load_hospital_admissions <- function(dataset,
     stop("the language must be 'eng' or 'pt'. By default it is 'eng'.")
   }
 
-  # Create param list with specific parameters for SINASC
+  # Create param list with specific parameters for SIHSUS
   param <- list()
 
   param$source <- "datasus"
