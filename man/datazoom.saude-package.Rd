@@ -5,7 +5,7 @@
 \name{datazoom.saude-package}
 \alias{datazoom.saude}
 \alias{datazoom.saude-package}
-\title{datazoom.saude: What the Package Does (One Line, Title Case)}
+\title{datazoom.saude: Download and Process Brazilian Public Health Data from DATASUS}
 \description{
 Functions to download and treat data regarding the Brazilian Amazon region from a variety of official sources.
 }
@@ -17,7 +17,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: João Paulo dos Santos P. Barbosa \email{joao.31582129@gmail.com}
+\strong{Maintainer}: João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com}
+
+Other contributors:
+\itemize{
+  \item Vanndher Amós B. A. de Souza \email{vanndheramos@gmail.com} [funder]
+}
 
 }
 \keyword{internal}

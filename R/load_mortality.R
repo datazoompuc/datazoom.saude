@@ -1,3 +1,39 @@
+#' Load Brazilian mortality data from the SIM system via DATASUS
+#'
+#' Retrieves mortality records from Brazil’s official Mortality Information System (SIM),
+#' made available through DATASUS (Department of Informatics of the Brazilian Unified Health System).
+#' This dataset includes detailed information on deaths by cause, location, sex, age, and other demographic characteristics.
+#' Data is useful for public health research, epidemiology, and demographic analysis.
+#'
+#' @param dataset A string identifying the specific mortality dataset to download.
+#' Options include:
+#' - `"DO"`: General death records
+#' - `"DOEXT"`: Foreign citizens
+#' - `"DOINF"`: Incomplete records
+#' - `"DOMAT"`: Maternal deaths
+#' - `"DOFET"`: Fetal deaths
+#'
+#' @param dataset A string indicating the type of SIHSUS dataset to download. Accepted values are:
+#' "RD", "SP", "RJ", or "ER". See the 'Details' section for explanations.
+#' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
+#' For example, `2020` or `2015:2020`.
+#' @param states A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded.
+#' Use `"all"` to download data for the entire country. For specific states, use abbreviations like `"SP"`, `"RJ"`, or `c("SP", "RJ")`.
+#' @param raw_data Logical. If `TRUE`, returns the raw data exactly as provided by DATASUS. If `FALSE` (default),
+#' returns a cleaned and standardized version of the dataset.
+#' @param language A string indicating the desired language of variable names and labels. Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
+#' @param keep_all A \code{boolean} choosing whether to aggregate the data by municipality, in turn losing individual-level variables (\code{FALSE}) or to keep all the original variables. Only applies when raw_data is \code{TRUE}.
+#'
+#' @return A data frame containing the mortality records.
+#'
+#' @examples
+#' \dontrun{
+#' load_mortality(dataset = "do",
+#'                time_period = 2022,
+#'                states = "RJ")
+#' }
+#'
+#' @export
 
 load_mortality <- function(dataset,
                            time_period,
@@ -27,7 +63,8 @@ load_mortality <- function(dataset,
   # Declare global variables to avoid check notes
 
   . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
-  name_pt <- label_pt <- var_code <- NULL
+  name_pt <- label_pt <- var_code <- codmunocor <- causabas <-  NULL
+  dtobito <- is_cid_code <- code_muni_6 <- value <- NULL
 
   #############################
   ## Define Basic Parameters ##
@@ -265,7 +302,6 @@ load_mortality <- function(dataset,
     dplyr::rename_with(
       ~ dplyr::recode(., !!!var_names)
     )
-
 
   ####################
   ## Returning Data ##
