@@ -1,17 +1,16 @@
-README
-================
+---
+title: "README"
+output: github_document
+---
 
 # datazoom.saude
 
-**`datazoom.saude`** is an R package that provides simple, direct, and
-reliable functions to import, organize, and explore public health
-databases in Brazil.  
-The package is part of the **`datazoom`** ecosystem, designed to
-simplify access to and analysis of national data.
+**`datazoom.saude`** is an R package that provides simple, direct, and reliable functions to import, organize, and explore public health databases in Brazil.  
+The package is part of the **`datazoom`** ecosystem, designed to simplify access to and analysis of national data.
 
 ## Installation
 
-``` r
+```{r eval=FALSE}
 # Install the 'devtools' package if you don't have it yet
 install.packages("devtools")
 
@@ -28,6 +27,5 @@ devtools::install_github("datazoompuc/datazoom.saude")
 
 ## Supported databases
 
-- **Oncology Panel (PO):** Cancer cases registered in the SUS by
-  diagnosis location, treatment location, and cancer type.
+- **Oncology Panel (PO):** Cancer cases registered in the SUS by diagnosis location, treatment location, and cancer type.
 - **Births (SINASC):** Live birth records in Brazil.
