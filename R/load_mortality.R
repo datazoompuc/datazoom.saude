@@ -6,23 +6,23 @@
 #' Data is useful for public health research, epidemiology, and demographic analysis.
 #'
 #' @param dataset A string identifying the specific mortality dataset to download.
-#' Options include:
-#' - `"DO"`: General death records
-#' - `"DOEXT"`: Foreign citizens
-#' - `"DOINF"`: Incomplete records
-#' - `"DOMAT"`: Maternal deaths
-#' - `"DOFET"`: Fetal deaths
+#' Accepted values are:
+#' - `"do"`: General death records
+#' - `"doext"`: Deaths by external causes
+#' - `"doinf"`: Infant deaths
+#' - `"domat"`: Maternal deaths
+#' - `"dofet"`: Fetal deaths
 #'
-#' @param dataset A string indicating the type of SIHSUS dataset to download. Accepted values are:
-#' "RD", "SP", "RJ", or "ER". See the 'Details' section for explanations.
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
 #' For example, `2020` or `2015:2020`.
 #' @param states A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded.
 #' Use `"all"` to download data for the entire country. For specific states, use abbreviations like `"SP"`, `"RJ"`, or `c("SP", "RJ")`.
 #' @param raw_data Logical. If `TRUE`, returns the raw data exactly as provided by DATASUS. If `FALSE` (default),
 #' returns a cleaned and standardized version of the dataset.
+#' @param keep_all A \code{boolean} choosing whether to aggregate the data by municipality,
+#' losing individual-level variables (\code{FALSE}) or to keep all original variables (\code{TRUE}).
+#' Only applies when \code{raw_data} is \code{FALSE}.
 #' @param language A string indicating the desired language of variable names and labels. Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
-#' @param keep_all A \code{boolean} choosing whether to aggregate the data by municipality, in turn losing individual-level variables (\code{FALSE}) or to keep all the original variables. Only applies when raw_data is \code{TRUE}.
 #'
 #' @return A data frame containing the mortality records.
 #'
@@ -31,10 +31,14 @@
 #' load_mortality(dataset = "do",
 #'                time_period = 2022,
 #'                states = "RJ")
+#'
+#' load_mortality(dataset = "domat",
+#'                time_period = 2020,
+#'                raw_data = FALSE,
+#'                language = "pt")
 #' }
 #'
 #' @export
-
 load_mortality <- function(dataset,
                            time_period,
                            states = "all",
@@ -43,7 +47,6 @@ load_mortality <- function(dataset,
                            language = "eng") {
 
   # Checking for foreign package (in Suggests)
-
   if (!requireNamespace("foreign", quietly = TRUE)) {
     stop(
       "Package \"foreign\" must be installed to use this function.",
@@ -52,7 +55,6 @@ load_mortality <- function(dataset,
   }
 
   # Checking for RCurl package (in Suggests)
-
   if (!requireNamespace("RCurl", quietly = TRUE)) {
     stop(
       "Package \"RCurl\" must be installed to use this function.",
@@ -61,40 +63,35 @@ load_mortality <- function(dataset,
   }
 
   # Declare global variables to avoid check notes
-
-  . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
-  name_pt <- label_pt <- var_code <- codmunocor <- causabas <-  NULL
+  . <- file_name <- link <- name_eng <- label_eng <- NULL
+  name_pt <- label_pt <- var_code <- codmunocor <- causabas <- NULL
   dtobito <- is_cid_code <- code_muni_6 <- value <- NULL
 
   #############################
-  ## Define Basic Parameters ##
+  ### Define Basic Parameters #
   #############################
 
   param <- list()
 
   param$source <- "datasus"
-  param$dataset <- paste0("datasus_sim_",dataset)
+  param$dataset <- paste0("datasus_sim_", dataset)
   param$raw_data <- raw_data
   param$language <- language
   param$suffix <- toupper(dataset)
-  param$keep_all = keep_all
+  param$keep_all <- keep_all
 
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
-
   param$states <- ifelse(states == "all", "all", toupper(states))
-
-  # Auxiliary parameters to be passed to external_download
 
   param$filenames <- NULL
 
   # check if dataset and time_period are valid
-
   check_params(param)
 
-  ##############################
-  ##  Downloading SIM Data   ###
-  ##############################
+  #############################
+  ### Downloading SIM Data ###
+  #############################
 
   dat_url <- datasets_link()
 
@@ -104,54 +101,46 @@ load_mortality <- function(dataset,
     base::unlist() %>%
     as.character()
 
-  # Use RCurl to extract the names of all files stored in the server
-
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  ### Filtering by year and Filtering for chosen states when possible
+  # Unified filename filtering logic
 
-  file_years <- NULL
-  file_years_yy <- NULL
-  file_state <- NULL
+  # Remove empty filenames
+  filenames <- filenames[nchar(filenames) > 0]
 
-  if (param$dataset == "datasus_sim_do") {
-    file_years <- filenames %>%
-      substr(5, 8)
+  # Extract the year part from the filename (handles both 2 and 4 digit years)
+  file_years_str <- stringr::str_extract(filenames, "\\d{2,4}")
 
-    if (!is.null(file_years)) {
-      filenames <- filenames[file_years %in% param$time_period]
+  # Convert 2-digit years to 4-digit years (e.g., "22" to "2022")
+  file_years_4dig <- purrr::map_chr(file_years_str, ~ {
+    if (nchar(.x) == 2) {
+      # Assumes years are in the 21st century (e.g., '22' -> 2022)
+      paste0("20", .x)
+    } else {
+      .x
     }
+  }) %>% as.numeric()
 
+  # Filter by year based on the corrected 4-digit years
+  filenames <- filenames[file_years_4dig %in% param$time_period]
+
+  # Filter by suffix (e.g., 'DO' for DO2010, 'DOEXT' for DOEXT2010)
+  filenames <- filenames[stringr::str_detect(filenames, param$suffix)]
+
+  # Filter for states, only for the 'do' dataset (state-specific files)
+  if (dataset == "do") {
     file_state <- filenames %>%
       substr(3, 4)
-
-    if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
+    if (paste0(param$states, collapse = "") != "all") {
       filenames <- filenames[file_state %in% param$states]
     }
-  }
-
-  if (param$dataset %in% c("datasus_sim_doext", "datasus_sim_doinf", "datasus_sim_domat", "datasus_sim_dofet")) {
-    file_years_yy <- filenames %>%
-      stringr::str_extract("\\d+")
-    # In this case, the position varies
-
-    if (!is.null(file_years_yy)) {
-      filenames <- filenames[file_years_yy %in% param$time_period_yy]
-    }
-
-    if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
-      filenames <- filenames[file_state %in% param$states]
-    }
-
-    filenames <- filenames[stringr::str_detect(filenames, param$suffix)]
   }
 
   param$filenames <- filenames
 
-  ### Downloading each file in filenames
-
+  # Downloading each file
   dat <- param$filenames %>%
     purrr::imap(
       function(file_name, iteration) {
@@ -160,7 +149,6 @@ load_mortality <- function(dataset,
         external_download(
           source = param$source,
           dataset = param$dataset,
-          skip_rows = param$skip_rows,
           file_name = file_name
         )
       }
@@ -168,48 +156,70 @@ load_mortality <- function(dataset,
 
   names(dat) <- filenames
 
-
-  ## Return Raw Data
-
+  # Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
   }
 
-  ######################
-  ## Data Engineering ##
-  ######################
+  ############################
+  ### Data Engineering      #
+  ############################
 
   dat <- dat %>%
     purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
     dplyr::bind_rows() %>%
     janitor::clean_names()
 
-  dat <- dat %>%
-    dplyr::mutate(
-      codmunocor = as.numeric(as.character(codmunocor)),
-      causabas = as.character(causabas),
-      dtobito = as.Date(dtobito, format = "%d%m%Y"),
-      idade_anos = dplyr::case_when(
-        substr(idade, 1, 1) == "0" ~ NA_character_,
-        substr(idade, 1, 1) %in% as.character(1:3) ~ "0",
-        substr(idade, 1, 1) == "4" ~ substr(idade, 2, 3),
-        substr(idade, 1, 1) == "5" ~ paste0(1, substr(idade, 2, 3))
+  # Making sure all columns that will be processed exist before processing
+  if ("codmunocor" %in% names(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        codmunocor = as.numeric(as.character(codmunocor))
       )
-    )
+  }
 
-  # The cid codes have no leading 0 when the numbers are only two digits
+  if ("causabas" %in% names(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        causabas = as.character(causabas)
+      )
+  }
 
-  dat <- dat %>%
-    dplyr::mutate(
-      causabas = dplyr::case_when(
-        nchar(causabas) == 4 ~ causabas,
-        nchar(causabas) == 3 ~ paste0(
-          stringr::str_extract(causabas, "[a-zA-Z]"),
-          0,
-          stringr::str_extract(causabas, "\\d+")
+  if ("dtobito" %in% names(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        dtobito = as.Date(as.character(dtobito), format = "%d%m%Y")
+      )
+  }
+
+  # This part was causing the error, it is now conditional
+  if ("idade" %in% names(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        idade_anos = dplyr::case_when(
+          substr(idade, 1, 1) %in% as.character(1:3) ~ "0",
+          substr(idade, 1, 1) == "4" ~ substr(idade, 2, 3),
+          substr(idade, 1, 1) == "5" ~ paste0(1, substr(idade, 2, 3)),
+          TRUE ~ NA_character_
         )
       )
-    )
+  }
+
+  # This part was also causing the error if 'causabas' didn't exist
+  if ("causabas" %in% names(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        causabas = dplyr::case_when(
+          nchar(causabas) == 4 ~ causabas,
+          nchar(causabas) == 3 ~ paste0(
+            stringr::str_extract(causabas, "[a-zA-Z]"),
+            0,
+            stringr::str_extract(causabas, "\\d+")
+          ),
+          TRUE ~ causabas
+        )
+      )
+  }
 
   dic_cid_codes <- load_dictionary(param$dataset) %>%
     dplyr::filter(is_cid_code)
@@ -229,60 +239,70 @@ load_mortality <- function(dataset,
     ) %>%
     dplyr::bind_cols(dat)
 
-  dat <- dat %>%
-    dplyr::rename("code_muni_6" = "codmunocor")
-
-  #################
-  ## Aggregating ##
-  #################
-
-  if (stringr::str_detect(param$dataset, "datasus_sim") & !param$keep_all) {
-    # Obtaining the mortality variables
-
-    cid_vars <- load_dictionary(param$dataset) %>%
-      dplyr::filter(is_cid_code) %>%
-      dplyr::select(var_code) %>%
-      unlist()
-
-    names(cid_vars) <- NULL # To stop summarise from renaming the variables
-
+  # Making sure this column exists before trying to rename it
+  if ("codmunocor" %in% names(dat)) {
     dat <- dat %>%
-      dplyr::group_by(code_muni_6, dtobito) %>%
-      dplyr::summarise(dplyr::across(dplyr::any_of(cid_vars), sum))
+      dplyr::rename("code_muni_6" = "codmunocor")
   }
 
-  ###############
-  ## Labelling ##
-  ###############
+  ############################
+  ### Aggregating           #
+  ############################
+
+  # Esta seção só é executada se o usuario escolher keep_all = FALSE
+  if (!param$keep_all) {
+
+    # Adicionando uma verificação para garantir que a coluna 'code_muni_6' existe
+    if ("code_muni_6" %in% names(dat)) {
+
+      # Carrega as variaveis CID do dicionario
+      cid_vars <- load_dictionary(param$dataset) %>%
+        dplyr::filter(is_cid_code) %>%
+        dplyr::select(var_code) %>%
+        unlist()
+
+      names(cid_vars) <- NULL
+
+      # Adicionamos uma nova coluna 'ano' para agrupar
+      dat <- dat %>%
+        dplyr::mutate(
+          ano = lubridate::year(dtobito)
+        ) %>%
+        # Agrupa por municipio e ano e soma as variaveis CID
+        dplyr::group_by(code_muni_6, ano) %>%
+        dplyr::summarise(
+          dplyr::across(
+            .cols = dplyr::all_of(cid_vars),
+            .fns = sum,
+            .names = "{.col}_sum"
+          ),
+          .groups = "drop" # Remove o agrupamento após a sumarização
+        )
+    } else {
+      # Se a coluna de município não existir, retorna uma mensagem de aviso e os dados não agregados
+      message("Aviso: A coluna 'code_muni_6' não foi encontrada para agregação. Retornando dados não agregados.")
+    }
+  }
+
+  ############################
+  ### Labelling             #
+  ############################
 
   dic <- load_dictionary(param$dataset)
-
   row_numbers <- match(names(dat), dic$var_code)
 
   if (param$language == "pt") {
-    dic <- dic %>%
-      dplyr::select(label_pt)
-  }
-  if (param$language == "eng") {
-    dic <- dic %>%
-      dplyr::select(label_eng)
+    labels <- dic$label_pt[row_numbers]
+  } else {
+    labels <- dic$label_eng[row_numbers]
   }
 
-  labels <- dic %>%
-    dplyr::slice(row_numbers) %>%
-    unlist()
+  names(labels) <- names(dat)
+  attr(dat, "variable.labels") <- labels
 
-  # Making sure 'labels' is the same length as the number of columns
-
-  labels_full <- character(length = ncol(dat))
-
-  labels_full[which(!is.na(row_numbers))] <- labels
-
-  Hmisc::label(dat) <- as.list(labels_full)
-
-  ################################
-  ## Harmonizing Variable Names ##
-  ################################
+  ############################
+  ### Harmonizing Variable  #
+  ############################
 
   dat_mod <- dat %>%
     tibble::as_tibble()
@@ -291,8 +311,7 @@ load_mortality <- function(dataset,
 
   if (param$language == "pt") {
     var_names <- dic$name_pt
-  }
-  if (param$language == "eng") {
+  } else {
     var_names <- dic$name_eng
   }
 
@@ -303,9 +322,9 @@ load_mortality <- function(dataset,
       ~ dplyr::recode(., !!!var_names)
     )
 
-  ####################
-  ## Returning Data ##
-  ####################
+  ############################
+  ### Returning Data        #
+  ############################
 
   return(dat_mod)
 }
