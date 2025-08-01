@@ -403,11 +403,11 @@ datasets_link <- function(source = NULL, dataset = NULL, url = FALSE) {
 
     ## DATASUS
 
-    "datasus", "datasus_sim_do", NA, "1996-2021", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/$file_name$",
-    "datasus", "datasus_sim_dofet", NA, "1996-2021", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
-    "datasus", "datasus_sim_doext", NA, "1996-2021", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
-    "datasus", "datasus_sim_doinf", NA, "1996-2021", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
-    "datasus", "datasus_sim_domat", NA, "1996-2021", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
+    "datasus", "datasus_sim_do", NA, "1996-2023", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/$file_name$",
+    "datasus", "datasus_sim_dofet", NA, "1996-2023", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
+    "datasus", "datasus_sim_doext", NA, "1996-2023", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
+    "datasus", "datasus_sim_doinf", NA, "1996-2023", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
+    "datasus", "datasus_sim_domat", NA, "1996-2023", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$",
     "datasus", "datasus_cnes_lt", NA, "2005-2025", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/LT/$file_name$",
     "datasus", "datasus_cnes_st", NA, "2005-2023", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/ST/$file_name$",
     "datasus", "datasus_cnes_dc", NA, "2005-2023", "State", "ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/DC/$file_name$",
