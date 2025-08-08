@@ -105,36 +105,35 @@ load_mortality <- function(dataset,
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  # Unified filename filtering logic
+  # Filtring by year and states when is possible for each dataset
 
-  # Remove empty filenames
-  filenames <- filenames[nchar(filenames) > 0]
+  file_years <- NULL
+  file_years_yy <- NULL
 
-  # Extract the year part from the filename (handles both 2 and 4 digit years)
-  file_years_str <- stringr::str_extract(filenames, "\\d{2,4}")
+  # DO
+  if (param$suffix == "do") {
+    file_years <- filenames %>%
+      substr(5, 8)
 
-  # Convert 2-digit years to 4-digit years (e.g., "22" to "2022")
-  file_years_4dig <- purrr::map_chr(file_years_str, ~ {
-    if (nchar(.x) == 2) {
-      # Assumes years are in the 21st century (e.g., '22' -> 2022)
-      paste0("20", .x)
-    } else {
-      .x
+    if (!is.null(file_years)) {
+      filenames <- filenames[file_years %in% param$time_period]
     }
-  }) %>% as.numeric()
 
-  # Filter by year based on the corrected 4-digit years
-  filenames <- filenames[file_years_4dig %in% param$time_period]
-
-  # Filter by suffix (e.g., 'DO' for DO2010, 'DOEXT' for DOEXT2010)
-  filenames <- filenames[stringr::str_detect(filenames, param$suffix)]
-
-  # Filter for states, only for the 'do' dataset (state-specific files)
-  if (dataset == "do") {
     file_state <- filenames %>%
       substr(3, 4)
+
     if (paste0(param$states, collapse = "") != "all") {
       filenames <- filenames[file_state %in% param$states]
+    }
+  }
+
+  # DOEXT, DOINF, DOMAT, DOFET
+  if (param$suffix %in% c("doext", "doinf", "domat", "dofet")) {
+    file_years_yy <- filenames %>%
+      stringr::str_extract("\\d+")
+
+    if (!is.null(file_years_yy)) {
+      filenames <- filenames[file_years_yy %in% param$time_period_yy]
     }
   }
 
