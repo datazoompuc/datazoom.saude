@@ -61,8 +61,6 @@ load_dictionary <- function(dataset) {
 
       # Non-CID variables
 
-      "origem", "origa", "orj", "sdd", "df",
-
       "tipobito", "tipobito", "tipobito", "1: obito fetal\n2: obito nao fetal", "", FALSE,
       "dtobito", "dtobito", "dtobito", "Data do obito, no formato ddmmaaaa", "", FALSE,
       "horaobito", "horaobito", "horaobito", "Hora do falecimento", "", FALSE,
