@@ -19,9 +19,14 @@ Useful links:
 \author{
 \strong{Maintainer}: João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com}
 
+Authors:
+\itemize{
+  \item Vanndher Amós B. A. de Souza \email{vanndheramos@gmail.com}
+}
+
 Other contributors:
 \itemize{
-  \item Vanndher Amós B. A. de Souza \email{vanndheramos@gmail.com} [funder]
+  \item DataZoom (PUC-Rio) \email{datazoom@econ.puc-rio.br} [funder]
 }
 
 }

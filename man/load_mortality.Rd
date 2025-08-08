@@ -14,8 +14,15 @@ load_mortality(
 )
 }
 \arguments{
-\item{dataset}{A string indicating the type of SIHSUS dataset to download. Accepted values are:
-"RD", "SP", "RJ", or "ER". See the 'Details' section for explanations.}
+\item{dataset}{A string identifying the specific mortality dataset to download.
+Accepted values are:
+\itemize{
+\item \code{"do"}: General death records
+\item \code{"doext"}: Deaths by external causes
+\item \code{"doinf"}: Infant deaths
+\item \code{"domat"}: Maternal deaths
+\item \code{"dofet"}: Fetal deaths
+}}
 
 \item{time_period}{A numeric value or vector indicating the year(s) of the data to be downloaded.
 For example, \code{2020} or \code{2015:2020}.}
@@ -26,7 +33,9 @@ Use \code{"all"} to download data for the entire country. For specific states, u
 \item{raw_data}{Logical. If \code{TRUE}, returns the raw data exactly as provided by DATASUS. If \code{FALSE} (default),
 returns a cleaned and standardized version of the dataset.}
 
-\item{keep_all}{A \code{boolean} choosing whether to aggregate the data by municipality, in turn losing individual-level variables (\code{FALSE}) or to keep all the original variables. Only applies when raw_data is \code{TRUE}.}
+\item{keep_all}{A \code{boolean} choosing whether to aggregate the data by municipality,
+losing individual-level variables (\code{FALSE}) or to keep all original variables (\code{TRUE}).
+Only applies when \code{raw_data} is \code{FALSE}.}
 
 \item{language}{A string indicating the desired language of variable names and labels. Accepts \code{"eng"} (default) for English or \code{"pt"} for Portuguese.}
 }
@@ -34,7 +43,7 @@ returns a cleaned and standardized version of the dataset.}
 A data frame containing the mortality records.
 }
 \description{
-Retrieves mortality records from Brazil’s official Mortality Information System (SIM),
+Retrieves mortality records from Brazil is official Mortality Information System (SIM),
 made available through DATASUS (Department of Informatics of the Brazilian Unified Health System).
 This dataset includes detailed information on deaths by cause, location, sex, age, and other demographic characteristics.
 Data is useful for public health research, epidemiology, and demographic analysis.
@@ -44,6 +53,11 @@ Data is useful for public health research, epidemiology, and demographic analysi
 load_mortality(dataset = "do",
                time_period = 2022,
                states = "RJ")
+
+load_mortality(dataset = "domat",
+               time_period = 2020,
+               raw_data = FALSE,
+               language = "pt")
 }
 
 }
