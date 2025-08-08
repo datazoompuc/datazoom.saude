@@ -111,7 +111,7 @@ load_mortality <- function(dataset,
   file_years_yy <- NULL
 
   # DO
-  if (param$suffix == "do") {
+  if (param$suffix == "DO") {
     file_years <- filenames %>%
       substr(5, 8)
 
@@ -128,7 +128,7 @@ load_mortality <- function(dataset,
   }
 
   # DOEXT, DOINF, DOMAT, DOFET
-  if (param$suffix %in% c("doext", "doinf", "domat", "dofet")) {
+  if (param$suffix %in% c("DOEXT", "DOINF", "DOMAT", "DOFET")) {
     file_years_yy <- filenames %>%
       stringr::str_extract("\\d+")
 
@@ -288,16 +288,29 @@ load_mortality <- function(dataset,
   ############################
 
   dic <- load_dictionary(param$dataset)
+
   row_numbers <- match(names(dat), dic$var_code)
 
   if (param$language == "pt") {
-    labels <- dic$label_pt[row_numbers]
-  } else {
-    labels <- dic$label_eng[row_numbers]
+    dic <- dic %>%
+      dplyr::select(label_pt)
+  }
+  if (param$language == "eng") {
+    dic <- dic %>%
+      dplyr::select(label_eng)
   }
 
-  names(labels) <- names(dat)
-  attr(dat, "variable.labels") <- labels
+  labels <- dic %>%
+    dplyr::slice(row_numbers) %>%
+    unlist()
+
+  # Making sure 'labels' is the same length as the number of columns
+
+  labels_full <- character(length = ncol(dat))
+
+  labels_full[which(!is.na(row_numbers))] <- labels
+
+  Hmisc::label(dat) <- as.list(labels_full)
 
   ############################
   ### Harmonizing Variable  #
@@ -310,7 +323,8 @@ load_mortality <- function(dataset,
 
   if (param$language == "pt") {
     var_names <- dic$name_pt
-  } else {
+  }
+  if (param$language == "eng") {
     var_names <- dic$name_eng
   }
 
