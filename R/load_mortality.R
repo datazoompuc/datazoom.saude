@@ -1,6 +1,6 @@
 #' Load Brazilian mortality data from the SIM system via DATASUS
 #'
-#' Retrieves mortality records from Brazil’s official Mortality Information System (SIM),
+#' Retrieves mortality records from Brazil is official Mortality Information System (SIM),
 #' made available through DATASUS (Department of Informatics of the Brazilian Unified Health System).
 #' This dataset includes detailed information on deaths by cause, location, sex, age, and other demographic characteristics.
 #' Data is useful for public health research, epidemiology, and demographic analysis.
@@ -63,7 +63,7 @@ load_mortality <- function(dataset,
   }
 
   # Declare global variables to avoid check notes
-  . <- file_name <- link <- name_eng <- label_eng <- NULL
+  . <- file_name <- link <- name_eng <- label_eng <- ano <- NULL
   name_pt <- label_pt <- var_code <- codmunocor <- causabas <- NULL
   dtobito <- is_cid_code <- code_muni_6 <- value <- NULL
 
@@ -248,10 +248,10 @@ load_mortality <- function(dataset,
   ### Aggregating           #
   ############################
 
-  # Esta seção só é executada se o usuario escolher keep_all = FALSE
+  # Esta secao so e executada se o usuario escolher keep_all = FALSE
   if (!param$keep_all) {
 
-    # Adicionando uma verificação para garantir que a coluna 'code_muni_6' existe
+    # Adicionando uma verificacao para garantir que a coluna 'code_muni_6' existe
     if ("code_muni_6" %in% names(dat)) {
 
       # Carrega as variaveis CID do dicionario
@@ -275,11 +275,11 @@ load_mortality <- function(dataset,
             .fns = sum,
             .names = "{.col}_sum"
           ),
-          .groups = "drop" # Remove o agrupamento após a sumarização
+          .groups = "drop" # Remove o agrupamento apos a sumarizacao
         )
     } else {
-      # Se a coluna de município não existir, retorna uma mensagem de aviso e os dados não agregados
-      message("Aviso: A coluna 'code_muni_6' não foi encontrada para agregação. Retornando dados não agregados.")
+      # Se a coluna de municipio nao existir, retorna uma mensagem de aviso e os dados nao agregados
+      message("Warning: Column 'code_muni_6' not found for aggregation. Returning non-aggregated data.")
     }
   }
 
