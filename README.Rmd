@@ -1,31 +1,126 @@
 ---
-title: "README"
 output: github_document
 ---
 
+<a href="https://github.com/datazoompuc/datazoom.saude"><img src="man/figures/logo.png" align="left" width="100" hspace="10" vspace="6"></a>
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
 # datazoom.saude
 
-**`datazoom.saude`** is an R package that provides simple, direct, and reliable functions to import, organize, and explore public health databases in Brazil.  
-The package is part of the **`datazoom`** ecosystem, designed to simplify access to and analysis of national data.
+<!-- badges: start -->
+[![R build status](https://github.com/datazoompuc/datazoom.saude/workflows/R-CMD-check/badge.svg)](https://github.com/datazoompuc/datazoom.saude/actions)
+[![Total de Downloads](https://cranlogs.r-pkg.org/badges/grand-total/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
+[![Downloads mensais](https://cranlogs.r-pkg.org/badges/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
+[![Linguagens](https://img.shields.io/github/languages/count/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude)
+[![Atividade de Commits](https://img.shields.io/github/commit-activity/y/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/commits/main)
+[![Issues Abertas](https://img.shields.io/github/issues-raw/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/issues)
+[![Issues Fechadas](https://img.shields.io/github/issues-closed-raw/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/issues)
+<!-- badges: end -->
+
+The `datazoom.saude` package provides simple, direct, and reliable functions to import, organize, and explore public health databases in Brazil. It is part of the **`datazoom`** ecosystem, designed to simplify access to and analysis of national data.
 
 ## Installation
 
-```{r eval=FALSE}
+You can install the released version of `datazoom.saude` from CRAN or the development version from GitHub.
+
+### From CRAN
+
+``` {r, eval=FALSE}
+install.packages("datazoom.saude")
+```
+
+### From GitHub
+
+``` {r, eval=FALSE}
 # Install the 'devtools' package if you don't have it yet
 install.packages("devtools")
 
-# Install datazoom.saude
+# Install datazoom.saude directly from GitHub
 devtools::install_github("datazoompuc/datazoom.saude")
+
+devtools::load_all()
 ```
 
-## Main features
+## Supported Databases
 
-- **Raw data import** with a single line of code.
-- **Automatic variable name standardization.**
-- Access to datasets organized by year, state (UF), and data source.
-- Initial support for the SUS Oncology Panel (PO).
+For detailed usage examples and guides on each database, please refer to the vignettes below.
 
-## Supported databases
+**[1 - Mortality (SIM)](#mortality)**
 
-- **Oncology Panel (PO):** Cancer cases registered in the SUS by diagnosis location, treatment location, and cancer type.
-- **Births (SINASC):** Live birth records in Brazil.
+**[2 - Live Births (SINASC)](#live-births)**
+
+**[3 - Hospital Admissions (SIH)](#hospital-admissions)**
+
+**[4 - Hospital Beds (CNES-LT)](#hospital-beds)**
+
+**[5 - Outpatient Procedures (SIASUS)](#outpatient-procedures)**
+
+**[6 - Oncology Cases (PO)](#oncology-cases)**
+
+<br>
+
+# Mortality
+
+```{r child = "vignettes/vignette_load_mortality.Rmd"}
+```
+
+# Live Births
+
+```{r child = "vignettes/vignette_load_births.Rmd"}
+```
+
+# Hospital Admissions
+
+```{r child = "vignettes/vignette_load_hospital_admissions.Rmd"}
+```
+
+# Hospital Beds
+
+```{r child = "vignettes/vignette_load_hospital_beds.Rmd"}
+```
+
+# Outpatient Procedures
+
+```{r child = "vignettes/vignette_load_outpatient_procedures.Rmd"}
+```
+
+# Oncology Cases
+
+```{r child = "vignettes/vignette_load_oncology_cases.Rmd"}
+```
+
+<br>
+
+## Contributing
+
+Thank you for your interest in contributing! If you have found a bug or have a suggestion for improvement, please open a [GitHub issue](https://github.com/datazoompuc/datazoom.saude/issues).
+
+## Credits
+
+DataZoom is developed by a team at the Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio), Department of Economics. Our official website is: <https://www.econ.puc-rio.br/datazoom/>.
+
+To cite the `datazoom.saude` package in publications, use:
+
+> Data Zoom (2023). Data Zoom: Simplifying Access To Brazilian Microdata.
+> https://www.econ.puc-rio.br/datazoom/english/index.html
+
+A BibTeX entry for LaTeX users is:
+
+```
+@Unpublished{DataZoom2023,
+  author = {Data Zoom},
+  title = {Data Zoom: Simplifying Access To Brazilian Microdata},
+  url = {[https://www.econ.puc-rio.br/datazoom/](https://www.econ.puc-rio.br/datazoom/)},
+  year = {2023},
+}
+```
