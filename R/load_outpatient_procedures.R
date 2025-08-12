@@ -157,7 +157,9 @@ load_outpatient_procedures <- function(dataset,
       substr(4, 5)
   }
 
-  if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
+  if (param$states == "all") {
+    filenames <- filenames[file_state == "BR"]
+  } else {
     filenames <- filenames[file_state %in% param$states]
   }
 

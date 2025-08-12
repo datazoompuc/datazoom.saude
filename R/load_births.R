@@ -114,7 +114,9 @@ load_births <- function(time_period,
   file_state <- filenames %>%
     substr(3, 4)
 
-  if (paste0(param$states, collapse = "") != "all") {
+  if (param$states == "all") {
+    filenames <- filenames[file_state == "BR"]
+  } else {
     filenames <- filenames[file_state %in% param$states]
   }
 
