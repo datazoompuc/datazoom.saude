@@ -78,7 +78,7 @@ load_oncology_case <- function(time_period,
   check_params(param)
 
   #############################
-  ## Downloading SINASC Data ##
+  ## Downloading PO Data     ##
   #############################
 
   # Get dataset source URL
@@ -115,11 +115,13 @@ load_oncology_case <- function(time_period,
           file_name = file_name
         )
       }
-    ) %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows()
+    )
 
   names(dat) <- filenames
+
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
 
   ## Return Raw Data if requested
   if (param$raw_data) {

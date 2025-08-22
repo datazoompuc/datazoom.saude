@@ -36,10 +36,13 @@
 #' @examples
 #' \dontrun{
 #' # Load beds data for RJ and SP in 2020 and 2021
-#' beds <- load_hospital_beds(time_period = c("2020", "2021"), states = c("RJ", "SP"))
+#' beds <- load_hospital_beds(time_period = c("2020", "2021"),
+#'                            states = c("RJ", "SP"))
 #'
 #' # Load raw data for all states in 2019
-#' raw <- load_hospital_beds(time_period = "2019", raw_data = TRUE)
+#' raw <- load_hospital_beds(time_period = "2019",
+#'                           states = "AC",
+#'                           raw_data = TRUE)
 #' }
 #'
 #' @export
@@ -158,9 +161,11 @@ load_hospital_beds <- function(time_period,
 
   names(dat) <- filenames
 
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
 
-  ## Return Raw Data
-
+  ## Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
   }
@@ -170,8 +175,6 @@ load_hospital_beds <- function(time_period,
   ######################
 
   dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
     janitor::clean_names()
 
   dat <- dat %>%

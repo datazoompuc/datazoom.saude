@@ -138,6 +138,10 @@ load_births <- function(time_period,
 
   names(dat) <- filenames
 
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
+
   ## Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
@@ -148,8 +152,6 @@ load_births <- function(time_period,
   ######################
 
   dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
     janitor::clean_names()
 
   labels <- tibble::tribble(

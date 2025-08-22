@@ -157,18 +157,20 @@ load_mortality <- function(dataset,
 
   names(dat) <- filenames
 
-  # Return Raw Data if requested
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
+
+  ## Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
   }
 
-  ############################
-  ### Data Engineering      #
-  ############################
+  ######################
+  ## Data Engineering ##
+  ######################
 
   dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
     janitor::clean_names()
 
   # Making sure all columns that will be processed exist before processing

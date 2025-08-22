@@ -175,12 +175,13 @@ load_outpatient_procedures <- function(dataset,
           file_name = file_name
         )
       }
-    )
+    ) %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
 
   names(dat) <- filenames
 
-  ## Return Raw Data
-
+  ## Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
   }
@@ -190,8 +191,6 @@ load_outpatient_procedures <- function(dataset,
   ######################
 
   dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
     janitor::clean_names()
 
   dat <- dat %>%

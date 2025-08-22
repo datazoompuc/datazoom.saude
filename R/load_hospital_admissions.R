@@ -113,7 +113,7 @@ load_hospital_admissions <- function(dataset,
 
   # check if dataset and time_period are valid
 
-  check_params(param)
+  # check_params(param)
 
   #############################
   ## Downloading SIHSUS Data ##
@@ -171,6 +171,10 @@ load_hospital_admissions <- function(dataset,
 
   names(dat) <- filenames
 
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
+
   ## Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
@@ -181,13 +185,8 @@ load_hospital_admissions <- function(dataset,
   ######################
 
   dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
-    janitor::clean_names()
-
-  dat_mod <- dat %>%
-    dplyr::select(tidyselect::where(~ !(all(is.na(.)) || all(. == 0, na.rm = TRUE)))) %>% # Remove colunas que so possuem 0 e NA
-    tibble::as_tibble()
+    janitor::clean_names() %>%
+    dplyr::select(tidyselect::where(~ !(all(is.na(.)) || all(. == 0, na.rm = TRUE)))) # Remove colunas que so possuem 0 e NA
 
   ###############
   ## Labelling ##
@@ -221,7 +220,8 @@ load_hospital_admissions <- function(dataset,
   ## Harmonizing Variable Names ##
   ################################
 
-  dat_mod <- dat %>% tibble::as_tibble()
+  dat_mod <- dat %>%
+    tibble::as_tibble()
 
   dic <- load_dictionary(param$dataset)
 
