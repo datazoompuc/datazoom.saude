@@ -115,7 +115,9 @@ load_oncology_case <- function(time_period,
           file_name = file_name
         )
       }
-    )
+    ) %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
 
   names(dat) <- filenames
 
@@ -129,8 +131,6 @@ load_oncology_case <- function(time_period,
   ######################
 
   dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
     janitor::clean_names()
 
   labels <- tibble::tribble(
