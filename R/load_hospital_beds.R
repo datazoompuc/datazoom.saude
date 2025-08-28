@@ -52,59 +52,35 @@ load_hospital_beds <- function(time_period,
                                raw_data = FALSE,
                                language = "eng") {
 
-  # Checking for foreign package (in Suggests)
+  # Check required packages
+  if (!requireNamespace("foreign", quietly = TRUE)) stop("Package 'foreign' required.")
+  if (!requireNamespace("RCurl", quietly = TRUE)) stop("Package 'RCurl' required.")
 
-  if (!requireNamespace("foreign", quietly = TRUE)) {
-    stop(
-      "Package \"foreign\" must be installed to use this function.",
-      call. = FALSE
-    )
-  }
-
-  # Checking for RCurl package (in Suggests)
-
-  if (!requireNamespace("RCurl", quietly = TRUE)) {
-    stop(
-      "Package \"RCurl\" must be installed to use this function.",
-      call. = FALSE
-    )
-  }
-
-  # Declare global variables to avoid check notes
-
-  . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
-   name_pt <- label_pt <- var_code <- NULL
-
-  #############################
-  ## Define Basic Parameters ##
-  #############################
-
+  # Prepare parameters
   param <- list()
-
   param$source <- "datasus"
   param$dataset <- "datasus_cnes_lt"
   param$raw_data <- raw_data
   param$language <- language
 
-  param$time_period <- time_period
-  param$time_period_yy <- substr(time_period, 3, 4)
+  param$time_period <- as.character(time_period)
 
-  param$states <- ifelse(states == "all", "all", toupper(states))
-
-  # Auxiliary parameters to be passed to external_download
+  param$states <- if (length(states) == 1 && tolower(states) == "all") {
+    param$states <- "ALL"
+  } else {
+    param$states <- toupper(states)
+  }
 
   param$filenames <- NULL
 
-  # check if dataset and time_period are valid
-
+  # Check if dataset and time_period are valid
   check_params(param)
 
-  ##############################
-  ## Downloading CNES_lt Data ##
-  ##############################
+  ###########################
+  ## Downloading CNES Data ##
+  ###########################
 
   # Get dataset source URL
-
   dat_url <- datasets_link()
 
   url <- dat_url %>%
@@ -114,70 +90,44 @@ load_hospital_beds <- function(time_period,
     as.character()
 
   # Use RCurl to extract the names of all files stored in the server
-
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  ### Filtering by year
-
-  file_years <- NULL
-  file_years_yy <- NULL
-
-  file_years_yy <- filenames %>%
-    substr(5, 6)
-
-  if (!is.null(file_years_yy)) {
-    filenames <- filenames[file_years_yy %in% param$time_period_yy]
-  }
-
-  ### Filtering for chosen states when possible
-
-  file_state <- NULL
-
-  file_state <- filenames %>%
-    substr(3, 4)
-
-  if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
+  # Filter by requested states
+  file_state <- substr(filenames, 3, 4)   # state code (UF)
+  if (paste0(param$states, collapse = "") != "ALL") {
     filenames <- filenames[file_state %in% param$states]
   }
 
+  # Filter by requested years
+  file_year <- substr(filenames, 5, 6)   # year (2 digits)
+  file_year <- as.integer(file_year)
+  file_year <- ifelse(file_year >= 90, 1900 + file_year, 2000 + file_year)
+  filenames <- filenames[file_year %in% param$time_period]
+
   param$filenames <- filenames
 
-  ### Downloading each file in filenames
-
-  dat <- param$filenames %>%
-    purrr::imap(
-      function(file_name, iteration) {
-        base::message(paste0("Downloading file ", file_name, " (", iteration, " out of ", length(filenames), ")"))
-
-        external_download(
-          source = param$source,
-          dataset = param$dataset,
-          file_name = file_name
-        )
-      }
-    )
-
+  # Download each file
+  dat <- purrr::imap(filenames, function(file_name, i) {
+    message(paste0("Downloading file ", file_name, " (", i, " of ", length(filenames), ")"))
+    external_download(source = param$source, dataset = param$dataset, file_name = file_name)
+  })
   names(dat) <- filenames
 
-  dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+  dat <- purrr::imap(dat, ~ dplyr::mutate(.x, file_name = .y)) %>%
     dplyr::bind_rows()
 
-  ## Return Raw Data if requested
-  if (param$raw_data) {
-    return(dat)
-  }
+  # Return raw data if requested
+  if (raw_data) return(dat)
 
   ######################
   ## Data Engineering ##
   ######################
 
+  # Clean and label data
   dat <- dat %>%
-    janitor::clean_names()
-
-  dat <- dat %>%
+    janitor::clean_names() %>%
     dplyr::mutate(
       year = as.numeric(paste0("20", substr(file_name, 5, 6))),
       month = as.numeric(substr(file_name, 7, 8))
@@ -187,57 +137,25 @@ load_hospital_beds <- function(time_period,
   ## Labelling ##
   ###############
 
+  # Load dictionary for labeling
   dic <- load_dictionary(param$dataset)
-
-  row_numbers <- match(names(dat), dic$var_code)
-
-  if (param$language == "pt") {
-    dic <- dic %>%
-      dplyr::select(label_pt)
-  }
-  if (param$language == "eng") {
-    dic <- dic %>%
-      dplyr::select(label_eng)
+  if (language == "pt") {
+    labels_lookup <- setNames(dic$label_pt, dic$var_code)
+    var_names <- setNames(dic$name_pt, dic$var_code)
+  } else {
+    labels_lookup <- setNames(dic$label_eng, dic$var_code)
+    var_names <- setNames(dic$name_eng, dic$var_code)
   }
 
-  labels <- dic %>%
-    dplyr::slice(row_numbers) %>%
-    unlist()
-
-  # Making sure 'labels' is the same length as the number of columns
-
-  labels_full <- character(length = ncol(dat))
-
-  labels_full[which(!is.na(row_numbers))] <- labels
-
+  # Apply labels
+  row_numbers <- match(names(dat), names(labels_lookup))
+  labels_full <- character(ncol(dat))
+  labels_full[!is.na(row_numbers)] <- labels_lookup[!is.na(row_numbers)]
   Hmisc::label(dat) <- as.list(labels_full)
 
-  ################################
-  ## Harmonizing Variable Names ##
-  ################################
+  # Harmonize variable names
+  dat <- dat %>% tibble::as_tibble() %>%
+    dplyr::rename_with(~ dplyr::recode(., !!!var_names))
 
-  dat_mod <- dat %>%
-    tibble::as_tibble()
-
-  dic <- load_dictionary(param$dataset)
-
-  if (param$language == "pt") {
-    var_names <- dic$name_pt
-  }
-  if (param$language == "eng") {
-    var_names <- dic$name_eng
-  }
-
-  names(var_names) <- dic$var_code
-
-  dat_mod <- dat_mod %>%
-    dplyr::rename_with(
-      ~ dplyr::recode(., !!!var_names)
-    )
-
-  ####################
-  ## Returning Data ##
-  ####################
-
-  return(dat_mod)
+  return(dat)
 }

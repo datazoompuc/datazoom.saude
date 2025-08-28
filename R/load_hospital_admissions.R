@@ -4,7 +4,8 @@
 #' part of DATASUS, used in public health and hospital care analyses.
 #'
 #' @param dataset A string indicating the type of SIHSUS dataset to download. Accepted values are:
-#' "RD", "SP", "RJ", or "ER". See the 'Details' section for explanations.
+#' `"reduced_aih"`, `"professional_services"`, `"rejected_aih"`, or `"rejected_aih_error"`.
+#' See the 'Details' section for explanations.
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
 #' For example, `2020` or `2015:2020`.
 #' @param states A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded.
@@ -18,21 +19,21 @@
 #' SIHSUS provides several datasets related to hospital admissions in Brazil:
 #'
 #' \describe{
-#'   \item{RD – Reduced AIH (Hospital Admission Authorization)}{
+#'   \item{reduced_aih (RD) - Reduced AIH (Hospital Admission Authorization)}{
 #'   A simplified database with the main information from approved and processed AIHs.
 #'   It is the most commonly used dataset for statistical and epidemiological analyses, including
 #'   data on the main procedure, diagnoses, and total values of each admission.}
 #'
-#'   \item{SP – Professional Services}{
+#'   \item{professional_services (SP) - Professional Services}{
 #'   A stratified dataset containing details about services provided during the hospital stay,
 #'   such as medical procedures, professional identification (CBO/CNS), and values related to
 #'   professional and hospital services.}
 #'
-#'   \item{RJ – Rejected AIHs}{
+#'   \item{rejected_aih (RJ) - Rejected AIHs}{
 #'   Contains rejected AIHs and summarizes the reasons for rejection. It is useful for analyzing
 #'   the volume and impact of rejected records but does not include detailed information on each rejection.}
 #'
-#'   \item{ER – Rejected AIHs with Error Code}{
+#'   \item{rejected_aih_error (ER) - Rejected AIHs with Error Code}{
 #'   Includes AIHs rejected due to inconsistencies identified during processing. These records contain
 #'   specific error codes indicating why the rejection occurred (e.g., patient data inconsistency,
 #'   procedure incompatibility).}
@@ -42,19 +43,17 @@
 #'
 #' @examples
 #' \dontrun{
-#' load_hospital_admissions(dataset = "SP",
+#' load_hospital_admissions(dataset = "professional_services",
 #'                          time_period = 2020,
 #'                          states = "AC")
 #' }
-
 load_hospital_admissions <- function(dataset,
-                        time_period,
-                        states = "all",
-                        raw_data = FALSE,
-                        language = "eng") {
+                                     time_period,
+                                     states = "all",
+                                     raw_data = FALSE,
+                                     language = "eng") {
 
-  # Checking for foreign package (in Suggests)
-
+  # Check if foreign package is installed
   if (!requireNamespace("foreign", quietly = TRUE)) {
     stop(
       "Package \"foreign\" must be installed to use this function.",
@@ -62,8 +61,7 @@ load_hospital_admissions <- function(dataset,
     )
   }
 
-  # Checking for RCurl package (in Suggests)
-
+  # Check if RCurl package is installed
   if (!requireNamespace("RCurl", quietly = TRUE)) {
     stop(
       "Package \"RCurl\" must be installed to use this function.",
@@ -71,7 +69,20 @@ load_hospital_admissions <- function(dataset,
     )
   }
 
-  # Argument checks (basic)
+  # Map dataset names to SIHSUS codes
+  dataset_map <- c(
+    "reduced_aih" = "rd",
+    "professional_services" = "sp",
+    "rejected_aih" = "rj",
+    "rejected_aih_error" = "er"
+  )
+  normalized_dataset <- tolower(dataset)
+
+  if (!normalized_dataset %in% names(dataset_map)) {
+    stop("Invalid dataset name. Please use one of: `reduced_aih`, `professional_services`, `rejected_aih` or `rejected_aih_error`.")
+  }
+
+  # Basic argument checks
   if (!is.numeric(time_period)) {
     stop("time_period must be a numeric value or vector of years.")
   }
@@ -89,31 +100,29 @@ load_hospital_admissions <- function(dataset,
   }
 
   # Declare global variables to avoid check notes
-
-  . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
+  . <- file_name <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
 
   # Create param list with specific parameters for SIHSUS
   param <- list()
-
   param$source <- "datasus"
-  param$dataset <- paste0("datasus_sih_",dataset)
+  param$dataset <- paste0("datasus_sih_", dataset_map[normalized_dataset])
   param$raw_data <- raw_data
   param$language <- language
-  param$suffix <- toupper(dataset)
+  param$suffix <- toupper(dataset_map[normalized_dataset])
 
   param$time_period <- time_period
-  param$time_period_yy <- substr(time_period, 3, 4)
 
-  param$states <- ifelse(states == "all", "all", toupper(states))
-
-  # Auxiliary parameters to be passed to external_download
+  param$states <- if (length(states) == 1 && tolower(states) == "all") {
+    param$states <- "ALL"
+  } else {
+    param$states <- toupper(states)
+  }
 
   param$filenames <- NULL
 
-  # check if dataset and time_period are valid
-
-  # check_params(param)
+  # Check if dataset and time_period are valid
+  check_params(param)
 
   #############################
   ## Downloading SIHSUS Data ##
@@ -133,34 +142,28 @@ load_hospital_admissions <- function(dataset,
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  ### filtering by suffix
-
+  # Filter by dataset suffix (RD, SP, RJ, ER)
   filenames <- filenames[stringr::str_starts(filenames, param$suffix)]
 
-  ### Filtering by year
-  file_years_yy <- NULL
-  file_years_yy <- filenames %>%
-    substr(5, 6)
-
-  filenames <- filenames[file_years_yy %in% param$time_period_yy]
-
-  ### Filtering for chosen states
-  file_state <- NULL
-  file_state <- filenames %>%
-    substr(3, 4)
-
-  if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
+  # Filter by requested states
+  file_state <- substr(filenames, 3, 4)   # state code (UF)
+  if (paste0(param$states, collapse = "") != "ALL") {
     filenames <- filenames[file_state %in% param$states]
   }
 
+  # Filter by requested years
+  file_year <- substr(filenames, 5, 6)   # year (2 digits)
+  file_year <- as.integer(file_year)
+  file_year <- ifelse(file_year >= 90, 1900 + file_year, 2000 + file_year)
+  filenames <- filenames[file_year %in% param$time_period]
+
   param$filenames <- filenames
 
-  ### Downloading each file in filenames
+  # Download each file
   dat <- param$filenames %>%
     purrr::imap(
       function(file_name, iteration) {
-        base::message(paste0("Downloading file ", file_name, " (", iteration, " out of ", length(filenames), ")"))
-
+        base::message(paste0("Downloading file ", file_name, " (", iteration, " out of ", length(param$filenames), ")"))
         external_download(
           source = param$source,
           dataset = param$dataset,
@@ -175,7 +178,7 @@ load_hospital_admissions <- function(dataset,
     purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
     dplyr::bind_rows()
 
-  ## Return Raw Data if requested
+  # Return raw data if requested
   if (param$raw_data) {
     return(dat)
   }
@@ -186,7 +189,7 @@ load_hospital_admissions <- function(dataset,
 
   dat <- dat %>%
     janitor::clean_names() %>%
-    dplyr::select(tidyselect::where(~ !(all(is.na(.)) || all(. == 0, na.rm = TRUE)))) # Remove colunas que so possuem 0 e NA
+    dplyr::select(tidyselect::where(~ !(all(is.na(.)) || all(. == 0, na.rm = TRUE)))) # Remove columns with only 0 or NA
 
   ###############
   ## Labelling ##
@@ -194,26 +197,16 @@ load_hospital_admissions <- function(dataset,
 
   dic <- load_dictionary(param$dataset)
 
-  row_numbers <- match(names(dat), dic$var_code)
-
+  # Select labels based on language
   if (param$language == "pt") {
-    dic <- dic %>%
-      dplyr::select(label_pt)
-  }
-  if (param$language == "eng") {
-    dic <- dic %>%
-      dplyr::select(label_eng)
+    labels_lookup <- dic$label_pt
+  } else {
+    labels_lookup <- dic$label_eng
   }
 
-  labels <- dic %>%
-    dplyr::slice(row_numbers) %>%
-    unlist()
-
-  # Making sure 'labels' is the same length as the number of columns
-  labels_full <- character(length = ncol(dat))
-
-  labels_full[which(!is.na(row_numbers))] <- labels
-
+  names(labels_lookup) <- dic$var_code
+  labels_full <- labels_lookup[match(names(dat), names(labels_lookup))]
+  labels_full[is.na(labels_full)] <- ""
   Hmisc::label(dat) <- as.list(labels_full)
 
   ################################
@@ -223,20 +216,18 @@ load_hospital_admissions <- function(dataset,
   dat_mod <- dat %>%
     tibble::as_tibble()
 
-  dic <- load_dictionary(param$dataset)
-
+  # Select variable names based on language
   if (param$language == "pt") {
-    var_names <- dic$name_pt
-  }
-  if (param$language == "eng") {
-    var_names <- dic$name_eng
+    var_names_lookup <- dic$name_pt
+  } else {
+    var_names_lookup <- dic$name_eng
   }
 
-  names(var_names) <- dic$var_code
+  names(var_names_lookup) <- dic$var_code
 
   dat_mod <- dat_mod %>%
     dplyr::rename_with(
-      ~ dplyr::recode(., !!!var_names)
+      ~ dplyr::recode(., !!!var_names_lookup)
     )
 
   ####################
@@ -244,4 +235,4 @@ load_hospital_admissions <- function(dataset,
   ####################
 
   return(dat_mod)
-  }
+}

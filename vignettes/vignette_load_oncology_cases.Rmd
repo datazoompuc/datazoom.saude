@@ -40,9 +40,10 @@ oncology_data_2023 <- load_oncology_case(
   language = "eng"
 )
 
-# Download raw oncology data for the years 2020 to 2022.
+# Download raw oncology data for the years 2020 to 2022 with labels in portuguese.
 oncology_data_raw <- load_oncology_case(
   time_period = 2020:2022,
-  raw_data = TRUE
+  raw_data = TRUE,
+  language = "pt"
 )
 ```

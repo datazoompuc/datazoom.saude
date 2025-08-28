@@ -21,13 +21,13 @@ The `load_hospital_admissions` function offers the following parameters:
 
 1. **dataset**: Specifies the SIH dataset to download:
     * SIH hospitalization data is split across four datasets:
-        * `"sih_rd"` – Reduced AIHs (summary of hospitalizations).
+        * `"reduced_aih"` – Reduced AIHs (summary of hospitalizations).
             Contains consolidated information about approved and processed AIHs, including the main procedure performed, related diagnoses, and total costs. This is the most commonly used dataset for statistical and epidemiological analyses.
-        * `"sih_sp"` – Professional Services performed during hospitalization.
+        * `"professional_services"` – Professional Services performed during hospitalization.
             Provides detailed records of the professional services carried out during hospital stays, including procedures performed, professionals involved (CBO/CNS), and amounts paid for medical and hospital services.
-        * `"sih_rj"` – Rejected AIHs (general reason).
+        * `"rejected_aih"` – Rejected AIHs (general reason).
             Includes consolidated records of AIHs that were rejected, specifying the general reason for the rejection but without detailed error codes. Useful for analyzing the volume and impact of rejections.
-        * `"sih_er"` – Rejected AIHs with specific error codes.
+        * `"rejected_aih_error"` – Rejected AIHs with specific error codes.
             Contains AIHs that were rejected due to inconsistencies found during processing. Each rejection includes a specific error code indicating the reason (e.g., invalid patient data, procedure incompatibilities).
 
   2. **raw_data**: there are two options:
@@ -47,7 +47,7 @@ library(datazoom.saude)
 
 # Download raw data for Reduced AIHs (AIHs Reduzida) – State of Amazonas, 2010.
 data_rd_raw <- load_hospital_admissions(
-  dataset = "sih_rd",
+  dataset = "reduced_aih",
   time_period = 2010,
   states = "AM",
   raw_data = TRUE
@@ -55,7 +55,7 @@ data_rd_raw <- load_hospital_admissions(
 
 # Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010.
 data_er_processed <- load_hospital_admissions(
-  dataset = "sih_er",
+  dataset = "rejected_aih_error",
   time_period = 2010,
   states = "AM",
   raw_data = FALSE
@@ -63,7 +63,7 @@ data_er_processed <- load_hospital_admissions(
 
 # Download raw data for Professional Services – State of Acre, 2010.
 data_sp_raw <- load_hospital_admissions(
-  dataset = "sih_sp",
+  dataset = "professional_services",
   time_period = 2010,
   states = "AC",
   raw_data = TRUE
@@ -71,7 +71,7 @@ data_sp_raw <- load_hospital_admissions(
 
 # Download processed data for Professional Services – Federal District, 2010.
 data_sp_processed <- load_hospital_admissions(
-  dataset = "sih_sp",
+  dataset = "professional_services",
   time_period = 2010,
   states = "DF",
   raw_data = FALSE
