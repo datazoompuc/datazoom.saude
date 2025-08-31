@@ -88,10 +88,10 @@ load_outpatient_procedures <- function(dataset,
   param <- list()
 
   param$source <- "datasus"
-  param$dataset <- paste0("datasus_siasus_",dataset)
+  param$dataset <- dataset
   param$raw_data <- raw_data
   param$language <- language
-  param$suffix <- toupper(dataset)
+  param$suffix <- toupper(stringr::str_remove(dataset, pattern = "datasus_siasus_"))
 
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
