@@ -76,14 +76,17 @@ load_births <- function(time_period,
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
 
-  param$states <- ifelse(states == "all", "all", toupper(states))
+  param$states <- if (length(states) == 1 && tolower(states) == "all") {
+    param$states <- "all"
+  } else {
+    param$states <- toupper(states)
+  }
 
   # Auxiliary parameters to be passed to external_download
 
   param$filenames <- NULL
 
   # check if dataset and time_period are valid
-
   check_params(param)
 
   #############################
@@ -114,7 +117,7 @@ load_births <- function(time_period,
   file_state <- filenames %>%
     substr(3, 4)
 
-  if (param$states == "all") {
+  if (identical(param$states, "all")) {
     filenames <- filenames[file_state == "BR"]
   } else {
     filenames <- filenames[file_state %in% param$states]
@@ -156,7 +159,7 @@ load_births <- function(time_period,
 
   labels <- tibble::tribble(
     ~ var_code, ~ value, ~ label_pt, ~ label_eng,
-    "origem", 1, "oracle", "oracle",
+    "origem", 1, "oracle", "oraculo",
     "origem", 2, "ftp", "ftp",
     "origem", 3, "sead", "sead",
     "locnasc", 1, "hospital", "hospital",

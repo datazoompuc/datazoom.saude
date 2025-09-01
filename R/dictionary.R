@@ -62,7 +62,7 @@ load_dictionary <- function(dataset) {
       # Non-CID variables
 
       "tipobito", "tipobito", "tipobito", "1: obito fetal\n2: obito nao fetal", "1: fetal death\n2: non-fetal death", FALSE,
-      "dtobito", "dtobito", "dtobito", "Data do obito, no formato ddmmaaaa", "Date of death, in ddmmaaaa format", FALSE,
+      "dtobito", "dtobito", "dtobito", "Data do obito", "Date of death", FALSE,
       "horaobito", "horaobito", "horaobito", "Hora do falecimento", "Time of death", FALSE,
       "natural", "natural", "natural", "Naturalidade, conforme a tabela de paises. Se for brasileiro, porem, o primeiro digito contem 8 e os demais o codigo da UF de naturalidade", "Place of birth, according to the country table. If Brazilian, the first digit contains 8 and the others the state (UF) code of birth", FALSE,
       "dtnasc", "dtnasc", "dtnasc", "Data de nascimento do falecido", "Date of birth of the deceased", FALSE,

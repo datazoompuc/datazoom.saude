@@ -42,11 +42,11 @@ data_raw_births <- load_births(
 )
 
 # Download processed data for the year 2015 in the state of Amazonas (AM),
-# with variable labels in English.
+# with variable labels in portuguese.
 data_processed_births <- load_births(
   time_period = 2015,
   states = "AM",
   raw_data = FALSE,
-  language = "eng"
+  language = "pt"
 )
 ```

@@ -21,7 +21,6 @@ load_oncology_case <- function(time_period,
                                language = "eng") {
 
   # Checking for foreign package (in Suggests)
-
   if (!requireNamespace("foreign", quietly = TRUE)) {
     stop(
       "Package \"foreign\" must be installed to use this function.",
@@ -30,7 +29,6 @@ load_oncology_case <- function(time_period,
   }
 
   # Checking for RCurl package (in Suggests)
-
   if (!requireNamespace("RCurl", quietly = TRUE)) {
     stop(
       "Package \"RCurl\" must be installed to use this function.",
@@ -38,7 +36,7 @@ load_oncology_case <- function(time_period,
     )
   }
 
-  # Argument checks (basic)
+  # Basic argument checks
   if (!is.numeric(time_period)) {
     stop("time_period must be a numeric value or vector of years.")
   }
@@ -52,29 +50,28 @@ load_oncology_case <- function(time_period,
   }
 
   # Declare global variables to avoid check notes
-
   . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
   dt_diag <- dt_trat <- dt_nasc <- mun_diag <- NULL
 
-  # Create param list with specific parameters for SINASC
+  # Create param list with specific parameters for Oncology Panel
   param <- list()
 
   param$source <- "datasus"
   param$dataset <- "datasus_po"
   param$raw_data <- raw_data
   param$language <- language
-  param$keep_all <- FALSE  # Default for births data
+  param$keep_all <- FALSE  # Default is FALSE
 
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
 
-  # Auxiliary parameters to be passed to external_download
+  param$states <- "ALL" # Required for the check_params function
 
+  # Auxiliary parameters to be passed to external_download
   param$filenames <- NULL
 
-  # check if dataset and time_period are valid
-
+  # Check if dataset and time_period are valid
   check_params(param)
 
   #############################
@@ -90,12 +87,12 @@ load_oncology_case <- function(time_period,
     base::unlist() %>%
     as.character()
 
-  # Use RCurl to extract the names of all files stored in the server
+  # Use RCurl to extract the names of all files stored on the server
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  ### Filtering by year
+  # Filter by year
   file_years <- filenames %>%
     substr(5, 8)
 
@@ -103,7 +100,7 @@ load_oncology_case <- function(time_period,
 
   param$filenames <- filenames
 
-  ### Downloading each file in filenames
+  # Download each file in filenames
   dat <- param$filenames %>%
     purrr::imap(
       function(file_name, iteration) {
@@ -123,7 +120,7 @@ load_oncology_case <- function(time_period,
     purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
     dplyr::bind_rows()
 
-  ## Return Raw Data if requested
+  # Return raw data if requested
   if (param$raw_data) {
     return(dat)
   }
@@ -145,9 +142,9 @@ load_oncology_case <- function(time_period,
     "diagnostic", "1", "neoplasias malignas (lei no 12.732/12)", "malignant neoplasms (law no. 12.732/12)",
     "diagnostic", "2", "neoplasias in situ", "neoplasms in situ",
     "diagnostic", "3", "neoplasias de comportamento incerto ou desconhecido", "neoplasms of uncertain or unknown behavior",
-    "diagnostic", "4", "C44 e C73", "C44 e C73",
+    "diagnostic", "4", "C44 e C73", "C44 and C73",
     "sexo", "F", "feminino", "female",
-    "sexo", "M", "masculino", "masculine",
+    "sexo", "M", "masculino", "male",
     "estadiam", "0", "0", "0",
     "estadiam", "1", "I", "I",
     "estadiam", "2", "II", "II",
@@ -157,37 +154,33 @@ load_oncology_case <- function(time_period,
     "estadiam", "9", "ignorado", "ignored",
   )
 
-  # adicionando factor labels
-
+  # Adding factor labels
   dat <- dat %>%
     dplyr::mutate(
       dplyr::across(
         dplyr::any_of(unique(labels$var_code)),
         function(x) {
-          # linhas do dict correspondentes a cada variavel
+          # Dictionary rows corresponding to each variable
           dic <- labels %>%
             dplyr::filter(var_code == dplyr::cur_column())
 
-          # vetor de levels
+          # Vector of levels
           lev <- dic$value
 
-          # vetor de labels
+          # Vector of labels
           if (param$language == "pt") {
             lab <- dic$label_pt
-          }
-          else {
+          } else {
             lab <- dic$label_eng
           }
 
-          # transforma em factor
-
+          # Transform into factor
           factor(x, levels = lev, labels = lab)
         }
       )
     )
 
-  # formatando dados
-
+  # Formatting data
   dat <- dat %>%
     dplyr::mutate(
       dt_diag = lubridate::dmy((dt_diag)),
@@ -201,26 +194,18 @@ load_oncology_case <- function(time_period,
 
   dic <- load_dictionary(param$dataset)
 
-  row_numbers <- match(names(dat), dic$var_code)
-
   if (param$language == "pt") {
-    dic <- dic %>%
-      dplyr::select(label_pt)
-  }
-  if (param$language == "eng") {
-    dic <- dic %>%
-      dplyr::select(label_eng)
+    labels_lookup <- dic$label_pt
+  } else {
+    labels_lookup <- dic$label_eng
   }
 
-  labels <- dic %>%
-    dplyr::slice(row_numbers) %>%
-    unlist()
+  names(labels_lookup) <- dic$var_code
 
-  # Making sure 'labels' is the same length as the number of columns
+  labels_full <- labels_lookup[match(names(dat), names(labels_lookup))]
 
-  labels_full <- character(length = ncol(dat))
-
-  labels_full[which(!is.na(row_numbers))] <- labels
+  # Making sure 'labels' has the same length as the number of columns
+  labels_full[is.na(labels_full)] <- ""
 
   Hmisc::label(dat) <- as.list(labels_full)
 
@@ -231,19 +216,17 @@ load_oncology_case <- function(time_period,
   dat_mod <- dat %>% tibble::as_tibble()
 
   dic <- load_dictionary(param$dataset)
-
   if (param$language == "pt") {
-    var_names <- dic$name_pt
-  }
-  if (param$language == "eng") {
-    var_names <- dic$name_eng
+    var_names_lookup <- dic$name_pt
+  } else {
+    var_names_lookup <- dic$name_eng
   }
 
-  names(var_names) <- dic$var_code
+  names(var_names_lookup) <- dic$var_code
 
   dat_mod <- dat_mod %>%
     dplyr::rename_with(
-      ~ dplyr::recode(., !!!var_names)
+      ~ dplyr::recode(., !!!var_names_lookup)
     )
 
   ####################
@@ -251,4 +234,4 @@ load_oncology_case <- function(time_period,
   ####################
 
   return(dat_mod)
-  }
+}

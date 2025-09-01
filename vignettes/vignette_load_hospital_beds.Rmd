@@ -34,22 +34,18 @@ The `load_hospital_beds` function offers the following parameters:
 ```{r, eval = FALSE}
 library(datazoom.saude)
 
-# Download treated data with the number of available beds in Amazonas (AM) and Pará (PA),
-# aggregated by municipality.
-data_beds_agg <- load_hospital_beds(
-  time_period = 2010,
-  states = c("AM", "PA"),
-  raw_data = FALSE,
-  keep_all = FALSE
-)
-
-# Download treated data with the number of available beds in Amazonas (AM) and Pará (PA),
-# keeping all original variables.
+# Download treated data with the number of available beds in Amazonas (AM) and Pará (PA).
 data_beds_full <- load_hospital_beds(
   time_period = 2010,
   states = c("AM", "PA"),
-  raw_data = FALSE,
-  keep_all = TRUE
+  raw_data = FALSE
+)
+
+# Download treated data with the number of available beds in whole country.
+data_beds_full <- load_hospital_beds(
+  time_period = 2010,
+  states = "all",
+  raw_data = FALSE
 )
 
 # Download raw data for the number of hospital beds in 2015 for Rio de Janeiro.

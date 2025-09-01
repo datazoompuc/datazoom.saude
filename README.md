@@ -29,16 +29,8 @@ access to and analysis of national data.
 
 ## Installation
 
-You can install the released version of `datazoom.saude` from CRAN or
-the development version from GitHub.
-
-### From CRAN
-
-``` r
-install.packages("datazoom.saude")
-```
-
-### From GitHub
+You can install the released version of `datazoom.saude` from the
+development version from GitHub.
 
 ``` r
 # Install the 'devtools' package if you don't have it yet
@@ -85,23 +77,23 @@ The `load_mortality` function offers the following parameters:
 1.  **dataset**: Specifies the SIM dataset to download:
 
     - SIM Datasets:
-      - `"sim_do"` – Main Declarations of Death. Contains records of all
-        non-fetal Death Certificates (DO) in Brazil, including
+      - `"general"` – Main Declarations of Death. Contains records of
+        all non-fetal Death Certificates (DO) in Brazil, including
         socio-demographic data, location, and causes of death (ICD-10).
         It’s the base for general mortality analysis.
-      - `"sim_dofet"` – Fetal mortality data. Contains records of fetal
+      - `"fetal"` – Fetal mortality data. Contains records of fetal
         deaths, with information on the mother, pregnancy, and causes of
         fetal death. It’s essential for maternal and child health.
-      - `"sim_doext"` – Mortality data from external causes. Contains a
-        subset of `"sim_do"` focusing on deaths due to accidents,
-        violence, and other unnatural causes. Used for safety and
-        prevention studies.
-      - `"sim_doinf"` – Infant mortality data (children). Contains a
-        subset of `"sim_do"` recording deaths of children under 1 year
-        old, detailing causes and birth-related factors. Crucial for
+      - `"external_causes"` – Mortality data from external causes.
+        Contains a subset of `"general"` focusing on deaths due to
+        accidents, violence, and other unnatural causes. Used for safety
+        and prevention studies.
+      - `"infant"` – Infant mortality data (children). Contains a subset
+        of `"general"` recording deaths of children under 1 year old,
+        detailing causes and birth-related factors. Crucial for
         assessing child health.
-      - `"sim_domat"` – Maternal mortality data. Contains a subset of
-        `"sim_do"` for deaths of women during or shortly after
+      - `"maternal"` – Maternal mortality data. Contains a subset of
+        `"general"` for deaths of women during or shortly after
         pregnancy/childbirth, detailing obstetric causes. Important for
         women’s health.
 
@@ -111,68 +103,62 @@ The `load_mortality` function offers the following parameters:
     - `FALSE`: if you want the treated version of the data. Only
       effective for SIM-DO and subsets, SIH, and CNES-LT.
 
-3.  **time_period**: picks the years for which the data will be
-    downloaded
+3.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
 
-4.  **states**: a vector of states by which to filter the data. Only
-    works for datasets whose data is provided in separate files by
-    state.
+4.  **states**: a string or vector of strings indicating the Brazilian
+    state(s) for which the data should be downloaded. Use `"all"` to
+    download data for the entire country. For specific states (valid
+    only for the `general` dataset), use abbreviations like `"SP"` (São
+    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
 
 5.  **language**: you can choose between Portuguese `("pt")` and English
-    `("eng")`
+    `("eng")`.
+
+6.  **keep_all**: A boolean choosing whether to aggregate the data by
+    municipality, losing individual-level variables (`FALSE`) or to keep
+    all original variables (`TRUE`). Only applies when `raw_data` is
+    `FALSE`.
 
 **Examples:**
 
 ``` r
 library(datazoom.saude)
 
-# download raw data for the year 2010 in the state of AM.
-data <- load_mortality(
-  dataset = "sim_do",
-  time_period = 2010,
-  states = "AM",
+# Download raw data for the year 2022 in the state of RJ for general mortality.
+raw_data_general_rj <- load_mortality(
+  dataset = "general",
+  time_period = 2022,
+  states = "RJ",
   raw_data = TRUE
 )
 
-# download treated data with the number of deaths by cause in AM and PA.
-data <- load_mortality(
-  dataset = "sim_do",
-  time_period = 2010,
-  states = c("AM", "PA"),
-  raw_data = FALSE
+# Download treated data with the number of deaths by cause in RJ, aggregated by municipality and year.
+trated_data_general_rj <- load_mortality(
+  dataset = "general",
+  time_period = 2022,
+  states = "RJ",
+  raw_data = FALSE,
+  keep_all = FALSE # Explicitly stating default behavior
 )
 
-# Download processed data for Fetal Deaths (SIM-DOFET) for 2019,
+# Download treated data for Maternal Deaths (`maternal`) for 2020,
 # for the entire country, with descriptions in Portuguese.
-data_sim_dofet_pt <- load_mortality_data(
-  dataset = "sim_dofet",
-  time_period = 2019,
+# Note: `maternal` does not provide separate files by state.
+data_maternal_pt <- load_mortality(
+  dataset = "maternal",
+  time_period = 2020,
   raw_data = FALSE,
   language = "pt"
 )
 
-# Download raw data for Deaths by External Causes (SIM-DOEXT) for 2020.
-data_sim_doext_raw <- load_mortality_data(
-  dataset = "sim_doext",
-  time_period = 2020,
-  raw_data = TRUE
-)
-
-# Download treated data for Infant Deaths (SIM-DOINF) for 2017,
-# for all states, keeping all individual variables.
-data_sim_doinf_full <- load_mortality_data(
-  dataset = "sim_doinf",
+# Download treated data for Infant Deaths (`infant`) for 2017,
+# for all states, keeping all individual variables (not aggregated).
+data_infant_full <- load_mortality(
+  dataset = "infant",
   time_period = 2017,
-  raw_data = FALSE
-)
-
-# Download treated data for Maternal Deaths (SIM-DOMAT) for 2015,
-# with descriptions in English.
-data_sim_domat_eng <- load_mortality_data(
-  dataset = "sim_domat",
-  time_period = 2015,
   raw_data = FALSE,
-  language = "eng"
+  keep_all = TRUE
 )
 ```
 
@@ -218,12 +204,12 @@ data_raw_births <- load_births(
 )
 
 # Download processed data for the year 2015 in the state of Amazonas (AM),
-# with variable labels in English.
+# with variable labels in portuguese.
 data_processed_births <- load_births(
   time_period = 2015,
   states = "AM",
   raw_data = FALSE,
-  language = "eng"
+  language = "pt"
 )
 ```
 
@@ -243,25 +229,25 @@ The `load_hospital_admissions` function offers the following parameters:
 1.  **dataset**: Specifies the SIH dataset to download:
 
     - SIH hospitalization data is split across four datasets:
-      - `"sih_rd"` – Reduced AIHs (summary of hospitalizations).
+      - `"reduced_aih"` – Reduced AIHs (summary of hospitalizations).
         Contains consolidated information about approved and processed
         AIHs, including the main procedure performed, related diagnoses,
         and total costs. This is the most commonly used dataset for
         statistical and epidemiological analyses.
-      - `"sih_sp"` – Professional Services performed during
-        hospitalization. Provides detailed records of the professional
-        services carried out during hospital stays, including procedures
-        performed, professionals involved (CBO/CNS), and amounts paid
-        for medical and hospital services.
-      - `"sih_rj"` – Rejected AIHs (general reason). Includes
+      - `"professional_services"` – Professional Services performed
+        during hospitalization. Provides detailed records of the
+        professional services carried out during hospital stays,
+        including procedures performed, professionals involved
+        (CBO/CNS), and amounts paid for medical and hospital services.
+      - `"rejected_aih"` – Rejected AIHs (general reason). Includes
         consolidated records of AIHs that were rejected, specifying the
         general reason for the rejection but without detailed error
         codes. Useful for analyzing the volume and impact of rejections.
-      - `"sih_er"` – Rejected AIHs with specific error codes. Contains
-        AIHs that were rejected due to inconsistencies found during
-        processing. Each rejection includes a specific error code
-        indicating the reason (e.g., invalid patient data, procedure
-        incompatibilities).
+      - `"rejected_aih_error"` – Rejected AIHs with specific error
+        codes. Contains AIHs that were rejected due to inconsistencies
+        found during processing. Each rejection includes a specific
+        error code indicating the reason (e.g., invalid patient data,
+        procedure incompatibilities).
 
 2.  **raw_data**: there are two options:
 
@@ -284,7 +270,7 @@ library(datazoom.saude)
 
 # Download raw data for Reduced AIHs (AIHs Reduzida) – State of Amazonas, 2010.
 data_rd_raw <- load_hospital_admissions(
-  dataset = "sih_rd",
+  dataset = "reduced_aih",
   time_period = 2010,
   states = "AM",
   raw_data = TRUE
@@ -292,7 +278,7 @@ data_rd_raw <- load_hospital_admissions(
 
 # Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010.
 data_er_processed <- load_hospital_admissions(
-  dataset = "sih_er",
+  dataset = "rejected_aih_error",
   time_period = 2010,
   states = "AM",
   raw_data = FALSE
@@ -300,7 +286,7 @@ data_er_processed <- load_hospital_admissions(
 
 # Download raw data for Professional Services – State of Acre, 2010.
 data_sp_raw <- load_hospital_admissions(
-  dataset = "sih_sp",
+  dataset = "professional_services",
   time_period = 2010,
   states = "AC",
   raw_data = TRUE
@@ -308,7 +294,7 @@ data_sp_raw <- load_hospital_admissions(
 
 # Download processed data for Professional Services – Federal District, 2010.
 data_sp_processed <- load_hospital_admissions(
-  dataset = "sih_sp",
+  dataset = "professional_services",
   time_period = 2010,
   states = "DF",
   raw_data = FALSE
@@ -345,22 +331,18 @@ The `load_hospital_beds` function offers the following parameters:
 ``` r
 library(datazoom.saude)
 
-# Download treated data with the number of available beds in Amazonas (AM) and Pará (PA),
-# aggregated by municipality.
-data_beds_agg <- load_hospital_beds(
-  time_period = 2010,
-  states = c("AM", "PA"),
-  raw_data = FALSE,
-  keep_all = FALSE
-)
-
-# Download treated data with the number of available beds in Amazonas (AM) and Pará (PA),
-# keeping all original variables.
+# Download treated data with the number of available beds in Amazonas (AM) and Pará (PA).
 data_beds_full <- load_hospital_beds(
   time_period = 2010,
   states = c("AM", "PA"),
-  raw_data = FALSE,
-  keep_all = TRUE
+  raw_data = FALSE
+)
+
+# Download treated data with the number of available beds in whole country.
+data_beds_full <- load_hospital_beds(
+  time_period = 2010,
+  states = "all",
+  raw_data = FALSE
 )
 
 # Download raw data for the number of hospital beds in 2015 for Rio de Janeiro.
@@ -518,10 +500,11 @@ oncology_data_2023 <- load_oncology_case(
   language = "eng"
 )
 
-# Download raw oncology data for the years 2020 to 2022.
+# Download raw oncology data for the years 2020 to 2022 with labels in portuguese.
 oncology_data_raw <- load_oncology_case(
   time_period = 2020:2022,
-  raw_data = TRUE
+  raw_data = TRUE,
+  language = "pt"
 )
 ```
 
