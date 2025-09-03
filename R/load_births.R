@@ -71,7 +71,6 @@ load_births <- function(time_period,
   param$dataset <- "datasus_sinasc"
   param$raw_data <- raw_data
   param$language <- language
-  param$keep_all <- FALSE  # Default for births data
 
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
