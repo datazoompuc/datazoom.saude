@@ -228,9 +228,9 @@ load_births <- function(time_period,
     "tpapresent", 2, "pelvica ou podalica", "breech or footling",
     "tpapresent", 3, "transversa", "transverse",
     "tpapresent", 9, "ignorado", "unknown",
-    "sttrabpart", 1, TRUE, TRUE,
-    "sttrabpart", 2, FALSE, FALSE,
-    #"sttrabpart", 9, "ignorado", "unknown",
+    "sttrabpart", 1, "sim", "yes",
+    "sttrabpart", 2, "nao", "no",
+    "sttrabpart", 9, "ignorado", "unknown",
     "stcesparto", 1, "sim", "yes",
     "stcesparto", 2, "nao", "no",
     "stcesparto", 3, "nao se aplica", "not applicable",
@@ -280,6 +280,11 @@ load_births <- function(time_period,
       dtnasc = lubridate::dmy(as.character(dtnasc)),
       codmunnasc = as.numeric(as.character(codmunnasc)),
 
+      horanasc2 = as.integer(horanasc),
+      horanasc2 = sprintf("%04d", as.integer(horanasc2)),
+      horanasc2 = paste0(substr(horanasc2, 1, 2), ":", substr(horanasc2, 3, 4)),
+      horanasc2 = hms::parse_hm(horanasc),
+
       # INTEGER
 
       idademae = as.integer(idademae),
@@ -295,7 +300,8 @@ load_births <- function(time_period,
       semagestac = as.integer(semagestac),
       consprenat = as.integer(consprenat),
       mesprenat = as.integer(mesprenat)
-      )
+      ) %>%
+    dplyr::relocate(horanasc2, .after = horanasc)
 
   ###############
   ## Labelling ##
