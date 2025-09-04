@@ -280,10 +280,10 @@ load_births <- function(time_period,
       dtnasc = lubridate::dmy(as.character(dtnasc)),
       codmunnasc = as.numeric(as.character(codmunnasc)),
 
-      horanasc2 = as.integer(horanasc),
-      horanasc2 = sprintf("%04d", as.integer(horanasc2)),
-      horanasc2 = paste0(substr(horanasc2, 1, 2), ":", substr(horanasc2, 3, 4)),
-      horanasc2 = hms::parse_hm(horanasc),
+      horanasc = as.character(horanasc),
+      horanasc = sprintf("%04d", as.integer(horanasc2)),
+      horanasc = paste0(substr(horanasc2, 1, 2), ":", substr(horanasc2, 3, 4)),
+      horanasc = hms::parse_hm(horanasc2),
 
       # INTEGER
 
