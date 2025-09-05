@@ -19,15 +19,19 @@ The `load_births` function provides access to the **Live Birth Information Syste
 ***
 The `load_births` function offers the following parameters:
 
-  1. **raw_data**: there are two options:
-      * `TRUE`: If you want the original DATASUS files in their segmented form.
-      * `FALSE`: if you want the treated version of the data.
+  1. **time_period**: A numeric value or vector indicating the year(s) of the data to be downloaded. For      
+                      example, 2020 or 2015:2020.
   
-  2. **time_period**: Specifies the years for which the data will be downloaded.
+  2. **states**: A string or vector of strings indicating the Brazilian state(s) for which the data should be
+                 downloaded. Use "all" to download data for the entire country. For specific states, use       
+                 abbreviations like "SP", "RJ", or c("SP", "RJ").
   
-  3. **states**: A vector of states by which to filter the data.
-
-  4. **language**: You can choose between Portuguese `("pt")` and English `("eng")` for variable descriptions when `raw_data = FALSE`.
+  3. **raw_data**: Logical, default is `FALSE`. 
+      * `TRUE`: if TRUE, returns the raw data exactly as provided by DATASUS.
+      * `FALSE`: if FALSE (default), returns a cleaned and standardized version of the dataset.
+  
+  4. **language**: A string indicating the desired language of variable names and labels. Accepts "eng"
+                   (default) for English or "pt" for Portuguese.
   
 **Examples:**
 
@@ -35,11 +39,13 @@ The `load_births` function offers the following parameters:
 library(datazoom.saude)
 
 # Download raw data for the year 2015 in the state of Amazonas (AM).
-data_raw_births <- load_births(
-  time_period = 2015,
-  states = "AM",
-  raw_data = TRUE
-)
+data_raw_births <- load_births(time_period = 2023,
+                               states = "RJ")
+
+data_raw_births <- load_births(time_period = 2020,
+                               states = c("RJ","SP"),
+                               raw_data = TRUE)
+
 
 # Download processed data for the year 2015 in the state of Amazonas (AM),
 # with variable labels in portuguese.
