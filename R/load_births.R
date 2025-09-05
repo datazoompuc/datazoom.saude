@@ -63,6 +63,9 @@ load_births <- function(time_period,
   . <- file_name <- dataset <- link <- name_eng <- label_eng  <-NULL
   label_pt <- var_code <- dtnascmae <- dtultmenst <- codmunnasc <- NULL
   dtcadastro <- dtnasc <- dtrecebim <- dtdeclarac <- name_pt <- NULL
+  horanasc <- idademae <- idadepai <- qtdfilvivo <- qtdfilmort <- apgar1 <- NULL
+  apgar5 <- peso <- qtdgestant <- qtdpartnor <- qtdpartces <- semagestac <- NULL
+  consprenat <- mesprenat <- NULL
 
   # Create param list with specific parameters for SINASC
   param <- list()
