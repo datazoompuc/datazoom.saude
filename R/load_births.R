@@ -281,9 +281,8 @@ load_births <- function(time_period,
       codmunnasc = as.numeric(as.character(codmunnasc)),
 
       horanasc = as.character(horanasc),
-      horanasc = sprintf("%04d", as.integer(horanasc)),
+      horanasc = ifelse(horanasc %in% c("", "NA"), NA, horanasc),
       horanasc = paste0(substr(horanasc, 1, 2), ":", substr(horanasc, 3, 4)),
-      horanasc = hms::parse_hm(horanasc),
 
       # INTEGER
 
