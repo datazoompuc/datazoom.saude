@@ -27,8 +27,8 @@ The `load_births` function offers the following parameters:
                  abbreviations like "SP", "RJ", or c("SP", "RJ").
   
   3. **raw_data**: Logical, default is `FALSE`. 
-      * `TRUE`: if TRUE, returns the raw data exactly as provided by DATASUS.
-      * `FALSE`: if FALSE (default), returns a cleaned and standardized version of the dataset.
+      * `TRUE`: If TRUE, returns the raw data exactly as provided by DATASUS.
+      * `FALSE`: If FALSE (default), returns a cleaned and standardized version of the dataset.
   
   4. **language**: A string indicating the desired language of variable names and labels. Accepts "eng"
                    (default) for English or "pt" for Portuguese.
@@ -38,17 +38,30 @@ The `load_births` function offers the following parameters:
 ```{r, eval = FALSE}
 library(datazoom.saude)
 
-# Download raw data for the year 2015 in the state of Amazonas (AM).
-data_raw_births <- load_births(time_period = 2023,
-                               states = "RJ")
+# Download raw birth data for 2023 in the state of Rio de Janeiro (RJ).
+data_raw_births <- load_births(
+  time_period = 2023,
+  states = "RJ"
+)
 
-data_raw_births <- load_births(time_period = 2020,
-                               states = c("RJ","SP"),
-                               raw_data = TRUE)
+# Download raw birth data for 2020 in the states of Rio de Janeiro (RJ) and São Paulo (SP),
+# keeping the original raw format.
+data_raw_births2 <- load_births(
+  time_period = 2020,
+  states = c("RJ","SP"),
+  raw_data = TRUE
+)
 
+# Download raw birth data for 2014 in the state of Amazonas (AM),
+# with variable labels in Portuguese.
+data_raw_births3 <- load_births(
+  time_period = 2014,
+  states = "AM",
+  language = "pt"
+)
 
-# Download processed data for the year 2015 in the state of Amazonas (AM),
-# with variable labels in portuguese.
+# Download processed birth data for 2015 in the state of Amazonas (AM),
+# with variable labels in Portuguese for easier analysis.
 data_processed_births <- load_births(
   time_period = 2015,
   states = "AM",
