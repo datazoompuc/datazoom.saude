@@ -281,9 +281,9 @@ load_births <- function(time_period,
       codmunnasc = as.numeric(as.character(codmunnasc)),
 
       horanasc = as.character(horanasc),
-      horanasc = sprintf("%04d", as.integer(horanasc2)),
-      horanasc = paste0(substr(horanasc2, 1, 2), ":", substr(horanasc2, 3, 4)),
-      horanasc = hms::parse_hm(horanasc2),
+      horanasc = sprintf("%04d", as.integer(horanasc)),
+      horanasc = paste0(substr(horanasc, 1, 2), ":", substr(horanasc, 3, 4)),
+      horanasc = hms::parse_hm(horanasc),
 
       # INTEGER
 
@@ -300,8 +300,7 @@ load_births <- function(time_period,
       semagestac = as.integer(semagestac),
       consprenat = as.integer(consprenat),
       mesprenat = as.integer(mesprenat)
-      ) %>%
-    dplyr::relocate(horanasc2, .after = horanasc)
+      )
 
   ###############
   ## Labelling ##
