@@ -4,7 +4,7 @@
 #' part of DATASUS, used in public health analyses.
 #'
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded. For example, `2020` or `2015:2020`.
-#' @param states A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded. Use `"all"` to download data for the entire country. For specific states, use abbreviations like `"SP"`, `"RJ"`, or `c("SP", "RJ")`.
+#' @param states A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded. Use `"all"` (by default) to download data for the entire country. For specific states, use abbreviations like `"SP"`, `"RJ"`, or `c("SP", "RJ")`.
 #' @param raw_data Logical. If `TRUE`, returns the raw data exactly as provided by DATASUS. If `FALSE` (default), returns a cleaned and standardized version of the dataset.
 #' @param language A string indicating the desired language of variable names and labels. Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
 #'
@@ -63,6 +63,9 @@ load_births <- function(time_period,
   . <- file_name <- dataset <- link <- name_eng <- label_eng  <-NULL
   label_pt <- var_code <- dtnascmae <- dtultmenst <- codmunnasc <- NULL
   dtcadastro <- dtnasc <- dtrecebim <- dtdeclarac <- name_pt <- NULL
+  horanasc <- idademae <- idadepai <- qtdfilvivo <- qtdfilmort <- apgar1 <- NULL
+  apgar5 <- peso <- qtdgestant <- qtdpartnor <- qtdpartces <- semagestac <- NULL
+  consprenat <- mesprenat <- NULL
 
   # Create param list with specific parameters for SINASC
   param <- list()
@@ -71,7 +74,6 @@ load_births <- function(time_period,
   param$dataset <- "datasus_sinasc"
   param$raw_data <- raw_data
   param$language <- language
-  param$keep_all <- FALSE  # Default for births data
 
   param$time_period <- time_period
   param$time_period_yy <- substr(time_period, 3, 4)
@@ -207,8 +209,8 @@ load_births <- function(time_period,
     "racacor", 3, "amarela", "yellow",
     "racacor", 4, "parda", "brown",
     "racacor", 5, "indigena", "indigenous",
-    "idanomal", 1, "nao","no",
-    "idanomal", 2, "sim", "yes",
+    "idanomal", 1, "sim","yes",
+    "idanomal", 2, "nao", "no",
     "idanomal", 9, "ignorado", "unknown",
     "escmae2010", 0, "sem escolaridade", "no education",
     "escmae2010", 1, "fundamental 1", "elementary 1",
@@ -279,7 +281,27 @@ load_births <- function(time_period,
       dtultmenst = lubridate::dmy(as.character(dtultmenst)),
       dtdeclarac = lubridate::dmy(as.character(dtdeclarac)),
       dtnasc = lubridate::dmy(as.character(dtnasc)),
-      codmunnasc = as.numeric(as.character(codmunnasc))
+      codmunnasc = as.numeric(as.character(codmunnasc)),
+
+      horanasc = as.character(horanasc),
+      horanasc = ifelse(horanasc %in% c("", "NA"), NA, horanasc),
+      horanasc = paste0(substr(horanasc, 1, 2), ":", substr(horanasc, 3, 4)),
+
+      # INTEGER
+
+      idademae = as.integer(idademae),
+      idadepai = as.integer(idadepai),
+      qtdfilvivo = as.integer(qtdfilvivo),
+      qtdfilmort = as.integer(qtdfilmort),
+      apgar1 = as.integer(apgar1),
+      apgar5 = as.integer(apgar5),
+      peso = as.integer(peso),
+      qtdgestant = as.integer(qtdgestant),
+      qtdpartnor = as.integer(qtdpartnor),
+      qtdpartces = as.integer(qtdpartces),
+      semagestac = as.integer(semagestac),
+      consprenat = as.integer(consprenat),
+      mesprenat = as.integer(mesprenat)
       )
 
   ###############

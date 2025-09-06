@@ -17,11 +17,11 @@ load_mortality(
 \item{dataset}{A string identifying the specific mortality dataset to download.
 Accepted values are:
 \itemize{
-\item \code{"do"}: General death records
-\item \code{"doext"}: Deaths by external causes
-\item \code{"doinf"}: Infant deaths
-\item \code{"domat"}: Maternal deaths
-\item \code{"dofet"}: Fetal deaths
+\item \code{"general"}: General death records
+\item \code{"fetal"}: Fetal deaths
+\item \code{"external_causes"}: Deaths by external causes
+\item \code{"infant"}: Infant deaths
+\item \code{"maternal"}: Maternal deaths
 }}
 
 \item{time_period}{A numeric value or vector indicating the year(s) of the data to be downloaded.
@@ -43,18 +43,18 @@ Only applies when \code{raw_data} is \code{FALSE}.}
 A data frame containing the mortality records.
 }
 \description{
-Retrieves mortality records from Brazil is official Mortality Information System (SIM),
+Retrieves mortality records from Brazil's official Mortality Information System (SIM),
 made available through DATASUS (Department of Informatics of the Brazilian Unified Health System).
 This dataset includes detailed information on deaths by cause, location, sex, age, and other demographic characteristics.
 Data is useful for public health research, epidemiology, and demographic analysis.
 }
 \examples{
 \dontrun{
-load_mortality(dataset = "do",
+load_mortality(dataset = "general",
                time_period = 2022,
                states = "RJ")
 
-load_mortality(dataset = "domat",
+load_mortality(dataset = "maternal",
                time_period = 2020,
                raw_data = FALSE,
                language = "pt")

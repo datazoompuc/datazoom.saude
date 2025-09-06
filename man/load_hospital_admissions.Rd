@@ -14,7 +14,8 @@ load_hospital_admissions(
 }
 \arguments{
 \item{dataset}{A string indicating the type of SIHSUS dataset to download. Accepted values are:
-"RD", "SP", "RJ", or "ER". See the 'Details' section for explanations.}
+\code{"reduced_aih"}, \code{"professional_services"}, \code{"rejected_aih"}, or \code{"rejected_aih_error"}.
+See the 'Details' section for explanations.}
 
 \item{time_period}{A numeric value or vector indicating the year(s) of the data to be downloaded.
 For example, \code{2020} or \code{2015:2020}.}
@@ -38,21 +39,21 @@ part of DATASUS, used in public health and hospital care analyses.
 SIHSUS provides several datasets related to hospital admissions in Brazil:
 
 \describe{
-\item{RD – Reduced AIH (Hospital Admission Authorization)}{
+\item{reduced_aih (RD) - Reduced AIH (Hospital Admission Authorization)}{
 A simplified database with the main information from approved and processed AIHs.
 It is the most commonly used dataset for statistical and epidemiological analyses, including
 data on the main procedure, diagnoses, and total values of each admission.}
 
-\item{SP – Professional Services}{
+\item{professional_services (SP) - Professional Services}{
 A stratified dataset containing details about services provided during the hospital stay,
 such as medical procedures, professional identification (CBO/CNS), and values related to
 professional and hospital services.}
 
-\item{RJ – Rejected AIHs}{
+\item{rejected_aih (RJ) - Rejected AIHs}{
 Contains rejected AIHs and summarizes the reasons for rejection. It is useful for analyzing
 the volume and impact of rejected records but does not include detailed information on each rejection.}
 
-\item{ER – Rejected AIHs with Error Code}{
+\item{rejected_aih_error (ER) - Rejected AIHs with Error Code}{
 Includes AIHs rejected due to inconsistencies identified during processing. These records contain
 specific error codes indicating why the rejection occurred (e.g., patient data inconsistency,
 procedure incompatibility).}
@@ -60,7 +61,7 @@ procedure incompatibility).}
 }
 \examples{
 \dontrun{
-load_hospital_admissions(dataset = "SP",
+load_hospital_admissions(dataset = "professional_services",
                          time_period = 2020,
                          states = "AC")
 }

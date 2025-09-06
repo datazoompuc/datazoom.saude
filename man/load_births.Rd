@@ -9,7 +9,7 @@ load_births(time_period, states = "all", raw_data = FALSE, language = "eng")
 \arguments{
 \item{time_period}{A numeric value or vector indicating the year(s) of the data to be downloaded. For example, \code{2020} or \code{2015:2020}.}
 
-\item{states}{A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded. Use \code{"all"} to download data for the entire country. For specific states, use abbreviations like \code{"SP"}, \code{"RJ"}, or \code{c("SP", "RJ")}.}
+\item{states}{A string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded. Use \code{"all"} (by default) to download data for the entire country. For specific states, use abbreviations like \code{"SP"}, \code{"RJ"}, or \code{c("SP", "RJ")}.}
 
 \item{raw_data}{Logical. If \code{TRUE}, returns the raw data exactly as provided by DATASUS. If \code{FALSE} (default), returns a cleaned and standardized version of the dataset.}
 
