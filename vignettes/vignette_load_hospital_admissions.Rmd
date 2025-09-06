@@ -30,50 +30,58 @@ The `load_hospital_admissions` function offers the following parameters:
         * `"rejected_aih_error"` – Rejected AIHs with specific error codes.
             Contains AIHs that were rejected due to inconsistencies found during processing. Each rejection includes a specific error code indicating the reason (e.g., invalid patient data, procedure incompatibilities).
 
-  2. **raw_data**: there are two options:
-      * `TRUE`: If you want the original DATASUS files in their segmented form.
-      * `FALSE`: if you want the treated version of the data.
-      
-  3. **time_period**: Specifies the years for which the data will be downloaded.
+  2. **time_period**: a numeric value or vector indicating the year(s) of the data to be downloaded.
+  For example, `2020` or `2015:2020`.
   
-  4. **states**: A vector of states by which to filter the data.
+  3. **states**: a string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded.
+Use `"all"` to download data for the entire country. For specific states (valid only for the `general` dataset), use abbreviations like `"SP"` (São Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
+  
+  4. **raw_data**: Logical, default is `FALSE`.
+      * `TRUE`: If TRUE, returns the raw data exactly as provided by DATASUS.
+      * `FALSE`: If FALSE (default), returns a cleaned and standardized version of the dataset.
 
-  5. **language**: You can choose between Portuguese `("pt")` and English `("eng")` for variable descriptions when `raw_data = FALSE`.
+  5. **language**: A string indicating the desired language of variable names and labels. Accepts `"eng"`                      (default) for English or `"pt"` for Portuguese (only when `raw_data = FALSE`).
   
 **Examples:**
 
 ```{r, eval = FALSE}
 library(datazoom.saude)
 
-# Download raw data for Reduced AIHs (AIHs Reduzida) – State of Amazonas, 2010.
+# Download raw data for Reduced AIHs (AIHs Reduzida) – All country, 2010.
 data_rd_raw <- load_hospital_admissions(
   dataset = "reduced_aih",
   time_period = 2010,
-  states = "AM",
-  raw_data = TRUE
+  states = "all",
+  raw_data = TRUE,
+  language = "eng"
 )
 
-# Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010.
+# Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010 to 2020.
+# Descriptions in Portuguese.
 data_er_processed <- load_hospital_admissions(
   dataset = "rejected_aih_error",
-  time_period = 2010,
+  time_period = 2010:2020,
   states = "AM",
-  raw_data = FALSE
+  raw_data = FALSE,
+  language = "pt"
 )
 
-# Download raw data for Professional Services – State of Acre, 2010.
+# Download raw data for Professional Services – States of Rio and São Paulo, 2022.
 data_sp_raw <- load_hospital_admissions(
   dataset = "professional_services",
-  time_period = 2010,
-  states = "AC",
-  raw_data = TRUE
+  time_period = 2022,
+  states = C("RJ","SP"),
+  raw_data = TRUE,
+  language = "eng"
 )
 
-# Download processed data for Professional Services – Federal District, 2010.
+# Download processed data for Professional Services – Federal District, 2020 to 2022.
+# Descriptions in Portuguese.
 data_sp_processed <- load_hospital_admissions(
   dataset = "professional_services",
-  time_period = 2010,
+  time_period = 2020:2022,
   states = "DF",
-  raw_data = FALSE
+  raw_data = FALSE,
+  language = "pt"
 )
 ```

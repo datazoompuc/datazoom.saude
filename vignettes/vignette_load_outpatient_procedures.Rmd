@@ -42,15 +42,17 @@ The `load_outpacient_procedures` function offers the following parameters:
         * `"siasus_sad"` – RAAS Home Care (RAAS Atenção Domiciliar)
             Focuses on outpatient care provided at patients' homes, often involving chronic condition management, palliative care, and multi-professional follow-ups.
 
-  2. **raw_data**: there are two options:
-      * `TRUE`: if you want the data as it is originally.
-      * `FALSE`: if you want the treated version of the data. Only effective for SIM-DO and subsets, SIH, and CNES-LT.
+  2. **time_period**: a numeric value or vector indicating the year(s) of the data to be downloaded.
+  For example, `2020` or `2015:2020`.
   
-  3. **time_period**: picks the years for which the data will be downloaded
+  3. **states**: a string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded.
+Use `"all"` to download data for the entire country. For specific states (valid only for the `general` dataset), use abbreviations like `"SP"` (São Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
   
-  4. **states**: a vector of states by which to filter the data. Only works for datasets whose data is provided in separate files by state.
+  4. **raw_data**: Logical, default is `FALSE`.
+      * `TRUE`: If TRUE, returns the raw data exactly as provided by DATASUS.
+      * `FALSE`: If FALSE (default), returns a cleaned and standardized version of the dataset.
 
-  5. **language**: you can choose between Portuguese `("pt")` and English `("eng")`
+  5. **language**: A string indicating the desired language of variable names and labels. Accepts `"eng"`                      (default) for English or `"pt"` for Portuguese (only when `raw_data = FALSE`).
   
 **Examples:**
 
@@ -61,34 +63,36 @@ library(datazoom.saude)
 teste_abo <- load_outpatient_procedures(
   dataset = "siasus_abo",
   time_period = 2012,
+  states = "AC",
   raw_data = FALSE,
-  language = "eng",
-  states = "AC"
+  language = "eng"
 )
 
 # Download processed data for Consolidated Outpatient Procedures (PA) – State of Acre, 2022.
+# Descriptions in Portuguese.
 teste_pa <- load_outpatient_procedures(
   dataset = "siasus_pa",
   time_period = 2022,
+  states = "AC",
   raw_data = FALSE,
-  language = "eng",
-  states = "AC"
+  language = "pt"
 )
 
-# Download raw data for High-Cost Medications (AM) for the year 2021 in Pernambuco (PE).
+# Download raw data for High-Cost Medications (AM) - State of Pernambuco, 2021.
 teste_am_raw <- load_outpatient_procedures(
   dataset = "siasus_am",
   time_period = 2021,
+  states = "PE",
   raw_data = TRUE,
-  states = "PE"
+  language = "eng"
 )
 
-# Download processed data for Psychosocial Care (PS) for the year 2022 in Acre (AC).
+# Download processed data for Psychosocial Care (PS) - State of Acre, 2022.
 teste_ps <- load_outpatient_procedures(
   dataset = "siasus_ps",
   time_period = 2022,
+  states = "AC",
   raw_data = FALSE,
-  language = "eng",
-  states = "AC"
+  language = "eng"
 )
 ```
