@@ -2,3 +2,4 @@
 ^docs$
 ^datazoom\.saude\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$

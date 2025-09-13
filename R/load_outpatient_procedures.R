@@ -83,8 +83,7 @@ load_outpatient_procedures <- function(dataset,
   . <- file_name <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
 
-  # Creating a dataset helper
-
+  # Map dataset names to SIASUS codes
   dataset_map <- c(
     "bariatric_surgery_follow_up"     = "ab",
     "diverse_reports"                 = "ad",
@@ -105,8 +104,7 @@ load_outpatient_procedures <- function(dataset,
   normalized_dataset <- tolower(dataset)
 
   if (!normalized_dataset %in% names(dataset_map)){
-    stop(
-      "Invalid dataset name. Use one of: ", paste(names(dataset_map), collapse = ", "))
+    stop("Invalid dataset name. Use one of: ", paste(names(dataset_map), collapse = ", "))
   }
 
   # Create param list with specific parameters for SIASUS
@@ -221,33 +219,92 @@ load_outpatient_procedures <- function(dataset,
   dat <- dat %>%
     janitor::clean_names()
 
-  ####################
-  ## Load Dictionary ##
-  ####################
-  dic <- load_dictionary(param$dataset)
-  if(param$language=="pt") {
-    labels_lookup    <- dic$label_pt
-    var_names_lookup <- dic$name_pt
-  } else {
-    labels_lookup    <- dic$label_eng
-    var_names_lookup <- dic$name_eng
-  }
-  names(labels_lookup)    <- dic$var_code
-  names(var_names_lookup) <- dic$var_code
+  dat <- dat %>%
+    dplyr::mutate(
+      dplyr::across(tidyselect::where(is.factor), as.character)
+    )
 
-  labels_full <- labels_lookup[match(names(dat), names(labels_lookup))]
-  labels_full[is.na(labels_full)] <- ""
+  tem_zero_a_esquerda <- function(x) {
+    # Força o encoding como latin1 → UTF-8 para evitar warnings
+    x <- enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))
+    any(grepl("^0", x))
+  }
+
+  coluna_numerica_valida <- function(x) {
+    x <- enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))
+    all(grepl("^\\d+$", x))
+  }
+
+  dat <- dat %>%
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::where(is.character),
+        ~ {
+          if (!tem_zero_a_esquerda(.x) && coluna_numerica_valida(.x)) {
+            suppressWarnings(as.numeric(.x))
+          } else {
+            .x
+          }
+        }
+      )
+    )
+
+  ###############
+  ## Labelling ##
+  ###############
+
+  dic <- load_dictionary(param$dataset)
+
+  row_numbers <- match(names(dat), dic$var_code)
+
+  if (param$language == "pt") {
+    dic <- dic %>%
+      dplyr::select(label_pt)
+  }
+  if (param$language == "eng") {
+    dic <- dic %>%
+      dplyr::select(label_eng)
+  }
+
+  labels <- dic %>%
+    dplyr::slice(row_numbers) %>%
+    unlist()
+
+  # Making sure 'labels' is the same length as the number of columns
+
+  labels_full <- character(length = ncol(dat))
+
+  labels_full[which(!is.na(row_numbers))] <- labels
+
   Hmisc::label(dat) <- as.list(labels_full)
 
-  ####################
-  ## Harmonize Names ##
-  ####################
+  ################################
+  ## Harmonizing Variable Names ##
+  ################################
+
   dat_mod <- dat %>%
-    tibble::as_tibble() %>%
-    dplyr::rename_with(~ dplyr::recode(., !!!var_names_lookup))
+    tibble::as_tibble()
+
+  dic <- load_dictionary(param$dataset)
+
+  if (param$language == "pt") {
+    var_names <- dic$name_pt
+  }
+  if (param$language == "eng") {
+    var_names <- dic$name_eng
+  }
+
+  names(var_names) <- dic$var_code
+
+  dat_mod <- dat_mod %>%
+    dplyr::rename_with(
+      ~ dplyr::recode(., !!!var_names)
+    )
 
   ####################
   ## Returning Data ##
   ####################
+
   return(dat_mod)
+
 }

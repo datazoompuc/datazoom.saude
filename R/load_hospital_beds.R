@@ -56,6 +56,11 @@ load_hospital_beds <- function(time_period,
   if (!requireNamespace("foreign", quietly = TRUE)) stop("Package 'foreign' required.")
   if (!requireNamespace("RCurl", quietly = TRUE)) stop("Package 'RCurl' required.")
 
+  # Declare global variables to avoid check notes
+
+  . <- file_name <- link <- name_eng <- label_eng <- dataset <- NULL
+  name_pt <- label_pt <- var_code <- setNames <- NULL
+
   # Prepare parameters
   param <- list()
   param$source <- "datasus"

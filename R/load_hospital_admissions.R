@@ -69,19 +69,6 @@ load_hospital_admissions <- function(dataset,
     )
   }
 
-  # Map dataset names to SIHSUS codes
-  dataset_map <- c(
-    "reduced_aih" = "rd",
-    "professional_services" = "sp",
-    "rejected_aih" = "rj",
-    "rejected_aih_error" = "er"
-  )
-  normalized_dataset <- tolower(dataset)
-
-  if (!normalized_dataset %in% names(dataset_map)) {
-    stop("Invalid dataset name. Please use one of: `reduced_aih`, `professional_services`, `rejected_aih` or `rejected_aih_error`.")
-  }
-
   # Basic argument checks
   if (!is.numeric(time_period)) {
     stop("time_period must be a numeric value or vector of years.")
@@ -103,9 +90,23 @@ load_hospital_admissions <- function(dataset,
   . <- file_name <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
 
+  # Map dataset names to SIHSUS codes
+  dataset_map <- c(
+    "reduced_aih" = "rd",
+    "professional_services" = "sp",
+    "rejected_aih" = "rj",
+    "rejected_aih_error" = "er"
+  )
+  normalized_dataset <- tolower(dataset)
+
+  if (!normalized_dataset %in% names(dataset_map)) {
+    stop("Invalid dataset name. Use one of: ", paste(names(dataset_map), collapse = ", "))
+  }
+
   # Create param list with specific parameters for SIHSUS
   param <- list()
-  param$source <- "datasus"
+
+  param$source <- "datasus_sih"
   param$dataset <- paste0("datasus_sih_", dataset_map[normalized_dataset])
   param$raw_data <- raw_data
   param$language <- language
