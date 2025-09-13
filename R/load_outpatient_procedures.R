@@ -122,10 +122,15 @@ load_outpatient_procedures <- function(dataset,
 
   # Auxiliary parameters to be passed to external_download
 
-  param$time_period    <- as.character(time_period)
+  param$time_period    <- time_period
   param$time_period_yy <- substr(param$time_period, 3,4)
 
-  param$states <- if(length(states) == 1 && tolower(states) == "all") "all" else toupper(states)
+  param$states <- if(length(states) == 1 && tolower(states) == "all") {
+    "all"
+  } else {
+      toupper(states)}
+
+
   param$filenames <- NULL
 
   # check if dataset and time_period are valid
@@ -161,13 +166,20 @@ load_outpatient_procedures <- function(dataset,
   file_state <- NULL
 
   if (param$dataset %in% siasus_two_digits) {
-    file_years_yy <- substr(filenames, 5, 6)
     file_state <- filenames %>% substr(3, 4)
+    file_years_yy <- substr(filenames, 5, 6)
 
   } else if (param$dataset %in% siasus_three_digits) {
-    file_years_yy <- substr(filenames, 6, 7)
     file_state <- filenames %>% substr(4, 5)
+    file_years_yy <- substr(filenames, 6, 7)
   }
+
+  # Criar um índice lógico combinando os dois filtros
+  idx <- file_years_yy %in% param$time_period_yy & file_state %in% param$states
+
+  filenames   <- filenames[idx]
+  file_state  <- file_state[idx]
+  file_years_yy <- file_years_yy[idx]
 
   filenames <- filenames[file_years_yy %in% param$time_period_yy]
 
@@ -175,31 +187,39 @@ load_outpatient_procedures <- function(dataset,
     filenames <- filenames[file_state %in% param$states]
   }
 
-  ####################
-  ## Download Files ##
-  ####################
-  dat <- param$filenames %>% purrr::imap(function(file_name, iteration){
-    message(paste0("Downloading file ", file_name, " (", iteration, " of ", length(filenames), ")"))
-    external_download(source=param$source, dataset=param$dataset, file_name=file_name)
-  }) %>% purrr::imap(~dplyr::mutate(.x, file_name=.y)) %>% dplyr::bind_rows()
+  param$filenames <- filenames
+
+  ### Downloading each file in filenames
+  dat <- param$filenames %>%
+    purrr::imap(
+      function(file_name, iteration) {
+        base::message(paste0("Downloading file ", file_name, " (", iteration, " out of ", length(filenames), ")"))
+
+        external_download(
+          source = param$source,
+          dataset = param$dataset,
+          file_name = file_name
+        )
+      }
+    )
+
   names(dat) <- filenames
 
-  ####################
-  ## Return Raw Data ##
-  ####################
-  if(param$raw_data) return(dat)
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows()
 
-  ####################
-  ## Clean Columns ##
-  ####################
-  dat <- dat %>% janitor::clean_names()
-  dat <- dat %>% dplyr::mutate(dplyr::across(tidyselect::where(is.factor), as.character))
-  dat <- dat %>% dplyr::mutate(
-    dplyr::across(tidyselect::where(is.character), ~{
-      x <- enc2utf8(iconv(.x, from="latin1", to="UTF-8"))
-      if(all(grepl("^\\d+$", x)) & !any(grepl("^0", x))) suppressWarnings(as.numeric(x)) else .x
-    })
-  )
+  ## Return Raw Data if requested
+  if (param$raw_data) {
+    return(dat)
+  }
+
+  ######################
+  ## Data Engineering ##
+  ######################
+
+  dat <- dat %>%
+    janitor::clean_names()
 
   ####################
   ## Load Dictionary ##
