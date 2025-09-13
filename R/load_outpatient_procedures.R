@@ -70,15 +70,20 @@ load_outpatient_procedures <- function(dataset,
                                        raw_data = FALSE,
                                        language = "eng") {
 
-  if (!requireNamespace("foreign", quietly = TRUE)) stop("Package 'foreign' required.", call. = FALSE)
-  if (!requireNamespace("RCurl", quietly = TRUE)) stop("Package 'RCurl' required.", call. = FALSE)
+  if (!requireNamespace("foreign", quietly = TRUE)){
+    stop("Package 'foreign' required.", call. = FALSE)
+  }
+
+  if (!requireNamespace("RCurl", quietly = TRUE)){
+    stop("Package 'RCurl' required.", call. = FALSE)
+  }
 
   # Declare global variables to avoid check notes
 
   . <- file_name <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
 
-  # Create param list with specific parameters for SIASUS
+  # Creating a dataset helper
 
   dataset_map <- c(
     "bariatric_surgery_follow_up"     = "ab",
@@ -95,18 +100,25 @@ load_outpatient_procedures <- function(dataset,
     "home_care"                       = "sad"
   )
 
+  # Checking if the entered dataset is correct
+
   normalized_dataset <- tolower(dataset)
-  if (!normalized_dataset %in% names(dataset_map)) stop(
-    "Invalid dataset name. Use one of: ", paste(names(dataset_map), collapse = ", ")
-  )
+
+  if (!normalized_dataset %in% names(dataset_map)){
+    stop(
+      "Invalid dataset name. Use one of: ", paste(names(dataset_map), collapse = ", "))
+  }
+
+  # Create param list with specific parameters for SIASUS
 
   param <- list()
+
   param$source   <- "datasus_siasus"
   param$dataset  <- paste0("datasus_siasus_", dataset_map[normalized_dataset])
   param$origin_dataset <- dataset
   param$raw_data <- raw_data
   param$language <- language
-  param$suffix   <- toupper(dataset_map[normalized_dataset])
+  param$suffix   <- toupper(dataset_map[[normalized_dataset]])
 
   # Auxiliary parameters to be passed to external_download
 
