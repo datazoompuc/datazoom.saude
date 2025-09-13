@@ -224,6 +224,25 @@ load_outpatient_procedures <- function(dataset,
       dplyr::across(tidyselect::where(is.factor), as.character)
     )
 
+  # Formatting data
+
+  dat <- dat %>%
+    dplyr::mutate(
+      ap_mvm = lubridate::ym(as.character(ap_mvm)),
+      ap_cmp = lubridate::ym(as.character(ap_cmp)),
+      ap_dtinic = lubridate::ymd(as.character(ap_dtinic)),
+      ap_dtfim = lubridate::ymd(as.character(ap_dtfim)),
+      ap_dtocor = lubridate::ymd(as.character(ap_dtocor)),
+      ap_dtsolic = lubridate::ymd(as.character(ap_dtsolic)),
+      ap_dtaut = lubridate::ymd(as.character(ap_dtaut)),
+
+      ap_vl_ap = as.numeric(ap_vl_ap),
+      ap_nuidade = as.numeric(ap_nuidade),
+      ap_mndif = as.numeric(ap_mndif),
+      ap_tpapac = as.numeric(ap_tpapac),
+      ap_motsai = as.numeric(ap_motsai)
+    )
+
   tem_zero_a_esquerda <- function(x) {
     # Força o encoding como latin1 → UTF-8 para evitar warnings
     x <- enc2utf8(iconv(x, from = "latin1", to = "UTF-8"))
