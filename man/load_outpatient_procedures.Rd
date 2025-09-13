@@ -14,7 +14,7 @@ load_outpatient_procedures(
 }
 \arguments{
 \item{dataset}{A string indicating the type of 'SIASUS' dataset to download. Accepted values include:
-\code{"ab"}, \code{"ad"}, \code{"am"}, \code{"an"}, \code{"aq"}, \code{"ar"}, \code{"pa"}, \code{"ps"}, \code{"abo"}, \code{"acf"}, \code{"atd"}, \code{"sad"}.
+\code{"bariatric_surgery_follow_up"}, \code{"diverse_reports"}, \code{"medicines"}, \code{"nephrology"}, \code{"chemotherapy"}, \code{"radiotherapy"}, \code{"ambulatory_production"}, \code{"psychosocial"}, \code{"post_bariatric_surgery_follow_up"}, \code{"fistula_confection"}, \code{"dialytic_treatment"}, \code{"home_care"}.
 See the 'Details' section for descriptions.}
 
 \item{time_period}{A numeric value or vector indicating the year(s) of the data to be downloaded.
@@ -39,46 +39,46 @@ It contains records of outpatient medical procedures performed throughout the co
 SIASUS provides multiple datasets that cover different aspects of outpatient care in Brazil:
 
 \describe{
-\item{'ab' – Basic Healthcare}{
+\item{bariatric_surgery_follow_up}{
 General preventive and primary care procedures, such as check-ups and vaccinations.}
 
-\item{'ad' – Dentistry}{
+\item{diverse_reports}{
 Outpatient dental procedures including extractions, restorations, and preventive services.}
 
-\item{'am' – Specialized Ambulatory Services}{
+\item{medicines}{
 Higher complexity procedures including specialized consultations and diagnostic exams.}
 
-\item{'an' – Neonatal Screening}{
+\item{nephrology}{
 Procedures related to early-life screening tests, including metabolic and sensory testing.}
 
-\item{'aq' – Home Care Services}{
+\item{chemotherapy}{
 Outpatient procedures provided through structured home care programs.}
 
-\item{'ar' – Rehabilitation Services}{
+\item{radiotherapy}{
 Procedures focused on physical, cognitive, and functional rehabilitation.}
 
-\item{'pa' – Procedures by Authorization}{
+\item{ambulatory_production}{
 High-cost procedures that require prior authorization, such as cancer treatment or dialysis.}
 
-\item{'ps' – Simplified Procedures}{
+\item{psychosocial}{
 Aggregated or simplified records of outpatient procedures with limited detail.}
 
-\item{'abo' – Oral Health Specialized Services}{
+\item{post_bariatric_surgery_follow_up}{
 Records from specialized dental centers providing oral health care.}
 
-\item{'acf' – Pharmaceutical Care}{
+\item{fistula_confection}{
 Data on medication dispensing and pharmaceutical consultations.}
 
-\item{'atd' – Therapeutic Support Services}{
+\item{dialytic_treatment}{
 Procedures related to therapies such as chemotherapy and radiotherapy.}
 
-\item{'sad' – Home Oxygen Therapy and Specialized Assistance}{
+\item{home_care}{
 Home-based specialized care such as oxygen therapy and related services.}
 }
 }
 \examples{
 \dontrun{
-load_outpatient_procedures(dataset = "ab",
+load_outpatient_procedures(dataset = "ambulatory_production",
                            time_period = 2021,
                            states = c("SP", "RJ"))
 }

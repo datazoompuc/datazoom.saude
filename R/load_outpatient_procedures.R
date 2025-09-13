@@ -17,6 +17,47 @@
 #'
 #' @return A data frame containing outpatient procedure records from SIASUS for the specified period and states.
 #'
+#' @details
+#' SIASUS provides multiple datasets that cover different aspects of outpatient care in Brazil:
+#'
+#' \describe{
+#'   \item{bariatric_surgery_follow_up}{
+#'   General preventive and primary care procedures, such as check-ups and vaccinations.}
+#'
+#'   \item{diverse_reports}{
+#'   Outpatient dental procedures including extractions, restorations, and preventive services.}
+#'
+#'   \item{medicines}{
+#'   Higher complexity procedures including specialized consultations and diagnostic exams.}
+#'
+#'   \item{nephrology}{
+#'   Procedures related to early-life screening tests, including metabolic and sensory testing.}
+#'
+#'   \item{chemotherapy}{
+#'   Outpatient procedures provided through structured home care programs.}
+#'
+#'   \item{radiotherapy}{
+#'   Procedures focused on physical, cognitive, and functional rehabilitation.}
+#'
+#'   \item{ambulatory_production}{
+#'   High-cost procedures that require prior authorization, such as cancer treatment or dialysis.}
+#'
+#'   \item{psychosocial}{
+#'   Aggregated or simplified records of outpatient procedures with limited detail.}
+#'
+#'   \item{post_bariatric_surgery_follow_up}{
+#'   Records from specialized dental centers providing oral health care.}
+#'
+#'   \item{fistula_confection}{
+#'   Data on medication dispensing and pharmaceutical consultations.}
+#'
+#'   \item{dialytic_treatment}{
+#'   Procedures related to therapies such as chemotherapy and radiotherapy.}
+#'
+#'   \item{home_care}{
+#'   Home-based specialized care such as oxygen therapy and related services.}
+#' }
+#'
 #' @examples
 #' \dontrun{
 #' load_outpatient_procedures(dataset = "ambulatory_production",
@@ -29,21 +70,16 @@ load_outpatient_procedures <- function(dataset,
                                        raw_data = FALSE,
                                        language = "eng") {
 
-  ####################
-  ## Check Packages ##
-  ####################
   if (!requireNamespace("foreign", quietly = TRUE)) stop("Package 'foreign' required.", call. = FALSE)
   if (!requireNamespace("RCurl", quietly = TRUE)) stop("Package 'RCurl' required.", call. = FALSE)
 
-  ####################
-  ## Declare Globals ##
-  ####################
+  # Declare global variables to avoid check notes
+
   . <- file_name <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
 
-  ####################
-  ## Normalize Dataset ##
-  ####################
+  # Create param list with specific parameters for SIASUS
+
   dataset_map <- c(
     "bariatric_surgery_follow_up"     = "ab",
     "diverse_reports"                 = "ad",
@@ -65,52 +101,67 @@ load_outpatient_procedures <- function(dataset,
   )
 
   param <- list()
-  param$source   <- "datasus"
+  param$source   <- "datasus_siasus"
   param$dataset  <- paste0("datasus_siasus_", dataset_map[normalized_dataset])
+  param$origin_dataset <- dataset
   param$raw_data <- raw_data
   param$language <- language
   param$suffix   <- toupper(dataset_map[normalized_dataset])
 
-  ####################
-  ## Normalize States and Years ##
-  ####################
+  # Auxiliary parameters to be passed to external_download
+
   param$time_period    <- as.character(time_period)
   param$time_period_yy <- substr(param$time_period, 3,4)
 
   param$states <- if(length(states) == 1 && tolower(states) == "all") "all" else toupper(states)
   param$filenames <- NULL
 
-  ####################
-  ## Check Parameters ##
-  ####################
+  # check if dataset and time_period are valid
+
   check_params(param)
 
-  ####################
-  ## Download File List ##
-  ####################
-  dat_url <- datasets_link()
-  url <- dat_url %>% dplyr::filter(dataset == param$dataset) %>% dplyr::pull(link) %>% as.character()
-  if(length(url) == 0) stop("Dataset URL not found in datasets_link().")
+  #############################
+  ## Downloading SIASUS Data ##
+  #############################
 
-  filenames_all <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
+  dat_url <- datasets_link()
+
+  url <- dat_url %>%
+    dplyr::filter(dataset == param$dataset) %>%
+    dplyr::select(link) %>%
+    base::unlist() %>%
+    as.character()
+
+  filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  ####################
-  ## Filter Files by Year and State ##
-  ####################
-  years_filter  <- sprintf("%02d", as.numeric(param$time_period_yy))
-  states_filter <- if(param$states[1] == "all") unique(substr(filenames_all,3,4)) else param$states
-  dataset_code  <- toupper(dataset_map[normalized_dataset])
+  ### filtering by suffix
 
-  filenames <- filenames_all[
-    stringr::str_starts(filenames_all, dataset_code) &
-      substr(filenames_all, nchar(dataset_code) + 1, nchar(dataset_code) + 2) %in% states_filter &
-      substr(filenames_all, nchar(dataset_code) + 3, nchar(dataset_code) + 4) %in% years_filter
-  ]
+  filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
 
-  if(length(filenames) == 0) stop("No files found for the specified dataset, time period, and states.")
-  param$filenames <- filenames
+  ### filtering by states and years
+  siasus_two_digits <- c("datasus_siasus_ab","datasus_siasus_ad","datasus_siasus_am","datasus_siasus_an",
+                         "datasus_siasus_aq","datasus_siasus_ar","datasus_siasus_pa","datasus_siasus_ps")
+  siasus_three_digits <- c("datasus_siasus_abo","datasus_siasus_acf","datasus_siasus_atd","datasus_siasus_sad")
+
+  file_years_yy <- NULL
+  file_state <- NULL
+
+  if (param$dataset %in% siasus_two_digits) {
+    file_years_yy <- substr(filenames, 5, 6)
+    file_state <- filenames %>% substr(3, 4)
+
+  } else if (param$dataset %in% siasus_three_digits) {
+    file_years_yy <- substr(filenames, 6, 7)
+    file_state <- filenames %>% substr(4, 5)
+  }
+
+  filenames <- filenames[file_years_yy %in% param$time_period_yy]
+
+  if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
+    filenames <- filenames[file_state %in% param$states]
+  }
 
   ####################
   ## Download Files ##
