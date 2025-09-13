@@ -63,6 +63,11 @@
 #' load_outpatient_procedures(dataset = "ambulatory_production",
 #'                            time_period = 2021,
 #'                            states = c("SP", "RJ"))
+#'
+#' load_outpatient_procedures(dataset = "diverse_reports",
+#'                            time_period = 2016,
+#'                            states = "PI",
+#'                            language = "pt")
 #' }
 load_outpatient_procedures <- function(dataset,
                                        time_period,
@@ -82,6 +87,10 @@ load_outpatient_procedures <- function(dataset,
 
   . <- file_name <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
+
+  ap_mvm <- ap_cmp <- ap_dtinic <- ap_dtfim <- ap_dtocor <- NULL
+  ap_dtsolic <- ap_dtaut <- ap_vl_ap <- ap_nuidade <- ap_mndif <- NULL
+  ap_tpapac <- ap_motsai <- NULL
 
   # Map dataset names to SIASUS codes
   dataset_map <- c(
