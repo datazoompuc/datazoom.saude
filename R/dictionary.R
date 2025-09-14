@@ -5,7 +5,9 @@ load_dictionary <- function(dataset) {
   if (stringr::str_detect(dataset, "datasus_sim")) {
     harmonization_dat <- tibble::tribble(
       ~var_code, ~name_pt, ~name_eng, ~label_pt, ~label_eng, ~is_cid_code,
+
       # 22 CID-10 Chapters
+
       "A000-B990", "t_infecciosas", "t_infectious", "Algumas doencas infecciosas e parasitarias", "Certain infectious and parasitic diseases", TRUE,
       "C000-D480", "t_neoplasias", "t_neoplasms", "Neoplasias [tumores]", "Neoplasms", TRUE,
       "D500-D890", "t_sangue", "t_blood", "Doencas do sangue e dos orgaos hematopoeticos e alguns transtornos imunitarios", "Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism", TRUE,
@@ -362,12 +364,6 @@ load_dictionary <- function(dataset) {
       ~var_code, ~name_pt, ~name_eng, ~label_pt, ~label_eng,
 
       # Para todos:
-
-      "code_muni",    "code_muni",         "code_muni",            "Codigo IBGE do municipio",                                          "IBGE Municipality code",
-      "name_muni",    "name_muni",         "name_muni",            "Nome do municipio",                                                "City name",
-      "code_state",   "code_state",        "code_state",           "Codigo do estado",                                                 "State code",
-      "abbrev_state", "abbrev_state",      "abbrev_state",         "Sigla do estado",                                                  "State abbreviation",
-      "legal_amazon", "legal_amazon",      "legal_amazon",         "Amazonia Legal",                                                   "Legal Amazon",
       "ap_mvm",       "data_processamento", "processing_date",      "data de processamento / movimento",                               "processing date",
       "ap_condic",    "sigla_tipo_gestao", "management_type_code",  "sigla do tipo de gestao",                                        "management type code",
       "ap_gestao",    "cod_uf_mun_gestor", "manager_uf_muni_code",  "codigo da UF + municipio de gestao ou UF0000",                   "UF + municipality of management or UF0000",
@@ -582,12 +578,6 @@ load_dictionary <- function(dataset) {
     if(dataset %in% c("datasus_siasus_sad","datasus_siasus_ps")) {
       harmonization_dat <- tibble::tribble(
         ~var_code, ~name_pt, ~name_eng, ~label_pt, ~label_eng,
-
-        "code_muni",    "code_muni",         "code_muni",            "Codigo IBGE do municipio",                                          "IBGE Municipality code",
-        "name_muni",    "name_muni",         "name_muni",            "Nome do municipio",                                                "City name",
-        "code_state",   "code_state",        "code_state",           "Codigo do estado",                                                 "State code",
-        "abbrev_state", "abbrev_state",      "abbrev_state",         "Sigla do estado",                                                  "State abbreviation",
-        "legal_amazon", "legal_amazon",      "legal_amazon",         "Amazonia Legal",                                                   "Legal Amazon",
 
         #SAD
         "cnes_exec",      "codigo_estabelecimento",  "establishment_code",       "codigo do estabelecimento no cnes",      "cnes establishment code",
