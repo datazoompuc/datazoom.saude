@@ -58,6 +58,8 @@
 #'   Home-based specialized care such as oxygen therapy and related services.}
 #' }
 #'
+#' @export
+#'
 #' @examples
 #' \dontrun{
 #' load_outpatient_procedures(dataset = "ambulatory_production",
