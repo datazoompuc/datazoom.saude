@@ -189,6 +189,11 @@ load_mortality <- function(dataset,
 
   names(dat) <- filenames
 
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows() %>%
+    janitor::clean_names()
+
   # Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
@@ -197,11 +202,6 @@ load_mortality <- function(dataset,
   ########################
   ### Data Engineering ###
   ########################
-
-  dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
-    janitor::clean_names()
 
   # Making sure all columns that will be processed exist before processing
   if ("codmunocor" %in% names(dat)) {
@@ -289,7 +289,7 @@ load_mortality <- function(dataset,
         dplyr::group_by(codmunocor, ano, causabas) %>%
         # Counting the number of deaths for each group
         dplyr::summarise(
-          count = n(),
+          count = dplyr::n(),
           .groups = "drop" # Removes the grouping after summarization
         )
     } else {
