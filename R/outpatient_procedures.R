@@ -4,7 +4,7 @@
 #' It contains records of outpatient medical procedures performed throughout the country.
 #'
 #' @param dataset A string indicating the type of 'SIASUS' dataset to download. Accepted values include:
-#' `"bariatric_surgery_follow_up"`, `"diverse_reports"`, `"medicines"`, `"nephrology"`, `"chemotherapy"`, `"radiotherapy"`, `"ambulatory_production"`, `"psychosocial"`, `"post_bariatric_surgery_follow_up"`, `"fistula_confection"`, `"dialytic_treatment"`, `"home_care"`.
+#' `"bariatric_surgery_follow_up"`, `"diverse_reports"`, `"medicines"`, `"nephrology"`, `"ambulatory_production"`, `"psychosocial"`, `"post_bariatric_surgery_follow_up"`, `"fistula_confection"`, `"dialytic_treatment"`, `"home_care"`.
 #' See the 'Details' section for descriptions.
 #'
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
@@ -98,8 +98,6 @@ load_outpatient_procedures <- function(dataset,
     "diverse_reports"                 = "ad",
     "medicines"                       = "am",
     "nephrology"                      = "an",
-    "chemotherapy"                    = "aq",
-    "radiotherapy"                    = "ar",
     "ambulatory_production"           = "pa",
     "psychosocial"                    = "ps",
     "post_bariatric_surgery_follow_up"= "abo",
