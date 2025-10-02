@@ -4,7 +4,7 @@
 #' It contains records of outpatient medical procedures performed throughout the country.
 #'
 #' @param dataset A string indicating the type of 'SIASUS' dataset to download. Accepted values include:
-#' `"bariatric_surgery_follow_up"`, `"diverse_reports"`, `"medicines"`, `"nephrology"`, `"chemotherapy"`, `"radiotherapy"`, `"ambulatory_production"`, `"psychosocial"`, `"post_bariatric_surgery_follow_up"`, `"fistula_confection"`, `"dialytic_treatment"`, `"home_care"`.
+#' `"bariatric_surgery_follow_up"`, `"diverse_reports"`, `"medicines"`, `"nephrology"`, `"ambulatory_production"`, `"psychosocial"`, `"post_bariatric_surgery_follow_up"`, `"fistula_confection"`, `"dialytic_treatment"`, `"home_care"`.
 #' See the 'Details' section for descriptions.
 #'
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
@@ -98,8 +98,6 @@ load_outpatient_procedures <- function(dataset,
     "diverse_reports"                 = "ad",
     "medicines"                       = "am",
     "nephrology"                      = "an",
-    "chemotherapy"                    = "aq",
-    "radiotherapy"                    = "ar",
     "ambulatory_production"           = "pa",
     "psychosocial"                    = "ps",
     "post_bariatric_surgery_follow_up"= "abo",
@@ -135,7 +133,7 @@ load_outpatient_procedures <- function(dataset,
   param$states <- if(length(states) == 1 && tolower(states) == "all") {
     "all"
   } else {
-      toupper(states)}
+    toupper(states)}
 
 
   param$filenames <- NULL
@@ -160,43 +158,34 @@ load_outpatient_procedures <- function(dataset,
     stringr::str_split("\r*\n") %>%
     unlist()
 
-  ### filtering by suffix
-
-  filenames <- filenames[stringr::str_detect(filenames, paste0("^", param$suffix, "[A-Z]{2}\\d{4}\\.dbc$"))]
-
-  ### filtering by states and years
+  ### Filtering by suffix and dataset type
   siasus_two_digits <- c("datasus_siasus_ab","datasus_siasus_ad","datasus_siasus_am","datasus_siasus_an",
                          "datasus_siasus_aq","datasus_siasus_ar","datasus_siasus_pa","datasus_siasus_ps")
   siasus_three_digits <- c("datasus_siasus_abo","datasus_siasus_acf","datasus_siasus_atd","datasus_siasus_sad")
 
-  file_years_yy <- NULL
-  file_state <- NULL
+  filenames <- filenames[stringr::str_starts(filenames, param$suffix)]
 
-  if (param$dataset %in% siasus_two_digits) {
-    file_state <- filenames %>% substr(3, 4)
-    file_years_yy <- substr(filenames, 5, 6)
+  # Extract year and state from filenames
+if (param$dataset %in% siasus_two_digits) {
+  file_state <- substr(filenames, 3, 4)
+  file_years_yy <- substr(filenames, 5, 6)
+} else {
+  file_state <- substr(filenames, 4, 5)
+  file_years_yy <- substr(filenames, 6, 7)
+}
 
-  } else if (param$dataset %in% siasus_three_digits) {
-    file_state <- filenames %>% substr(4, 5)
-    file_years_yy <- substr(filenames, 6, 7)
-  }
+# Filter by year and state in one step
+idx <- file_years_yy %in% param$time_period_yy &
+       (param$states == "all" | file_state %in% param$states)
 
-  # Criar um índice lógico combinando os dois filtros
-  idx <- file_years_yy %in% param$time_period_yy & file_state %in% param$states
+# Apply filter
+filenames <- filenames[idx]
+file_state <- file_state[idx]
+file_years_yy <- file_years_yy[idx]
 
-  filenames   <- filenames[idx]
-  file_state  <- file_state[idx]
-  file_years_yy <- file_years_yy[idx]
+param$filenames <- filenames
 
-  filenames <- filenames[file_years_yy %in% param$time_period_yy]
-
-  if (!is.null(file_state) & paste0(param$states, collapse = "") != "all") {
-    filenames <- filenames[file_state %in% param$states]
-  }
-
-  param$filenames <- filenames
-
-  ### Downloading each file in filenames
+  # Download each file
   dat <- param$filenames %>%
     purrr::imap(
       function(file_name, iteration) {
@@ -212,9 +201,11 @@ load_outpatient_procedures <- function(dataset,
 
   names(dat) <- filenames
 
+  # Combine all dataframes into one
   dat <- dat %>%
     purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
     dplyr::bind_rows()
+
 
   ## Return Raw Data if requested
   if (param$raw_data) {
@@ -226,31 +217,45 @@ load_outpatient_procedures <- function(dataset,
   ######################
 
   dat <- dat %>%
-    janitor::clean_names()
+    dplyr::select(-tidyselect::any_of(c("AP_CNSPCN", "CNS_PAC", "file_name"))) %>%
+    janitor::clean_names() %>%
+    dplyr::mutate(dplyr::across(tidyselect::where(is.factor), as.character))
 
+  # 1. Define lists of potential columns based on their now-confirmed data format
+  potential_ym_cols <- c("ap_cmp", "ap_mvm")
+  potential_ymd_cols <- c("ap_dtinic", "ap_dtfim", "ap_dtocor",
+                          "ap_dtsolic", "ap_dtaut", "ab_dtcirur")
+  potential_numeric_cols <- c("ap_vl_ap", "ap_nuidade", "ap_mndif", "ap_tpapac", "ap_motsai")
+
+  # 2. Identify which of these columns actually exist in the current data
+  cols_to_format_as_ym <- intersect(potential_ym_cols, names(dat))
+  cols_to_format_as_ymd <- intersect(potential_ymd_cols, names(dat))
+  cols_to_format_as_numeric <- intersect(potential_numeric_cols, names(dat))
+
+  # 3. Apply formatting safely, handling invalid values before conversion
   dat <- dat %>%
     dplyr::mutate(
-      dplyr::across(tidyselect::where(is.factor), as.character)
+      # Safely convert Year-Month columns (e.g., "201601")
+      dplyr::across(
+        tidyselect::all_of(cols_to_format_as_ym),
+        # Convert YYYYMM to a date object (first day of the month)
+        ~ lubridate::ym(as.character(.x))
+      ),
+      # Safely convert Year-Month-Day columns, handling invalid entries
+      dplyr::across(
+        tidyselect::all_of(cols_to_format_as_ymd),
+        # First, replace common invalid date strings with NA, then parse
+        ~ lubridate::ymd(
+          dplyr::na_if(as.character(.x), "00000000")
+        )
+      ),
+      # Safely convert numeric columns
+      dplyr::across(
+        tidyselect::all_of(cols_to_format_as_numeric),
+        ~ as.numeric(.x)
+      )
     )
 
-  # Formatting data
-
-  dat <- dat %>%
-    dplyr::mutate(
-      ap_mvm = lubridate::ym(as.character(ap_mvm)),
-      ap_cmp = lubridate::ym(as.character(ap_cmp)),
-      ap_dtinic = lubridate::ymd(as.character(ap_dtinic)),
-      ap_dtfim = lubridate::ymd(as.character(ap_dtfim)),
-      ap_dtocor = lubridate::ymd(as.character(ap_dtocor)),
-      ap_dtsolic = lubridate::ymd(as.character(ap_dtsolic)),
-      ap_dtaut = lubridate::ymd(as.character(ap_dtaut)),
-
-      ap_vl_ap = as.numeric(ap_vl_ap),
-      ap_nuidade = as.numeric(ap_nuidade),
-      ap_mndif = as.numeric(ap_mndif),
-      ap_tpapac = as.numeric(ap_tpapac),
-      ap_motsai = as.numeric(ap_motsai)
-    )
 
   tem_zero_a_esquerda <- function(x) {
     # Força o encoding como latin1 → UTF-8 para evitar warnings
