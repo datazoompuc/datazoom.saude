@@ -16,30 +16,33 @@ knitr::opts_chunk$set(
 
 The `load_outpatient_procedures` function provides access to various **SIASUS (Ambulatory Information System)** datasets, covering a broad spectrum of outpatient services funded by the public health system (SUS). Each row in these datasets corresponds to a procedure performed at an outpatient level, including clinical, administrative, and financial details. The data is organized by type of service or procedure group.
 
+> **Note:** In all SIASUS datasets, variables related to the *Cadastro Nacional de Saúde* (CNS – National Health Card number) are **encrypted** by DATASUS.  
+> This ensures patient confidentiality and means that individual-level CNS identifiers cannot be directly used for linkage across datasets.
+
 ***
 The `load_outpacient_procedures` function offers the following parameters:
 
   1. **dataset**: Specifies the SIASUS dataset to download:
     * SIASUS Ambulatory Care Datasets:
-        * `"siasus_pa"` – Consolidated Outpatient Procedures (Procedimentos Ambulatoriais).
+        * `"ambulatory_production"` – Consolidated Outpatient Procedures (Procedimentos Ambulatoriais).
             Contains records of approved outpatient procedures across all specialties. This is the most comprehensive SIASUS dataset and is often used for general outpatient service analysis.
-        * `"siasus_ab"` – Bariatric Surgery (Cirurgia Bariátrica).
+        * `"bariatric_surgery_follow_up"` – Bariatric Surgery (Cirurgia Bariátrica).
             Records related to bariatric surgery procedures performed in outpatient settings.
-        * `"siasus_abo"` – Post-Bariatric Surgery Follow-Up (Acompanhamento Bariátrico).
+        * `"post_bariatric_surgery_follow_up"` – Post-Bariatric Surgery Follow-Up (Acompanhamento Bariátrico).
             Includes follow-up care for patients who have undergone bariatric surgery, focusing on long-term monitoring and outcomes.
-        * `"siasus_acf"` – Vascular Access for Dialysis (Fístula Arteriovenosa).
+        * `"fistula_confection"` – Vascular Access for Dialysis (Fístula Arteriovenosa).
             Documents procedures involving the creation or maintenance of arteriovenous fistulas, essential for hemodialysis treatment.
-        * `"siasus_ad"` – Miscellaneous Specialized Procedures (Laudos Diversos)
+        * `"diverse_reports"` – Miscellaneous Specialized Procedures (Laudos Diversos)
             Covers less frequent or highly specialized outpatient procedures not classified in other datasets.
-        * `"siasus_am"` – High-Cost Medications (Medicamentos)
+        * `"medicines"` – High-Cost Medications (Medicamentos)
             Tracks the distribution and usage of outpatient medications that are high-cost and part of specific therapeutic programs.
-        * `"siasus_an"` – Nephrology / Dialysis (Nefrologia)
+        * `"nephrology"` – Nephrology / Dialysis (Nefrologia)
             Contains outpatient nephrology procedures, particularly related to the care and monitoring of patients with chronic kidney disease.
-        * `"siasus_atd"` – Dialysis Treatment (Tratamento Dialítico)
+        * `"dialytic_treatment"` – Dialysis Treatment (Tratamento Dialítico)
             Includes outpatient dialysis treatment sessions for patients with kidney failure.
-        * `"siasus_ps"` – RAAS Psychosocial Care (RAAS Psicossocial)
+        * `"psychosocial"` – RAAS Psychosocial Care (RAAS Psicossocial)
             Part of the Specialized Outpatient Mental Health Services. Records care provided through Psychosocial Care Centers (CAPS), including treatments for severe mental disorders and substance use.
-        * `"siasus_sad"` – RAAS Home Care (RAAS Atenção Domiciliar)
+        * `"home_care"` – RAAS Home Care (RAAS Atenção Domiciliar)
             Focuses on outpatient care provided at patients' homes, often involving chronic condition management, palliative care, and multi-professional follow-ups.
 
   2. **time_period**: a numeric value or vector indicating the year(s) of the data to be downloaded.
