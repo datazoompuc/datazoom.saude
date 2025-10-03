@@ -240,6 +240,82 @@ load_oncology_case <- function(time_period,
       ~ dplyr::recode(., !!!var_names_lookup)
     )
 
+  #####################
+  ## Sorting Columns ##
+  #####################
+
+  if (param$language == "pt"){
+
+    dat_mod = dat_mod %>%
+      dplyr::select(
+
+        # Pacient ID
+        sexo_paciente,
+        idade_paciente,
+        data_nascimento,
+        uf_residencia,
+        municipio_residencia,
+
+        # Diagnosis
+        ano_diagnostico,
+        ano_mes_diagnostico,
+        data_diagnostico,
+        categoria_diagnostico,
+        cid_detalhado,
+        estadiamento,
+        cnes_diagnostico,
+        uf_diagnostico,
+        municipio_diagnostico,
+
+        # Treatment
+        ano_tratamento,
+        ano_mes_tratamento,
+        data_tratamento,
+        tipo_tratamento,
+        cnes_tratamento,
+        uf_tratamento,
+        municipio_tratamento,
+        intervalo_tratamento
+
+      )
+
+  } else{
+
+    dat_mod = dat_mod %>%
+      dplyr::select(
+
+        # Pacient ID
+        patient_sex,
+        patient_age,
+        date_birth,
+        state_residence,
+        mun_residence,
+
+        # Diagnosis
+        year_diagnosis,
+        year_month_diagnosis,
+        date_diagnosis,
+        diagnosis_category,
+        detailed_icd,
+        staging,
+        cnes_diagnosis,
+        state_diagnosis,
+        mun_diagnosis,
+
+        # Treatment
+        year_treatment,
+        year_month_treatment,
+        date_treatment,
+        treatment_type,
+        cnes_treatment,
+        state_treatment,
+        mun_treatment,
+        treatment_interval
+
+      )
+
+  }
+
   ####################
   ## Returning Data ##
   ####################
