@@ -51,7 +51,7 @@ library(datazoom.saude)
 data_rd_raw <- load_hospital_admissions(
   dataset = "reduced_aih",
   time_period = 2010,
-  states = "all",
+  states = "AP",
   raw_data = TRUE,
   language = "eng"
 )
@@ -60,7 +60,7 @@ data_rd_raw <- load_hospital_admissions(
 # Descriptions in Portuguese.
 data_er_processed <- load_hospital_admissions(
   dataset = "rejected_aih_error",
-  time_period = 2010:2020,
+  time_period = 2020,
   states = "AM",
   raw_data = FALSE,
   language = "pt"
@@ -70,7 +70,7 @@ data_er_processed <- load_hospital_admissions(
 data_sp_raw <- load_hospital_admissions(
   dataset = "professional_services",
   time_period = 2022,
-  states = C("RJ","SP"),
+  states = c("AP", "DF"),
   raw_data = TRUE,
   language = "eng"
 )
