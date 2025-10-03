@@ -12,7 +12,18 @@
 #'
 #' @examples
 #' \dontrun{
-#' load_oncology_case(time_period = 2023)
+#' # Download processed oncology data for the year 2023.
+# This will return data from the Oncology Panel for all Brazilian states.
+#'oncology_cases_treated <- load_oncology_case(time_period = 2023,
+#'                                             raw_data = FALSE,
+#'                                             language = "eng"
+#'                                             )
+#'
+#' # Download raw oncology data for the years 2021 to 2022 with labels in portuguese.
+#'oncology_cases_raw <- load_oncology_case(time_period = 2021:2022,
+#'                                         raw_data = TRUE,
+#'                                         language = "pt"
+#'                                         )
 #' }
 
 
@@ -139,10 +150,10 @@ load_oncology_case <- function(time_period,
     "tratamento", "3", "radioterapia", "radiotherapy",
     "tratamento", "4", "quimioterapia + radioterapia", "chemotherapy + radiotherapy",
     "tratamento", "5", "sem informacao de tratamento", "no treatment information",
-    "diagnostic", "1", "neoplasias malignas (lei no 12.732/12)", "malignant neoplasms (law no. 12.732/12)",
-    "diagnostic", "2", "neoplasias in situ", "neoplasms in situ",
-    "diagnostic", "3", "neoplasias de comportamento incerto ou desconhecido", "neoplasms of uncertain or unknown behavior",
-    "diagnostic", "4", "C44 e C73", "C44 and C73",
+    "diagnostic", "01", "neoplasias malignas (lei no 12.732/12)", "malignant neoplasms (law no. 12.732/12)",
+    "diagnostic", "02", "neoplasias in situ", "neoplasms in situ",
+    "diagnostic", "03", "neoplasias de comportamento incerto ou desconhecido", "neoplasms of uncertain or unknown behavior",
+    "diagnostic", "04", "C44 e C73", "C44 and C73",
     "sexo", "F", "feminino", "female",
     "sexo", "M", "masculino", "male",
     "estadiam", "0", "0", "0",
