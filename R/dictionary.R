@@ -63,6 +63,7 @@ load_dictionary <- function(dataset) {
 
       # Non-CID variables
 
+      "ano", "ano", "year", "Ano de referência", "Reference year", FALSE,
       "tipobito", "tipobito", "tipobito", "1: obito fetal\n2: obito nao fetal", "1: fetal death\n2: non-fetal death", FALSE,
       "dtobito", "dtobito", "dtobito", "Data do obito", "Date of death", FALSE,
       "horaobito", "horaobito", "horaobito", "Hora do falecimento", "Time of death", FALSE,
@@ -78,7 +79,7 @@ load_dictionary <- function(dataset) {
       "codbaires", "codbaires", "codbaires", "Codigo do Bairro de residencia", "Code of the neighborhood of residence", FALSE,
       "lococor", "lococor", "lococor", "Local de ocorrencia do obito:\n9: Ignorado\n1: Hospital\n2: Outro estab saude\n3: Domicilio\n4: Via Publica\n5: Outros", "Place of occurrence of death:\n9: Unknown\n1: Hospital\n2: Other health facility\n3: Home\n4: Public road\n5: Others", FALSE,
       "codestab", "codestab", "codestab", "Codigo do estabelecimento", "Establishment code", FALSE,
-      "codmunocor", "codmunocor", "codmunocor", "Municipio de ocorrencia do obito, conforme codigos IBGE", "Municipality of occurrence of death, according to IBGE codes", FALSE,
+      "codmunocor", "cod_munic", "munic_code", "Municipio de ocorrencia do obito, conforme codigos IBGE", "Municipality of occurrence of death, according to IBGE codes", FALSE,
       "codbaiocor", "codbaiocor", "codbaiocor", "Codigo do bairro de ocorrencia", "Code of the neighborhood of occurrence", FALSE,
       "idademae", "idademae", "idademae", "Idade da mae em anos", "Mother's age in years", FALSE,
       "escmae", "escmae", "escmae", "Escolaridade, Anos de estudo concluidos:\n1: Nenhuma\n2: 1 a 3 anos\n3: 4 a 7 anos\n4: 8 a 11 anos\n5: 12 e mais\n9: Ignorado", "Education, completed years of study:\n1: None\n2: 1 to 3 years\n3: 4 to 7 years\n4: 8 to 11 years\n5: 12 or more\n9: Unknown", FALSE,
@@ -101,7 +102,7 @@ load_dictionary <- function(dataset) {
       "linhac", "linhac", "linhac", "Linha C do atestado, conforme a Classificacao Internacional de Doenca (CID), 10a. Revisao", "Line C of the certificate, according to the International Classification of Diseases (ICD), 10th Revision", FALSE,
       "linhad", "linhad", "linhad", "Linha D do atestado, conforme a Classificacao Internacional de Doenca (CID), 10a. Revisao", "Line D of the certificate, according to the International Classification of Diseases (ICD), 10th Revision", FALSE,
       "linhaii", "linhaii", "linhaii", "Linha II do atestado, conforme a Classificacao Internacional de Doenca (CID), 10a. Revisao", "Line II of the certificate, according to the International Classification of Diseases (ICD), 10th Revision", FALSE,
-      "causabas", "causabas", "causabas", "Causa basica, conforme a Classificacao Internacional de Doenca (CID), 10a. Revisao", "Underlying cause, according to the International Classification of Diseases (ICD), 10th Revision", FALSE,
+      "causabas", "causa_de_morte", "cause_of_death", "Causa basica, conforme a Classificacao Internacional de Doenca (CID), 10a. Revisao", "Underlying cause, according to the International Classification of Diseases (ICD), 10th Revision", FALSE,
       "dtatestado", "dtatestado", "dtatestado", "Data do Atestado", "Date of the certificate", FALSE,
       "circobito", "circobito", "circobito", "Indica o tipo de acidente, se cabivel:\n9: Ignorado\n1: Acidente\n2: Suicidio\n3: Homicidio\n4: Outros", "Indicates the type of accident, if applicable:\n9: Unknown\n1: Accident\n2: Suicide\n3: Homicide\n4: Others", FALSE,
       "acidtrab", "acidtrab", "acidtrab", "Indica se foi acidente de trabalho, conforme a tabela:\n9: Ignorado\n1: Sim\n2: Nao", "Indicates whether it was a work-related accident, according to table:\n9: Unknown\n1: Yes\n2: No", FALSE,
@@ -114,7 +115,8 @@ load_dictionary <- function(dataset) {
       "fonteinv", "fonteinv", "fonteinv", "Fonte de investigacao:\n1 Comite de Morte Materna e/ou Infantil\n2 Visita domiciliar / Entrevista familia\n3 Estab Saude / Prontuario\n4 Relacion com outros bancos de dados\n5 S V O\n6 I M L\n7 Outra fonte\n8 Multiplas fontes\n9 Ignorado", "Source of investigation:\n1 Maternal and/or Child Death Committee\n2 Home visit / Family interview\n3 Health facility / Medical records\n4 Link with other databases\n5 Forensic Service (SVO)\n6 Forensic Institute (IML)\n7 Other source\n8 Multiple sources\n9 Unknown", FALSE,
       "dtrecebim", "dtrecebim", "dtrecebim", "Data de recebimento no nivel central, data da ultima atualizacao do registro", "Date received at the central level, date of last update of the record", FALSE,
       "ufinform", "ufinform", "ufinform", "Codigo da UF que informou o registro", "Code of the state (UF) that reported the record", FALSE,
-      "cb_pre", "cb_pre", "cb_pre", "Causa selecionada sem re-selecao (novo SCB)", "Cause selected without reselection (new SCB)", FALSE
+      "cb_pre", "cb_pre", "cb_pre", "Causa selecionada sem re-selecao (novo SCB)", "Cause selected without reselection (new SCB)", FALSE,
+      "num_de_mortes", "num_de_mortes", "num_of_deaths", "Número total de mortes", "Total number of deaths", FALSE
     )
   }
 
