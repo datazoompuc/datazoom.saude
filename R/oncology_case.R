@@ -60,10 +60,29 @@ load_oncology_case <- function(time_period,
     stop("the language must be 'eng' or 'pt'. By default it is 'eng'.")
   }
 
-  # Declare global variables to avoid check notes
+  # Binding global variables to avoid check notes
   . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
   dt_diag <- dt_trat <- dt_nasc <- mun_diag <- NULL
+  sexo_paciente <- idade_paciente <- data_nascimento <-  NULL
+  uf_residencia <- municipio_residencia <-  NULL
+  ano_diagnostico <- ano_mes_diagnostico <- data_diagnostico <-  NULL
+  categoria_diagnostico <- cid_detalhado <- estadiamento <-  NULL
+  cnes_diagnostico <- uf_diagnostico <- municipio_diagnostico <-  NULL
+  ano_tratamento <- ano_mes_tratamento <- data_tratamento <-  NULL
+  tipo_tratamento <- cnes_tratamento <- uf_tratamento <-  NULL
+  municipio_tratamento <- intervalo_tratamento <-  NULL
+  patient_sex <- patient_age <- date_birth <-  NULL
+  state_residence <- mun_residence <-  NULL
+  year_diagnosis <- year_month_diagnosis <- date_diagnosis <-  NULL
+  diagnosis_category <- detailed_icd <- staging <-  NULL
+  cnes_diagnosis <- state_diagnosis <- mun_diagnosis <-  NULL
+  year_treatment <- year_month_treatment <- date_treatment <-  NULL
+  treatment_type <- cnes_treatment <- state_treatment <-  NULL
+  mun_treatment <- treatment_interval <- NULL
+
+
+
 
   # Create param list with specific parameters for Oncology Panel
   param <- list()
