@@ -35,12 +35,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Load beds data for RJ and SP in 2020 and 2021
-#' beds <- load_hospital_beds(time_period = c("2020", "2021"),
-#'                            states = c("RJ", "SP"))
+#' # Load beds data for RO and AM in 2020
+#' beds <- load_hospital_beds(time_period = "2020",
+#'                            states = c("RO", "AM"),
+#'                            raw_data = FALSE,
+#'                            language = "eng")
 #'
-#' # Load raw data for all states in 2019
-#' raw <- load_hospital_beds(time_period = "2019",
+#' # Load raw data for AC in 2019 and 2020
+#' raw <- load_hospital_beds(time_period = c("2019", "2020"),
 #'                           states = "AC",
 #'                           raw_data = TRUE)
 #' }
@@ -120,11 +122,22 @@ load_hospital_beds <- function(time_period,
   })
   names(dat) <- filenames
 
-  dat <- purrr::imap(dat, ~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows()
+  dat <- purrr::imap(dat, ~ {
+    tibble::as_tibble(.x) %>%
+      dplyr::mutate(file_name = .y)
+  }) %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(
+      dplyr::across(where(is.factor), as.character),
+      dplyr::across(where(is.character),
+                    ~ iconv(.x, from = "latin1", to = "UTF-8", sub = ""))
+    )
+
 
   # Return raw data if requested
-  if (raw_data) return(dat)
+  if (raw_data) {
+    return(dat)
+  }
 
   ######################
   ## Data Engineering ##
