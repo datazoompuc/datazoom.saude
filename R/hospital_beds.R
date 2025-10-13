@@ -151,6 +151,19 @@ load_hospital_beds <- function(time_period,
       month = as.numeric(substr(file_name, 7, 8))
     )
 
+  if ("regsaude" %in% names(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        regsaude = stringr::str_trim(regsaude),
+        regsaude = dplyr::case_when(
+          is.na(regsaude) | regsaude == "" ~ NA_character_,
+          stringr::str_detect(regsaude, "(?i)AP|,|\\.") ~ regsaude,
+          stringr::str_detect(regsaude, "^\\d+$") ~ stringr::str_pad(regsaude, width = 4, pad = "0"),
+          TRUE ~ regsaude
+        )
+      )
+  }
+
   ###############
   ## Labelling ##
   ###############
