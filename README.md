@@ -97,35 +97,37 @@ The `load_mortality` function offers the following parameters:
         pregnancy/childbirth, detailing obstetric causes. Important for
         women’s health.
 
-2.  **raw_data**: there are two options:
-
-    - `TRUE`: if you want the data as it is originally.
-    - `FALSE`: if you want the treated version of the data. Only
-      effective for SIM-DO and subsets, SIH, and CNES-LT.
-
-3.  **time_period**: a numeric value or vector indicating the year(s) of
+2.  **time_period**: a numeric value or vector indicating the year(s) of
     the data to be downloaded. For example, `2020` or `2015:2020`.
 
-4.  **states**: a string or vector of strings indicating the Brazilian
+3.  **states**: a string or vector of strings indicating the Brazilian
     state(s) for which the data should be downloaded. Use `"all"` to
     download data for the entire country. For specific states (valid
     only for the `general` dataset), use abbreviations like `"SP"` (São
     Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
 
-5.  **language**: you can choose between Portuguese `("pt")` and English
-    `("eng")`.
+4.  **raw_data**: Logical, default is `FALSE`.
 
-6.  **keep_all**: A boolean choosing whether to aggregate the data by
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
+
+5.  **keep_all**: A boolean choosing whether to aggregate the data by
     municipality, losing individual-level variables (`FALSE`) or to keep
     all original variables (`TRUE`). Only applies when `raw_data` is
     `FALSE`.
+
+6.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
 
 **Examples:**
 
 ``` r
 library(datazoom.saude)
 
-# Download raw data for the year 2022 in the state of RJ for general mortality.
+# Download raw data for general mortality - State of Rio de Janeiro, 2022.
 raw_data_general_rj <- load_mortality(
   dataset = "general",
   time_period = 2022,
@@ -133,32 +135,53 @@ raw_data_general_rj <- load_mortality(
   raw_data = TRUE
 )
 
-# Download treated data with the number of deaths by cause in RJ, aggregated by municipality and year.
+# Download treated data for general mortality - States of Rio and São Paulo, 2022.
 trated_data_general_rj <- load_mortality(
   dataset = "general",
   time_period = 2022,
-  states = "RJ",
+  states = c("RJ", "SP"),
   raw_data = FALSE,
   keep_all = FALSE # Explicitly stating default behavior
 )
 
-# Download treated data for Maternal Deaths (`maternal`) for 2020,
-# for the entire country, with descriptions in Portuguese.
+# Download treated data for Maternal Deaths - Brazil, 2020 to 2022.
+# Descriptions in Portuguese.
 # Note: `maternal` does not provide separate files by state.
 data_maternal_pt <- load_mortality(
   dataset = "maternal",
-  time_period = 2020,
+  time_period = 2020:2022,
+  states = "all",
   raw_data = FALSE,
   language = "pt"
 )
 
-# Download treated data for Infant Deaths (`infant`) for 2017,
-# for all states, keeping all individual variables (not aggregated).
+# Download treated data for Infant Deaths - Brazil, 2017.
+# Keeping all individual variables (not aggregated).
 data_infant_full <- load_mortality(
   dataset = "infant",
   time_period = 2017,
+  states = "all",
   raw_data = FALSE,
-  keep_all = TRUE
+  keep_all = TRUE,
+  language = "eng"
+)
+  
+# Download treated data for Fetal Deaths - State of Amazonas, 2000.
+data_infant_full <- load_mortality(
+  dataset = "fetal",
+  time_period = 2000,
+  states = "AM", 
+  raw_data = FALSE,
+  language = "eng"
+)
+
+# Download treated data for External Causes Deaths - State of Acre, 2022.
+data_infant_full <- load_mortality(
+  dataset = "fetal",
+  time_period = 2022,
+  states = "AC", 
+  raw_data = FALSE,
+  language = "eng"
 )
 ```
 
@@ -271,55 +294,67 @@ The `load_hospital_admissions` function offers the following parameters:
         error code indicating the reason (e.g., invalid patient data,
         procedure incompatibilities).
 
-2.  **raw_data**: there are two options:
+2.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
 
-    - `TRUE`: If you want the original DATASUS files in their segmented
-      form.
-    - `FALSE`: if you want the treated version of the data.
+3.  **states**: a string or vector of strings indicating the Brazilian
+    state(s) for which the data should be downloaded. Use `"all"` to
+    download data for the entire country. For specific states (valid
+    only for the `general` dataset), use abbreviations like `"SP"` (São
+    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
 
-3.  **time_period**: Specifies the years for which the data will be
-    downloaded.
+4.  **raw_data**: Logical, default is `FALSE`.
 
-4.  **states**: A vector of states by which to filter the data.
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
 
-5.  **language**: You can choose between Portuguese `("pt")` and English
-    `("eng")` for variable descriptions when `raw_data = FALSE`.
+5.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
 
 **Examples:**
 
 ``` r
 library(datazoom.saude)
 
-# Download raw data for Reduced AIHs (AIHs Reduzida) – State of Amazonas, 2010.
+# Download raw data for Reduced AIHs (AIHs Reduzida) – All country, 2010.
 data_rd_raw <- load_hospital_admissions(
   dataset = "reduced_aih",
   time_period = 2010,
-  states = "AM",
-  raw_data = TRUE
+  states = "all",
+  raw_data = TRUE,
+  language = "eng"
 )
 
-# Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010.
+# Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010 to 2020.
+# Descriptions in Portuguese.
 data_er_processed <- load_hospital_admissions(
   dataset = "rejected_aih_error",
-  time_period = 2010,
+  time_period = 2010:2020,
   states = "AM",
-  raw_data = FALSE
+  raw_data = FALSE,
+  language = "pt"
 )
 
-# Download raw data for Professional Services – State of Acre, 2010.
+# Download raw data for Professional Services – States of Rio and São Paulo, 2022.
 data_sp_raw <- load_hospital_admissions(
   dataset = "professional_services",
-  time_period = 2010,
-  states = "AC",
-  raw_data = TRUE
+  time_period = 2022,
+  states = C("RJ","SP"),
+  raw_data = TRUE,
+  language = "eng"
 )
 
-# Download processed data for Professional Services – Federal District, 2010.
+# Download processed data for Professional Services – Federal District, 2020 to 2022.
+# Descriptions in Portuguese.
 data_sp_processed <- load_hospital_admissions(
   dataset = "professional_services",
-  time_period = 2010,
+  time_period = 2020:2022,
   states = "DF",
-  raw_data = FALSE
+  raw_data = FALSE,
+  language = "pt"
 )
 ```
 
@@ -334,44 +369,59 @@ of available hospital beds in health establishments across Brazil.
 
 The `load_hospital_beds` function offers the following parameters:
 
-1.  **raw_data**: there are two options:
+1.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
 
-    - `TRUE`: If you want the original DATASUS files in their segmented
-      form.
-    - `FALSE`: if you want the treated version of the data.
+2.  **states**: a string or vector of strings indicating the Brazilian
+    state(s) for which the data should be downloaded. Use `"all"` to
+    download data for the entire country. For specific states (valid
+    only for the `general` dataset), use abbreviations like `"SP"` (São
+    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
 
-2.  **time_period**: Specifies the years for which the data will be
-    downloaded.
+3.  **raw_data**: Logical, default is `FALSE`.
 
-3.  **states**: A vector of states by which to filter the data.
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
 
-4.  **language**: You can choose between Portuguese `("pt")` and English
-    `("eng")` for variable descriptions when `raw_data = FALSE`.
+4.  **keep_all**: A boolean choosing whether to aggregate the data by
+    municipality, losing individual-level variables (`FALSE`) or to keep
+    all original variables (`TRUE`). Only applies when `raw_data` is
+    `FALSE`.
+
+5.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
 
 **Examples:**
 
 ``` r
 library(datazoom.saude)
 
-# Download treated data with the number of available beds in Amazonas (AM) and Pará (PA).
+# Download treated data - States of Amazonas and Pará, 2010.
 data_beds_full <- load_hospital_beds(
   time_period = 2010,
   states = c("AM", "PA"),
-  raw_data = FALSE
+  raw_data = FALSE,
+  language = "eng"
 )
 
-# Download treated data with the number of available beds in whole country.
+# Download treated data - Brrazil, 2010 to 2022.
+# Descriptions in Portuguese.
 data_beds_full <- load_hospital_beds(
-  time_period = 2010,
+  time_period = 2010:2022,
   states = "all",
-  raw_data = FALSE
+  raw_data = FALSE,
+  language = "pt"
 )
 
-# Download raw data for the number of hospital beds in 2015 for Rio de Janeiro.
+# Download raw data - States of Rio de Janeiro, 2015.
 data_beds_raw <- load_hospital_beds(
   time_period = 2015,
   states = "RJ",
-  raw_data = TRUE
+  raw_data = TRUE,
+  language = "eng"
 )
 ```
 
@@ -385,6 +435,13 @@ at an outpatient level, including clinical, administrative, and
 financial details. The data is organized by type of service or procedure
 group.
 
+> **Note:** In all SIASUS datasets, variables related to the *Cadastro
+> Nacional de Saúde* (CNS – National Health Card number) are
+> **encrypted** by DATASUS.  
+> This ensures patient confidentiality and means that individual-level
+> CNS identifiers cannot be directly used for linkage across datasets.
+> Because of this, this variable is removed when `raw_data = FALSE`.
+
 ------------------------------------------------------------------------
 
 The `load_outpacient_procedures` function offers the following
@@ -393,57 +450,62 @@ parameters:
 1.  **dataset**: Specifies the SIASUS dataset to download: \* SIASUS
     Ambulatory Care Datasets:
 
-    - `"siasus_pa"` – Consolidated Outpatient Procedures (Procedimentos
-      Ambulatoriais). Contains records of approved outpatient procedures
-      across all specialties. This is the most comprehensive SIASUS
-      dataset and is often used for general outpatient service analysis.
-    - `"siasus_ab"` – Bariatric Surgery (Cirurgia Bariátrica). Records
-      related to bariatric surgery procedures performed in outpatient
-      settings.
-    - `"siasus_abo"` – Post-Bariatric Surgery Follow-Up (Acompanhamento
-      Bariátrico). Includes follow-up care for patients who have
-      undergone bariatric surgery, focusing on long-term monitoring and
-      outcomes.
-    - `"siasus_acf"` – Vascular Access for Dialysis (Fístula
+    - `"ambulatory_production"` – Consolidated Outpatient Procedures
+      (Procedimentos Ambulatoriais). Contains records of approved
+      outpatient procedures across all specialties. This is the most
+      comprehensive SIASUS dataset and is often used for general
+      outpatient service analysis.
+    - `"bariatric_surgery"` – Pre-Bariatric Surgery (Pré Cirurgia
+      Bariátrica). Records related to bariatric surgery procedures
+      performed in outpatient settings.
+    - `"bariatric_surgery_follow_up"` – Bariatric Surgery Follow-Up
+      (Acompanhamento Bariátrico). Includes follow-up care for patients
+      who have undergone bariatric surgery, focusing on long-term
+      monitoring and outcomes.
+    - `"fistula_confection"` – Vascular Access for Dialysis (Fístula
       Arteriovenosa). Documents procedures involving the creation or
       maintenance of arteriovenous fistulas, essential for hemodialysis
       treatment.
-    - `"siasus_ad"` – Miscellaneous Specialized Procedures (Laudos
+    - `"diverse_reports"` – Miscellaneous Specialized Procedures (Laudos
       Diversos) Covers less frequent or highly specialized outpatient
       procedures not classified in other datasets.
-    - `"siasus_am"` – High-Cost Medications (Medicamentos) Tracks the
+    - `"medicines"` – High-Cost Medications (Medicamentos) Tracks the
       distribution and usage of outpatient medications that are
       high-cost and part of specific therapeutic programs.
-    - `"siasus_an"` – Nephrology / Dialysis (Nefrologia) Contains
+    - `"nephrology"` – Nephrology / Dialysis (Nefrologia) Contains
       outpatient nephrology procedures, particularly related to the care
       and monitoring of patients with chronic kidney disease.
-    - `"siasus_atd"` – Dialysis Treatment (Tratamento Dialítico)
+    - `"dialytic_treatment"` – Dialysis Treatment (Tratamento Dialítico)
       Includes outpatient dialysis treatment sessions for patients with
       kidney failure.
-    - `"siasus_ps"` – RAAS Psychosocial Care (RAAS Psicossocial) Part of
-      the Specialized Outpatient Mental Health Services. Records care
+    - `"psychosocial"` – RAAS Psychosocial Care (RAAS Psicossocial) Part
+      of the Specialized Outpatient Mental Health Services. Records care
       provided through Psychosocial Care Centers (CAPS), including
       treatments for severe mental disorders and substance use.
-    - `"siasus_sad"` – RAAS Home Care (RAAS Atenção Domiciliar) Focuses
+    - `"home_care"` – RAAS Home Care (RAAS Atenção Domiciliar) Focuses
       on outpatient care provided at patients’ homes, often involving
       chronic condition management, palliative care, and
       multi-professional follow-ups.
 
-2.  **raw_data**: there are two options:
+2.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
 
-    - `TRUE`: if you want the data as it is originally.
-    - `FALSE`: if you want the treated version of the data. Only
-      effective for SIM-DO and subsets, SIH, and CNES-LT.
+3.  **states**: a string or vector of strings indicating the Brazilian
+    state(s) for which the data should be downloaded. Use `"all"` to
+    download data for the entire country. For specific states (valid
+    only for the `general` dataset), use abbreviations like `"SP"` (São
+    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
 
-3.  **time_period**: picks the years for which the data will be
-    downloaded
+4.  **raw_data**: Logical, default is `FALSE`.
 
-4.  **states**: a vector of states by which to filter the data. Only
-    works for datasets whose data is provided in separate files by
-    state.
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
 
-5.  **language**: you can choose between Portuguese `("pt")` and English
-    `("eng")`
+5.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
 
 **Examples:**
 
@@ -451,38 +513,40 @@ parameters:
 library(datazoom.saude)
 
 # Download processed data for Post-Bariatric Surgery Follow-Up (ABO) – State of Acre, 2012.
-teste_abo <- load_outpatient_procedures(
-  dataset = "siasus_abo",
+bariatric_surgery_follow_up <- load_outpatient_procedures(
+  dataset = "bariatric_surgery_follow_up",
   time_period = 2012,
+  states = "AC",
   raw_data = FALSE,
-  language = "eng",
-  states = "AC"
+  language = "eng"
 )
 
 # Download processed data for Consolidated Outpatient Procedures (PA) – State of Acre, 2022.
-teste_pa <- load_outpatient_procedures(
-  dataset = "siasus_pa",
+# Descriptions in Portuguese.
+ambulatory_production <- load_outpatient_procedures(
+  dataset = "ambulatory_production",
   time_period = 2022,
+  states = "AC",
   raw_data = FALSE,
-  language = "eng",
-  states = "AC"
+  language = "pt"
 )
 
-# Download raw data for High-Cost Medications (AM) for the year 2021 in Pernambuco (PE).
-teste_am_raw <- load_outpatient_procedures(
-  dataset = "siasus_am",
+# Download raw data for High-Cost Medications (AM) - State of Pernambuco, 2021.
+medicines_raw <- load_outpatient_procedures(
+  dataset = "medicines",
   time_period = 2021,
+  states = "PE",
   raw_data = TRUE,
-  states = "PE"
+  language = "eng"
 )
 
-# Download processed data for Psychosocial Care (PS) for the year 2022 in Acre (AC).
-teste_ps <- load_outpatient_procedures(
-  dataset = "siasus_ps",
-  time_period = 2022,
+# Download processed data for Psychosocial Care (PS) - State of Acre, 2022 to 2023.
+psychosocial <- load_outpatient_procedures(
+  dataset = "psychosocial",
+  time_period = 2022:2023,
+  states = "AC",
   raw_data = FALSE,
-  language = "eng",
-  states = "AC"
+  language = "eng"
 )
 ```
 
@@ -497,17 +561,19 @@ cancer cases in Brazil.
 
 The `load_oncology_case` function offers the following parameters:
 
-1.  **raw_data**: there are two options:
+1.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
 
-    - `TRUE`: If you want the original DATASUS files in their segmented
-      form.
-    - `FALSE`: if you want the treated version of the data.
+2.  **raw_data**: Logical, default is `FALSE`.
 
-2.  **time_period**: Specifies the years for which the data will be
-    downloaded.
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
 
-3.  **language**: You can choose between Portuguese `("pt")` and English
-    `("eng")` for variable descriptions when `raw_data = FALSE`.
+3.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
 
 **Examples:**
 

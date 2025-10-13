@@ -4,7 +4,7 @@
 #' It contains records of outpatient medical procedures performed throughout the country.
 #'
 #' @param dataset A string indicating the type of 'SIASUS' dataset to download. Accepted values include:
-#' `"bariatric_surgery_follow_up"`, `"diverse_reports"`, `"medicines"`, `"nephrology"`, `"ambulatory_production"`, `"psychosocial"`, `"post_bariatric_surgery_follow_up"`, `"fistula_confection"`, `"dialytic_treatment"`, `"home_care"`.
+#' `"bariatric_surgery"`, `"diverse_reports"`, `"medicines"`, `"nephrology"`, `"ambulatory_production"`, `"psychosocial"`, `"bariatric_surgery_follow_up"`, `"fistula_confection"`, `"dialytic_treatment"`, `"home_care"`.
 #' See the 'Details' section for descriptions.
 #'
 #' @param time_period A numeric value or vector indicating the year(s) of the data to be downloaded.
@@ -94,13 +94,13 @@ load_outpatient_procedures <- function(dataset,
 
   # Map dataset names to SIASUS codes
   dataset_map <- c(
-    "bariatric_surgery_follow_up"     = "ab",
+    "bariatric_surgery"               = "ab",
     "diverse_reports"                 = "ad",
     "medicines"                       = "am",
     "nephrology"                      = "an",
     "ambulatory_production"           = "pa",
     "psychosocial"                    = "ps",
-    "post_bariatric_surgery_follow_up"= "abo",
+    "bariatric_surgery_follow_up"     = "abo",
     "fistula_confection"              = "acf",
     "dialytic_treatment"              = "atd",
     "home_care"                       = "sad"
@@ -184,6 +184,17 @@ file_state <- file_state[idx]
 file_years_yy <- file_years_yy[idx]
 
 param$filenames <- filenames
+
+if (length(param$filenames) == 0) {
+  msg <- sprintf(
+    "No data files found for the '%s' dataset for the year(s) %s and state(s) %s.",
+    dataset,
+    paste(param$time_period, collapse = ", "),
+    paste(param$states, collapse = ", ")
+  )
+  stop(msg)
+  return(tibble::tibble())
+}
 
   # Download each file
   dat <- param$filenames %>%
