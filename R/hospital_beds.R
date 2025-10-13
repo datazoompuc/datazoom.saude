@@ -164,6 +164,7 @@ load_hospital_beds <- function(time_period,
       )
   }
 
+
   ###############
   ## Labelling ##
   ###############
@@ -187,6 +188,78 @@ load_hospital_beds <- function(time_period,
   # Harmonize variable names
   dat <- dat %>% tibble::as_tibble() %>%
     dplyr::rename_with(~ dplyr::recode(., !!!var_names))
+
+  #Set order
+
+  if (param$language == "pt") {
+    dat <- dat %>%
+      dplyr::select(dplyr::any_of(
+        c(
+          "competencia",
+          "regsaude",
+          "micr_reg",
+          "distrsan",
+          "distradm",
+          "codufmun",
+          "cnes",
+          "nat_jur",
+          "cpf_cnpj",
+          "cnpj_man",
+          "tpgestao",
+          "pf_pj",
+          "niv_dep",
+          "esfera_a",
+          "natureza",
+          "atividad",
+          "retencao",
+          "clientel",
+          "tp_unid",
+          "turno_atendimento",
+          "niv_hier",
+          "terceiro",
+          "tipo_leito",
+          "cod_leito",
+          "n_leitos_existentes",
+          "n_leitos_sus",
+          "n_leitos_nao_sus",
+          "qt_contr"
+        )
+      ),-dplyr::any_of("file_name"))
+  } else{
+    dat <- dat %>%
+      dplyr::select(dplyr::any_of(
+        c(
+          "competence",
+          "regsaude",
+          "micr_reg",
+          "distrsan",
+          "distradm",
+          "codufmun",
+          "cnes",
+          "nat_jur",
+          "cpf_cnpj",
+          "cnpj_man",
+          "tpgestao",
+          "pf_pj",
+          "niv_dep",
+          "esfera_a",
+          "natureza",
+          "atividad",
+          "retencao",
+          "clientel",
+          "tp_unid",
+          "turno_atendimento",
+          "niv_hier",
+          "terceito",
+          "tipo_leito",
+          "cod_leito",
+          "n_existing_beds",
+          "n_beds_sus",
+          "n_beds_not_sus",
+          "qt_contr"
+        )
+      ),-dplyr::any_of("file_name"))
+  }
 
   return(dat)
 }
