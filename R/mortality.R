@@ -189,6 +189,11 @@ load_mortality <- function(dataset,
 
   names(dat) <- filenames
 
+  dat <- dat %>%
+    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
+    dplyr::bind_rows() %>%
+    janitor::clean_names()
+
   # Return Raw Data if requested
   if (param$raw_data) {
     return(dat)
@@ -197,11 +202,6 @@ load_mortality <- function(dataset,
   ########################
   ### Data Engineering ###
   ########################
-
-  dat <- dat %>%
-    purrr::imap(~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows() %>%
-    janitor::clean_names()
 
   # Making sure all columns that will be processed exist before processing
   if ("codmunocor" %in% names(dat)) {
@@ -255,7 +255,7 @@ load_mortality <- function(dataset,
   }
 
   # Renaming columns dynamically based on the chosen language
-  dic <- load_dictionary(param$dataset)
+  dic <- load_dictionary("datasus_sim")
 
   if (param$language == "pt") {
     names_map <- setNames(dic$name_pt, dic$var_code)
@@ -280,6 +280,12 @@ load_mortality <- function(dataset,
     # Adding a check to ensure that the 'code_muni_6' and 'causabas' columns exist
     if (("codmunocor" %in% names(dat)) && ("causabas" %in% names(dat))) {
 
+      rename_vars <- if (language == "pt") {
+        list(cod_munic = "codmunocor", causa_de_morte = "causabas", ano = "ano", num_de_mortes = "num_de_mortes")
+      } else {
+        list(munic_code = "codmunocor", cause_of_death = "causabas", year = "ano", num_of_deaths = "num_de_mortes")
+      }
+
       # Adding a new 'ano' column to group by
       dat <- dat %>%
         dplyr::mutate(
@@ -289,9 +295,10 @@ load_mortality <- function(dataset,
         dplyr::group_by(codmunocor, ano, causabas) %>%
         # Counting the number of deaths for each group
         dplyr::summarise(
-          count = n(),
+          num_de_mortes = dplyr::n(),
           .groups = "drop" # Removes the grouping after summarization
-        )
+        ) %>%
+        rename(!!!rename_vars)
     } else {
       # If the required columns are not found, return a warning message and the non-aggregated data
       message("Warning: Columns 'codmunocor' or 'causabas' not found for aggregation. Returning non-aggregated data.")
@@ -309,12 +316,6 @@ load_mortality <- function(dataset,
     labels_map <- setNames(dic$label_eng, dic$name_eng)
   }
   labels_map <- labels_map[!is.na(labels_map)]
-
-  # Add new labels for aggregated columns
-  if (!param$keep_all) {
-    labels_map["count"] <- if (param$language == "pt") "Numero de obitos" else "Number of deaths"
-    labels_map["ano"] <- if (param$language == "pt") "Ano" else "Year"
-  }
 
   # Apply labels to the dataset
   current_names <- names(dat)
