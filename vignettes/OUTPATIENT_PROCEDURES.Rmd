@@ -27,9 +27,9 @@ The `load_outpacient_procedures` function offers the following parameters:
     * SIASUS Ambulatory Care Datasets:
         * `"ambulatory_production"` – Consolidated Outpatient Procedures (Procedimentos Ambulatoriais).
             Contains records of approved outpatient procedures across all specialties. This is the most comprehensive SIASUS dataset and is often used for general outpatient service analysis.
-        * `"bariatric_surgery_follow_up"` – Bariatric Surgery (Cirurgia Bariátrica).
+        * `"bariatric_surgery"` – Pre-Bariatric Surgery (Pré Cirurgia Bariátrica).
             Records related to bariatric surgery procedures performed in outpatient settings.
-        * `"post_bariatric_surgery_follow_up"` – Post-Bariatric Surgery Follow-Up (Acompanhamento Bariátrico).
+        * `"bariatric_surgery_follow_up"` – Bariatric Surgery Follow-Up (Acompanhamento Bariátrico).
             Includes follow-up care for patients who have undergone bariatric surgery, focusing on long-term monitoring and outcomes.
         * `"fistula_confection"` – Vascular Access for Dialysis (Fístula Arteriovenosa).
             Documents procedures involving the creation or maintenance of arteriovenous fistulas, essential for hemodialysis treatment.
@@ -64,8 +64,8 @@ Use `"all"` to download data for the entire country. For specific states (valid 
 library(datazoom.saude)
 
 # Download processed data for Post-Bariatric Surgery Follow-Up (ABO) – State of Acre, 2012.
-teste_abo <- load_outpatient_procedures(
-  dataset = "siasus_abo",
+bariatric_surgery_follow_up <- load_outpatient_procedures(
+  dataset = "bariatric_surgery_follow_up",
   time_period = 2012,
   states = "AC",
   raw_data = FALSE,
@@ -74,8 +74,8 @@ teste_abo <- load_outpatient_procedures(
 
 # Download processed data for Consolidated Outpatient Procedures (PA) – State of Acre, 2022.
 # Descriptions in Portuguese.
-teste_pa <- load_outpatient_procedures(
-  dataset = "siasus_pa",
+ambulatory_production <- load_outpatient_procedures(
+  dataset = "ambulatory_production",
   time_period = 2022,
   states = "AC",
   raw_data = FALSE,
@@ -83,18 +83,18 @@ teste_pa <- load_outpatient_procedures(
 )
 
 # Download raw data for High-Cost Medications (AM) - State of Pernambuco, 2021.
-teste_am_raw <- load_outpatient_procedures(
-  dataset = "siasus_am",
+medicines_raw <- load_outpatient_procedures(
+  dataset = "medicines",
   time_period = 2021,
   states = "PE",
   raw_data = TRUE,
   language = "eng"
 )
 
-# Download processed data for Psychosocial Care (PS) - State of Acre, 2022.
-teste_ps <- load_outpatient_procedures(
-  dataset = "siasus_ps",
-  time_period = 2022,
+# Download processed data for Psychosocial Care (PS) - State of Acre, 2022 to 2023.
+psychosocial <- load_outpatient_procedures(
+  dataset = "psychosocial",
+  time_period = 2022:2023,
   states = "AC",
   raw_data = FALSE,
   language = "eng"

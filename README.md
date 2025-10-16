@@ -435,6 +435,13 @@ at an outpatient level, including clinical, administrative, and
 financial details. The data is organized by type of service or procedure
 group.
 
+> **Note:** In all SIASUS datasets, variables related to the *Cadastro
+> Nacional de Saúde* (CNS – National Health Card number) are
+> **encrypted** by DATASUS.  
+> This ensures patient confidentiality and means that individual-level
+> CNS identifiers cannot be directly used for linkage across datasets.
+> Because of this, this variable is removed when `raw_data = FALSE`.
+
 ------------------------------------------------------------------------
 
 The `load_outpacient_procedures` function offers the following
@@ -443,38 +450,39 @@ parameters:
 1.  **dataset**: Specifies the SIASUS dataset to download: \* SIASUS
     Ambulatory Care Datasets:
 
-    - `"siasus_pa"` – Consolidated Outpatient Procedures (Procedimentos
-      Ambulatoriais). Contains records of approved outpatient procedures
-      across all specialties. This is the most comprehensive SIASUS
-      dataset and is often used for general outpatient service analysis.
-    - `"siasus_ab"` – Bariatric Surgery (Cirurgia Bariátrica). Records
-      related to bariatric surgery procedures performed in outpatient
-      settings.
-    - `"siasus_abo"` – Post-Bariatric Surgery Follow-Up (Acompanhamento
-      Bariátrico). Includes follow-up care for patients who have
-      undergone bariatric surgery, focusing on long-term monitoring and
-      outcomes.
-    - `"siasus_acf"` – Vascular Access for Dialysis (Fístula
+    - `"ambulatory_production"` – Consolidated Outpatient Procedures
+      (Procedimentos Ambulatoriais). Contains records of approved
+      outpatient procedures across all specialties. This is the most
+      comprehensive SIASUS dataset and is often used for general
+      outpatient service analysis.
+    - `"bariatric_surgery"` – Pre-Bariatric Surgery (Pré Cirurgia
+      Bariátrica). Records related to bariatric surgery procedures
+      performed in outpatient settings.
+    - `"bariatric_surgery_follow_up"` – Bariatric Surgery Follow-Up
+      (Acompanhamento Bariátrico). Includes follow-up care for patients
+      who have undergone bariatric surgery, focusing on long-term
+      monitoring and outcomes.
+    - `"fistula_confection"` – Vascular Access for Dialysis (Fístula
       Arteriovenosa). Documents procedures involving the creation or
       maintenance of arteriovenous fistulas, essential for hemodialysis
       treatment.
-    - `"siasus_ad"` – Miscellaneous Specialized Procedures (Laudos
+    - `"diverse_reports"` – Miscellaneous Specialized Procedures (Laudos
       Diversos) Covers less frequent or highly specialized outpatient
       procedures not classified in other datasets.
-    - `"siasus_am"` – High-Cost Medications (Medicamentos) Tracks the
+    - `"medicines"` – High-Cost Medications (Medicamentos) Tracks the
       distribution and usage of outpatient medications that are
       high-cost and part of specific therapeutic programs.
-    - `"siasus_an"` – Nephrology / Dialysis (Nefrologia) Contains
+    - `"nephrology"` – Nephrology / Dialysis (Nefrologia) Contains
       outpatient nephrology procedures, particularly related to the care
       and monitoring of patients with chronic kidney disease.
-    - `"siasus_atd"` – Dialysis Treatment (Tratamento Dialítico)
+    - `"dialytic_treatment"` – Dialysis Treatment (Tratamento Dialítico)
       Includes outpatient dialysis treatment sessions for patients with
       kidney failure.
-    - `"siasus_ps"` – RAAS Psychosocial Care (RAAS Psicossocial) Part of
-      the Specialized Outpatient Mental Health Services. Records care
+    - `"psychosocial"` – RAAS Psychosocial Care (RAAS Psicossocial) Part
+      of the Specialized Outpatient Mental Health Services. Records care
       provided through Psychosocial Care Centers (CAPS), including
       treatments for severe mental disorders and substance use.
-    - `"siasus_sad"` – RAAS Home Care (RAAS Atenção Domiciliar) Focuses
+    - `"home_care"` – RAAS Home Care (RAAS Atenção Domiciliar) Focuses
       on outpatient care provided at patients’ homes, often involving
       chronic condition management, palliative care, and
       multi-professional follow-ups.
@@ -505,8 +513,8 @@ parameters:
 library(datazoom.saude)
 
 # Download processed data for Post-Bariatric Surgery Follow-Up (ABO) – State of Acre, 2012.
-teste_abo <- load_outpatient_procedures(
-  dataset = "siasus_abo",
+bariatric_surgery_follow_up <- load_outpatient_procedures(
+  dataset = "bariatric_surgery_follow_up",
   time_period = 2012,
   states = "AC",
   raw_data = FALSE,
@@ -515,8 +523,8 @@ teste_abo <- load_outpatient_procedures(
 
 # Download processed data for Consolidated Outpatient Procedures (PA) – State of Acre, 2022.
 # Descriptions in Portuguese.
-teste_pa <- load_outpatient_procedures(
-  dataset = "siasus_pa",
+ambulatory_production <- load_outpatient_procedures(
+  dataset = "ambulatory_production",
   time_period = 2022,
   states = "AC",
   raw_data = FALSE,
@@ -524,18 +532,18 @@ teste_pa <- load_outpatient_procedures(
 )
 
 # Download raw data for High-Cost Medications (AM) - State of Pernambuco, 2021.
-teste_am_raw <- load_outpatient_procedures(
-  dataset = "siasus_am",
+medicines_raw <- load_outpatient_procedures(
+  dataset = "medicines",
   time_period = 2021,
   states = "PE",
   raw_data = TRUE,
   language = "eng"
 )
 
-# Download processed data for Psychosocial Care (PS) - State of Acre, 2022.
-teste_ps <- load_outpatient_procedures(
-  dataset = "siasus_ps",
-  time_period = 2022,
+# Download processed data for Psychosocial Care (PS) - State of Acre, 2022 to 2023.
+psychosocial <- load_outpatient_procedures(
+  dataset = "psychosocial",
+  time_period = 2022:2023,
   states = "AC",
   raw_data = FALSE,
   language = "eng"

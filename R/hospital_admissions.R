@@ -160,6 +160,18 @@ load_hospital_admissions <- function(dataset,
 
   param$filenames <- filenames
 
+
+  if (length(param$filenames) == 0) {
+    msg <- sprintf(
+      "No data files found for the '%s' dataset for the year(s) %s and state(s) %s.",
+      dataset,
+      paste(param$time_period, collapse = ", "),
+      paste(param$states, collapse = ", ")
+    )
+    stop(msg)
+    return(tibble::tibble())
+  }
+
   # Download each file
   dat <- param$filenames %>%
     purrr::imap(

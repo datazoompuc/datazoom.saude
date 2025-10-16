@@ -63,32 +63,32 @@ For detailed usage examples and guides on each database, please refer to the vig
 
 # Mortality
 
-```{r child = "vignettes/vignette_load_mortality.Rmd"}
+```{r child = "vignettes/MORTALITY.Rmd"}
 ```
 
 # Live Births
 
-```{r child = "vignettes/vignette_load_births.Rmd"}
+```{r child = "vignettes/BIRTHS.Rmd"}
 ```
 
 # Hospital Admissions
 
-```{r child = "vignettes/vignette_load_hospital_admissions.Rmd"}
+```{r child = "vignettes/HOSPITAL_ADMISSIONS.Rmd"}
 ```
 
 # Hospital Beds
 
-```{r child = "vignettes/vignette_load_hospital_beds.Rmd"}
+```{r child = "vignettes/HOSPITAL_BEDS.Rmd"}
 ```
 
 # Outpatient Procedures
 
-```{r child = "vignettes/vignette_load_outpatient_procedures.Rmd"}
+```{r child = "vignettes/OUTPATIENT_PROCEDURES.Rmd"}
 ```
 
 # Oncology Cases
 
-```{r child = "vignettes/vignette_load_oncology_cases.Rmd"}
+```{r child = "vignettes/ONCOLOGY_CASES.Rmd"}
 ```
 
 <br>
