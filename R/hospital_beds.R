@@ -35,12 +35,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Load beds data for RJ and SP in 2020 and 2021
-#' beds <- load_hospital_beds(time_period = c("2020", "2021"),
-#'                            states = c("RJ", "SP"))
+#' # Load beds data for RO and AM in 2020
+#' beds <- load_hospital_beds(time_period = "2020",
+#'                            states = c("RO", "AM"),
+#'                            raw_data = FALSE,
+#'                            language = "eng")
 #'
-#' # Load raw data for all states in 2019
-#' raw <- load_hospital_beds(time_period = "2019",
+#' # Load raw data for AC in 2019 and 2020
+#' raw <- load_hospital_beds(time_period = c("2019", "2020"),
 #'                           states = "AC",
 #'                           raw_data = TRUE)
 #' }
@@ -60,6 +62,7 @@ load_hospital_beds <- function(time_period,
 
   . <- file_name <- link <- name_eng <- label_eng <- dataset <- NULL
   name_pt <- label_pt <- var_code <- setNames <- NULL
+  regsaude <- rename <- where <- NULL
 
   # Prepare parameters
   param <- list()
@@ -120,11 +123,22 @@ load_hospital_beds <- function(time_period,
   })
   names(dat) <- filenames
 
-  dat <- purrr::imap(dat, ~ dplyr::mutate(.x, file_name = .y)) %>%
-    dplyr::bind_rows()
+  dat <- purrr::imap(dat, ~ {
+    tibble::as_tibble(.x) %>%
+      dplyr::mutate(file_name = .y)
+  }) %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(
+      dplyr::across(where(is.factor), as.character),
+      dplyr::across(where(is.character),
+                    ~ iconv(.x, from = "latin1", to = "UTF-8", sub = ""))
+    )
+
 
   # Return raw data if requested
-  if (raw_data) return(dat)
+  if (raw_data) {
+    return(dat)
+  }
 
   ######################
   ## Data Engineering ##
@@ -137,6 +151,20 @@ load_hospital_beds <- function(time_period,
       year = as.numeric(paste0("20", substr(file_name, 5, 6))),
       month = as.numeric(substr(file_name, 7, 8))
     )
+
+  if ("regsaude" %in% names(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        regsaude = stringr::str_trim(regsaude),
+        regsaude = dplyr::case_when(
+          is.na(regsaude) | regsaude == "" ~ NA_character_,
+          stringr::str_detect(regsaude, "(?i)AP|,|\\.") ~ regsaude,
+          stringr::str_detect(regsaude, "^\\d+$") ~ stringr::str_pad(regsaude, width = 4, pad = "0"),
+          TRUE ~ regsaude
+        )
+      )
+  }
+
 
   ###############
   ## Labelling ##
@@ -161,6 +189,78 @@ load_hospital_beds <- function(time_period,
   # Harmonize variable names
   dat <- dat %>% tibble::as_tibble() %>%
     dplyr::rename_with(~ dplyr::recode(., !!!var_names))
+
+  #Set order
+
+  if (param$language == "pt") {
+    dat <- dat %>%
+      dplyr::select(dplyr::any_of(
+        c(
+          "competencia",
+          "regsaude",
+          "micr_reg",
+          "distrsan",
+          "distradm",
+          "codufmun",
+          "cnes",
+          "nat_jur",
+          "cpf_cnpj",
+          "cnpj_man",
+          "tpgestao",
+          "pf_pj",
+          "niv_dep",
+          "esfera_a",
+          "natureza",
+          "atividad",
+          "retencao",
+          "clientel",
+          "tp_unid",
+          "turno_atendimento",
+          "niv_hier",
+          "terceiro",
+          "tipo_leito",
+          "cod_leito",
+          "n_leitos_existentes",
+          "n_leitos_sus",
+          "n_leitos_nao_sus",
+          "qt_contr"
+        )
+      ),-dplyr::any_of("file_name"))
+  } else{
+    dat <- dat %>%
+      dplyr::select(dplyr::any_of(
+        c(
+          "competence",
+          "regsaude",
+          "micr_reg",
+          "distrsan",
+          "distradm",
+          "codufmun",
+          "cnes",
+          "nat_jur",
+          "cpf_cnpj",
+          "cnpj_man",
+          "tpgestao",
+          "pf_pj",
+          "niv_dep",
+          "esfera_a",
+          "natureza",
+          "atividad",
+          "retencao",
+          "clientel",
+          "tp_unid",
+          "turno_atendimento",
+          "niv_hier",
+          "terceito",
+          "tipo_leito",
+          "cod_leito",
+          "n_existing_beds",
+          "n_beds_sus",
+          "n_beds_not_sus",
+          "qt_contr"
+        )
+      ),-dplyr::any_of("file_name"))
+  }
 
   return(dat)
 }
