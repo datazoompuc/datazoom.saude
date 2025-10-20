@@ -3,3 +3,5 @@
 ^datazoom\.saude\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+^doc$
+^Meta$

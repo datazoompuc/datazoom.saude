@@ -62,10 +62,11 @@ load_mortality <- function(dataset,
     )
   }
 
-  # Declare global variables to avoid check notes
+  # Binding global variables to avoid check notes
   . <- file_name <- link <- name_eng <- label_eng <- ano <- NULL
   name_pt <- label_pt <- var_code <- codmunocor <- causabas <- NULL
   dtobito <- is_cid_code <- code_muni_6 <- value <- n <- setNames <- NULL
+  rename <- NULL
 
   ###############################
   ### Define Basic Parameters ###

@@ -12,7 +12,18 @@
 #'
 #' @examples
 #' \dontrun{
-#' load_oncology_case(time_period = 2023)
+#' # Download processed oncology data for the year 2023.
+# This will return data from the Oncology Panel for all Brazilian states.
+#'oncology_cases_treated <- load_oncology_case(time_period = 2023,
+#'                                             raw_data = FALSE,
+#'                                             language = "eng"
+#'                                             )
+#'
+#' # Download raw oncology data for the years 2021 to 2022 with labels in portuguese.
+#'oncology_cases_raw <- load_oncology_case(time_period = 2021:2022,
+#'                                         raw_data = TRUE,
+#'                                         language = "pt"
+#'                                         )
 #' }
 
 
@@ -49,10 +60,29 @@ load_oncology_case <- function(time_period,
     stop("the language must be 'eng' or 'pt'. By default it is 'eng'.")
   }
 
-  # Declare global variables to avoid check notes
+  # Binding global variables to avoid check notes
   . <- file_name <- dataset <- link <- name_eng <- label_eng <- NULL
   name_pt <- label_pt <- var_code <- NULL
   dt_diag <- dt_trat <- dt_nasc <- mun_diag <- NULL
+  sexo_paciente <- idade_paciente <- data_nascimento <-  NULL
+  uf_residencia <- municipio_residencia <-  NULL
+  ano_diagnostico <- ano_mes_diagnostico <- data_diagnostico <-  NULL
+  categoria_diagnostico <- cid_detalhado <- estadiamento <-  NULL
+  cnes_diagnostico <- uf_diagnostico <- municipio_diagnostico <-  NULL
+  ano_tratamento <- ano_mes_tratamento <- data_tratamento <-  NULL
+  tipo_tratamento <- cnes_tratamento <- uf_tratamento <-  NULL
+  municipio_tratamento <- intervalo_tratamento <-  NULL
+  patient_sex <- patient_age <- date_birth <-  NULL
+  state_residence <- mun_residence <-  NULL
+  year_diagnosis <- year_month_diagnosis <- date_diagnosis <-  NULL
+  diagnosis_category <- detailed_icd <- staging <-  NULL
+  cnes_diagnosis <- state_diagnosis <- mun_diagnosis <-  NULL
+  year_treatment <- year_month_treatment <- date_treatment <-  NULL
+  treatment_type <- cnes_treatment <- state_treatment <-  NULL
+  mun_treatment <- treatment_interval <- NULL
+
+
+
 
   # Create param list with specific parameters for Oncology Panel
   param <- list()
@@ -139,10 +169,10 @@ load_oncology_case <- function(time_period,
     "tratamento", "3", "radioterapia", "radiotherapy",
     "tratamento", "4", "quimioterapia + radioterapia", "chemotherapy + radiotherapy",
     "tratamento", "5", "sem informacao de tratamento", "no treatment information",
-    "diagnostic", "1", "neoplasias malignas (lei no 12.732/12)", "malignant neoplasms (law no. 12.732/12)",
-    "diagnostic", "2", "neoplasias in situ", "neoplasms in situ",
-    "diagnostic", "3", "neoplasias de comportamento incerto ou desconhecido", "neoplasms of uncertain or unknown behavior",
-    "diagnostic", "4", "C44 e C73", "C44 and C73",
+    "diagnostic", "01", "neoplasias malignas (lei no 12.732/12)", "malignant neoplasms (law no. 12.732/12)",
+    "diagnostic", "02", "neoplasias in situ", "neoplasms in situ",
+    "diagnostic", "03", "neoplasias de comportamento incerto ou desconhecido", "neoplasms of uncertain or unknown behavior",
+    "diagnostic", "04", "C44 e C73", "C44 and C73",
     "sexo", "F", "feminino", "female",
     "sexo", "M", "masculino", "male",
     "estadiam", "0", "0", "0",
@@ -228,6 +258,82 @@ load_oncology_case <- function(time_period,
     dplyr::rename_with(
       ~ dplyr::recode(., !!!var_names_lookup)
     )
+
+  #####################
+  ## Sorting Columns ##
+  #####################
+
+  if (param$language == "pt"){
+
+    dat_mod = dat_mod %>%
+      dplyr::select(
+
+        # Pacient ID
+        sexo_paciente,
+        idade_paciente,
+        data_nascimento,
+        uf_residencia,
+        municipio_residencia,
+
+        # Diagnosis
+        ano_diagnostico,
+        ano_mes_diagnostico,
+        data_diagnostico,
+        categoria_diagnostico,
+        cid_detalhado,
+        estadiamento,
+        cnes_diagnostico,
+        uf_diagnostico,
+        municipio_diagnostico,
+
+        # Treatment
+        ano_tratamento,
+        ano_mes_tratamento,
+        data_tratamento,
+        tipo_tratamento,
+        cnes_tratamento,
+        uf_tratamento,
+        municipio_tratamento,
+        intervalo_tratamento
+
+      )
+
+  } else{
+
+    dat_mod = dat_mod %>%
+      dplyr::select(
+
+        # Pacient ID
+        patient_sex,
+        patient_age,
+        date_birth,
+        state_residence,
+        mun_residence,
+
+        # Diagnosis
+        year_diagnosis,
+        year_month_diagnosis,
+        date_diagnosis,
+        diagnosis_category,
+        detailed_icd,
+        staging,
+        cnes_diagnosis,
+        state_diagnosis,
+        mun_diagnosis,
+
+        # Treatment
+        year_treatment,
+        year_month_treatment,
+        date_treatment,
+        treatment_type,
+        cnes_treatment,
+        state_treatment,
+        mun_treatment,
+        treatment_interval
+
+      )
+
+  }
 
   ####################
   ## Returning Data ##
