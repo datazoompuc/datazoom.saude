@@ -27,8 +27,22 @@ knitr::opts_chunk$set(
 [![Issues Fechadas](https://img.shields.io/github/issues-closed-raw/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/issues)
 <!-- badges: end -->
 
+## Overview
 The `datazoom.saude` package provides simple, direct, and reliable functions to import, organize, and explore public health databases in Brazil. It is part of the **`datazoom`** ecosystem, designed to simplify access to and analysis of national data.
 
+## About DATASUS
+**DATASUS** is the information technology department of **SUS — the Brazilian Unified Health System**.
+It maintains a wide range of open databases covering topics such as **health establishments, mortality, access to healthcare services, hospital admissions, births, and epidemiological indicators** across the country.
+
+The `datazoom.saude` package streamlines access to these resources by:
+
+* Downloading multiple raw DATASUS datasets automatically;
+* Cleaning and standardizing selected datasets for easier analysis;
+* Providing consistent structures across data sources for seamless integration;
+
+Each supported dataset is detailed in the sections below.
+
+***
 ## Installation
 
 You can install the released version of `datazoom.saude` from the development version from GitHub.

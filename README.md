@@ -22,10 +22,31 @@ Abertas](https://img.shields.io/github/issues-raw/datazoompuc/datazoom.saude?sty
 Fechadas](https://img.shields.io/github/issues-closed-raw/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/issues)
 <!-- badges: end -->
 
+## Overview
+
 The `datazoom.saude` package provides simple, direct, and reliable
 functions to import, organize, and explore public health databases in
 Brazil. It is part of the **`datazoom`** ecosystem, designed to simplify
 access to and analysis of national data.
+
+## About DATASUS
+
+**DATASUS** is the information technology department of **SUS — the
+Brazilian Unified Health System**. It maintains a wide range of open
+databases covering topics such as **health establishments, mortality,
+access to healthcare services, hospital admissions, births, and
+epidemiological indicators** across the country.
+
+The `datazoom.saude` package streamlines access to these resources by:
+
+- Downloading multiple raw DATASUS datasets automatically;
+- Cleaning and standardizing selected datasets for easier analysis;
+- Providing consistent structures across data sources for seamless
+  integration;
+
+Each supported dataset is detailed in the sections below.
+
+------------------------------------------------------------------------
 
 ## Installation
 
@@ -77,34 +98,37 @@ The `load_mortality` function offers the following parameters:
 1.  **dataset**: Specifies the SIM dataset to download:
 
     - SIM Datasets:
-      - `"general"` – Main Declarations of Death. Contains records of
-        all non-fetal Death Certificates (DO) in Brazil, including
-        socio-demographic data, location, and causes of death (ICD-10).
-        It’s the base for general mortality analysis.
-      - `"fetal"` – Fetal mortality data. Contains records of fetal
-        deaths, with information on the mother, pregnancy, and causes of
-        fetal death. It’s essential for maternal and child health.
+      - `"general"` – Main Declarations of Death. (National dataset
+        available — `states = "all"`) Contains records of all non-fetal
+        Death Certificates (DO) in Brazil, including socio-demographic
+        data, location, and causes of death (ICD-10). It’s the base for
+        general mortality analysis.
+      - `"fetal"` – Fetal mortality data. (National dataset not
+        available) Contains records of fetal deaths, with information on
+        the mother, pregnancy, and causes of fetal death. It’s essential
+        for maternal and child health.
       - `"external_causes"` – Mortality data from external causes.
-        Contains a subset of `"general"` focusing on deaths due to
-        accidents, violence, and other unnatural causes. Used for safety
-        and prevention studies.
-      - `"infant"` – Infant mortality data (children). Contains a subset
-        of `"general"` recording deaths of children under 1 year old,
-        detailing causes and birth-related factors. Crucial for
-        assessing child health.
-      - `"maternal"` – Maternal mortality data. Contains a subset of
-        `"general"` for deaths of women during or shortly after
-        pregnancy/childbirth, detailing obstetric causes. Important for
-        women’s health.
+        (National dataset not available) Contains a subset of
+        `"general"` focusing on deaths due to accidents, violence, and
+        other unnatural causes. Used for safety and prevention studies.
+      - `"infant"` – Infant mortality data (children). (National dataset
+        not available) Contains a subset of `"general"` recording deaths
+        of children under 1 year old, detailing causes and birth-related
+        factors. Crucial for assessing child health.
+      - `"maternal"` – Maternal mortality data. (National dataset not
+        available) Contains a subset of `"general"` for deaths of women
+        during or shortly after pregnancy/childbirth, detailing
+        obstetric causes. Important for women’s health.
 
 2.  **time_period**: a numeric value or vector indicating the year(s) of
     the data to be downloaded. For example, `2020` or `2015:2020`.
 
-3.  **states**: a string or vector of strings indicating the Brazilian
-    state(s) for which the data should be downloaded. Use `"all"` to
-    download data for the entire country. For specific states (valid
-    only for the `general` dataset), use abbreviations like `"SP"` (São
-    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
+3.  **states**: (valid only for the `general` dataset) — a string or a
+    vector of strings indicating the Brazilian state(s) for which the
+    data should be downloaded. The default is `"all"`, which downloads
+    data for the entire country. For specific states, use the official
+    abbreviations such as `"SP"` (São Paulo), `"RJ"` (Rio de Janeiro),
+    or `c("SP", "RJ")`.
 
 4.  **raw_data**: Logical, default is `FALSE`.
 
