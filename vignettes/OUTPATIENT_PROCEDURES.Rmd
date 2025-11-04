@@ -24,27 +24,26 @@ The `load_outpatient_procedures` function provides access to various **SIASUS (A
 The `load_outpacient_procedures` function offers the following parameters:
 
   1. **dataset**: Specifies the SIASUS dataset to download:
-    * SIASUS Ambulatory Care Datasets:
         * `"ambulatory_production"` – Consolidated Outpatient Procedures (Procedimentos Ambulatoriais).
-            Contains records of approved outpatient procedures across all specialties. This is the most comprehensive SIASUS dataset and is often used for general outpatient service analysis.
+            Contains records of approved outpatient procedures across all specialties. This is the most comprehensive SIASUS dataset and is often used for general outpatient service analysis. (since Jul/1994 to present)
         * `"bariatric_surgery"` – Pre-Bariatric Surgery (Pré Cirurgia Bariátrica).
-            Records related to bariatric surgery procedures performed in outpatient settings.
+            Records related to bariatric surgery procedures performed in outpatient settings. (Jan/2008 to Mar/2013)
         * `"bariatric_surgery_follow_up"` – Bariatric Surgery Follow-Up (Acompanhamento Bariátrico).
-            Includes follow-up care for patients who have undergone bariatric surgery, focusing on long-term monitoring and outcomes.
+            Includes follow-up care for patients who have undergone bariatric surgery, focusing on long-term monitoring and outcomes. (since Apr/2013 to present)
         * `"fistula_confection"` – Vascular Access for Dialysis (Fístula Arteriovenosa).
-            Documents procedures involving the creation or maintenance of arteriovenous fistulas, essential for hemodialysis treatment.
+            Documents procedures involving the creation or maintenance of arteriovenous fistulas, essential for hemodialysis treatment. (since Jun/2014 to present)
         * `"diverse_reports"` – Miscellaneous Specialized Procedures (Laudos Diversos)
-            Covers less frequent or highly specialized outpatient procedures not classified in other datasets.
+            Covers less frequent or highly specialized outpatient procedures not classified in other datasets. (since Jan/2008 to present)
         * `"medicines"` – High-Cost Medications (Medicamentos)
-            Tracks the distribution and usage of outpatient medications that are high-cost and part of specific therapeutic programs.
+            Tracks the distribution and usage of outpatient medications that are high-cost and part of specific therapeutic programs. (since Jan/2008 to present)
         * `"nephrology"` – Nephrology / Dialysis (Nefrologia)
-            Contains outpatient nephrology procedures, particularly related to the care and monitoring of patients with chronic kidney disease.
+            Contains outpatient nephrology procedures, particularly related to the care and monitoring of patients with chronic kidney disease. (Jan/2008 to Out/2024)
         * `"dialytic_treatment"` – Dialysis Treatment (Tratamento Dialítico)
-            Includes outpatient dialysis treatment sessions for patients with kidney failure.
+            Includes outpatient dialysis treatment sessions for patients with kidney failure. (since Jun/2014 to present)
         * `"psychosocial"` – RAAS Psychosocial Care (RAAS Psicossocial)
-            Part of the Specialized Outpatient Mental Health Services. Records care provided through Psychosocial Care Centers (CAPS), including treatments for severe mental disorders and substance use.
+            Part of the Specialized Outpatient Mental Health Services. Records care provided through Psychosocial Care Centers (CAPS), including treatments for severe mental disorders and substance use. (since Jan/2013 to present)
         * `"home_care"` – RAAS Home Care (RAAS Atenção Domiciliar)
-            Focuses on outpatient care provided at patients' homes, often involving chronic condition management, palliative care, and multi-professional follow-ups.
+            Focuses on outpatient care provided at patients' homes, often involving chronic condition management, palliative care, and multi-professional follow-ups. (since Nov/2012 to present)
 
   2. **time_period**: a numeric value or vector indicating the year(s) of the data to be downloaded.
   For example, `2020` or `2015:2020`.

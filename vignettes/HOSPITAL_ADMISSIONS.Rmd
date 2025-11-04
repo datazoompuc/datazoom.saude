@@ -20,7 +20,7 @@ The `load_hospital_admissions` function provides access to multiple datasets fro
 The `load_hospital_admissions` function offers the following parameters:
 
 1. **dataset**: Specifies the SIH dataset to download:
-    * SIH hospitalization data is split across four datasets:
+    * SIH hospitalization data is split across four datasets (since Jan/2008 to present):
         * `"reduced_aih"` – Reduced AIHs (summary of hospitalizations).
             Contains consolidated information about approved and processed AIHs, including the main procedure performed, related diagnoses, and total costs. This is the most commonly used dataset for statistical and epidemiological analyses.
         * `"professional_services"` – Professional Services performed during hospitalization.
