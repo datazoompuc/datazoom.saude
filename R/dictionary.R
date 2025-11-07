@@ -63,7 +63,7 @@ load_dictionary <- function(dataset) {
 
       # Non-CID variables
 
-      "ano", "ano", "year", "Ano de referência", "Reference year", FALSE,
+      "ano", "ano", "year", "Ano de refer\u00EAncia", "Reference year", FALSE,
       "tipobito", "tipobito", "tipobito", "1: obito fetal\n2: obito nao fetal", "1: fetal death\n2: non-fetal death", FALSE,
       "dtobito", "dtobito", "dtobito", "Data do obito", "Date of death", FALSE,
       "horaobito", "horaobito", "horaobito", "Hora do falecimento", "Time of death", FALSE,
@@ -116,7 +116,7 @@ load_dictionary <- function(dataset) {
       "dtrecebim", "dtrecebim", "dtrecebim", "Data de recebimento no nivel central, data da ultima atualizacao do registro", "Date received at the central level, date of last update of the record", FALSE,
       "ufinform", "ufinform", "ufinform", "Codigo da UF que informou o registro", "Code of the state (UF) that reported the record", FALSE,
       "cb_pre", "cb_pre", "cb_pre", "Causa selecionada sem re-selecao (novo SCB)", "Cause selected without reselection (new SCB)", FALSE,
-      "num_de_mortes", "num_de_mortes", "num_of_deaths", "Número total de mortes", "Total number of deaths", FALSE
+      "num_de_mortes", "num_de_mortes", "num_of_deaths", "N\u00FAmero total de mortes", "Total number of deaths", FALSE
     )
   }
 
