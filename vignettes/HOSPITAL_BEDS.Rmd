@@ -14,13 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-The `load_hospital_beds` function specifically focuses on the **CNES - LT (Beds)** dataset, part of the National Register of Health Establishments (CNES). This dataset provides information on the number of available hospital beds in health establishments across Brazil.
+The `load_hospital_beds` function specifically focuses on the **CNES - LT (Beds)** dataset, part of the National Register of Health Establishments (CNES). This dataset provides information on the number of available hospital beds in health establishments across Brazil (since Out/2005 to present).
 
 ***
 The `load_hospital_beds` function offers the following parameters:
 
   1. **time_period**: a numeric value or vector indicating the year(s) of the data to be downloaded.
-  For example, `2020` or `2015:2020`.
+  For example, `2020` or `2015:2020`. (since Out/2005 to present)
   
   2. **states**: a string or vector of strings indicating the Brazilian state(s) for which the data should be downloaded.
 Use `"all"` to download data for the entire country. For specific states (valid only for the `general` dataset), use abbreviations like `"SP"` (São Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.

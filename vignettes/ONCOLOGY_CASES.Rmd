@@ -14,13 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-The `load_oncology_case` function downloads and organizes data from the **Oncology Panel (Painel de Oncologia)**, part of DATASUS. This dataset is widely used in public health and epidemiological analyses related to cancer cases in Brazil.
+The `load_oncology_case` function downloads and organizes data from the **Oncology Panel (Painel de Oncologia)**, part of DATASUS. This dataset is widely used in public health and epidemiological analyses related to cancer cases in Brazil (since 2013 to present).
 
 ***
 The `load_oncology_case` function offers the following parameters:
 
   1. **time_period**: a numeric value or vector indicating the year(s) of the data to be downloaded.
-  For example, `2020` or `2015:2020`.
+  For example, `2020` or `2015:2020`. (since 2013 to present)
   
   2. **raw_data**: Logical, default is `FALSE`.
       * `TRUE`: If TRUE, returns the raw data exactly as provided by DATASUS.

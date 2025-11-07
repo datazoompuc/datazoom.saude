@@ -102,23 +102,26 @@ The `load_mortality` function offers the following parameters:
         available — `states = "all"`) Contains records of all non-fetal
         Death Certificates (DO) in Brazil, including socio-demographic
         data, location, and causes of death (ICD-10). It’s the base for
-        general mortality analysis.
+        general mortality analysis. (since 1979 to present)
       - `"fetal"` – Fetal mortality data. (National dataset not
         available) Contains records of fetal deaths, with information on
         the mother, pregnancy, and causes of fetal death. It’s essential
-        for maternal and child health.
+        for maternal and child health. (since 1979 to present)
       - `"external_causes"` – Mortality data from external causes.
         (National dataset not available) Contains a subset of
         `"general"` focusing on deaths due to accidents, violence, and
         other unnatural causes. Used for safety and prevention studies.
+        (since 1979 to present)
       - `"infant"` – Infant mortality data (children). (National dataset
         not available) Contains a subset of `"general"` recording deaths
         of children under 1 year old, detailing causes and birth-related
-        factors. Crucial for assessing child health.
+        factors. Crucial for assessing child health. (since 1979 to
+        present)
       - `"maternal"` – Maternal mortality data. (National dataset not
         available) Contains a subset of `"general"` for deaths of women
         during or shortly after pregnancy/childbirth, detailing
-        obstetric causes. Important for women’s health.
+        obstetric causes. Important for women’s health. (since 1996 to
+        present)
 
 2.  **time_period**: a numeric value or vector indicating the year(s) of
     the data to be downloaded. For example, `2020` or `2015:2020`.
@@ -216,9 +219,10 @@ Information System (SINASC)** dataset, which collects and records
 detailed information about births in Brazil. This data is extracted from
 Live Birth Certificates (DNVs) and includes information about the
 newborn, such as sex, weight, and gestational age, as well as data about
-the mother, such as age, number of children, and health conditions.
-SINASC is essential for monitoring maternal and child health and
-generating relevant indicators for public health policy formulation.
+the mother, such as age, number of children and health conditions (since
+1994 to present). SINASC is essential for monitoring maternal and child
+health and generating relevant indicators for public health policy
+formulation.
 
 ------------------------------------------------------------------------
 
@@ -226,7 +230,7 @@ The `load_births` function offers the following parameters:
 
 1.  **time_period**: A numeric value or vector indicating the year(s) of
     the data to be downloaded. For  
-    example, 2020 or 2015:2020.
+    example, `2020` or `2015:2020`. (since 1994 to present)
 
 2.  **states**: A string or array of strings indicating the Brazilian
     state(s) for which data should be  
@@ -297,7 +301,8 @@ The `load_hospital_admissions` function offers the following parameters:
 
 1.  **dataset**: Specifies the SIH dataset to download:
 
-    - SIH hospitalization data is split across four datasets:
+    - SIH hospitalization data is split across four datasets (since
+      Jan/2008 to present):
       - `"reduced_aih"` – Reduced AIHs (summary of hospitalizations).
         Contains consolidated information about approved and processed
         AIHs, including the main procedure performed, related diagnoses,
@@ -387,7 +392,8 @@ data_sp_processed <- load_hospital_admissions(
 The `load_hospital_beds` function specifically focuses on the **CNES -
 LT (Beds)** dataset, part of the National Register of Health
 Establishments (CNES). This dataset provides information on the number
-of available hospital beds in health establishments across Brazil.
+of available hospital beds in health establishments across Brazil (since
+Out/2005 to present).
 
 ------------------------------------------------------------------------
 
@@ -395,6 +401,7 @@ The `load_hospital_beds` function offers the following parameters:
 
 1.  **time_period**: a numeric value or vector indicating the year(s) of
     the data to be downloaded. For example, `2020` or `2015:2020`.
+    (since Out/2005 to present)
 
 2.  **states**: a string or vector of strings indicating the Brazilian
     state(s) for which the data should be downloaded. Use `"all"` to
@@ -471,45 +478,48 @@ group.
 The `load_outpacient_procedures` function offers the following
 parameters:
 
-1.  **dataset**: Specifies the SIASUS dataset to download: \* SIASUS
-    Ambulatory Care Datasets:
+1.  **dataset**: Specifies the SIASUS dataset to download:
 
     - `"ambulatory_production"` – Consolidated Outpatient Procedures
       (Procedimentos Ambulatoriais). Contains records of approved
       outpatient procedures across all specialties. This is the most
       comprehensive SIASUS dataset and is often used for general
-      outpatient service analysis.
+      outpatient service analysis. (since Jul/1994 to present)
     - `"bariatric_surgery"` – Pre-Bariatric Surgery (Pré Cirurgia
       Bariátrica). Records related to bariatric surgery procedures
-      performed in outpatient settings.
+      performed in outpatient settings. (Jan/2008 to Mar/2013)
     - `"bariatric_surgery_follow_up"` – Bariatric Surgery Follow-Up
       (Acompanhamento Bariátrico). Includes follow-up care for patients
       who have undergone bariatric surgery, focusing on long-term
-      monitoring and outcomes.
+      monitoring and outcomes. (since Apr/2013 to present)
     - `"fistula_confection"` – Vascular Access for Dialysis (Fístula
       Arteriovenosa). Documents procedures involving the creation or
       maintenance of arteriovenous fistulas, essential for hemodialysis
-      treatment.
+      treatment. (since Jun/2014 to present)
     - `"diverse_reports"` – Miscellaneous Specialized Procedures (Laudos
       Diversos) Covers less frequent or highly specialized outpatient
-      procedures not classified in other datasets.
+      procedures not classified in other datasets. (since Jan/2008 to
+      present)
     - `"medicines"` – High-Cost Medications (Medicamentos) Tracks the
       distribution and usage of outpatient medications that are
-      high-cost and part of specific therapeutic programs.
+      high-cost and part of specific therapeutic programs. (since
+      Jan/2008 to present)
     - `"nephrology"` – Nephrology / Dialysis (Nefrologia) Contains
       outpatient nephrology procedures, particularly related to the care
-      and monitoring of patients with chronic kidney disease.
+      and monitoring of patients with chronic kidney disease. (Jan/2008
+      to Out/2024)
     - `"dialytic_treatment"` – Dialysis Treatment (Tratamento Dialítico)
       Includes outpatient dialysis treatment sessions for patients with
-      kidney failure.
+      kidney failure. (since Jun/2014 to present)
     - `"psychosocial"` – RAAS Psychosocial Care (RAAS Psicossocial) Part
       of the Specialized Outpatient Mental Health Services. Records care
       provided through Psychosocial Care Centers (CAPS), including
-      treatments for severe mental disorders and substance use.
+      treatments for severe mental disorders and substance use. (since
+      Jan/2013 to present)
     - `"home_care"` – RAAS Home Care (RAAS Atenção Domiciliar) Focuses
       on outpatient care provided at patients’ homes, often involving
       chronic condition management, palliative care, and
-      multi-professional follow-ups.
+      multi-professional follow-ups. (since Nov/2012 to present)
 
 2.  **time_period**: a numeric value or vector indicating the year(s) of
     the data to be downloaded. For example, `2020` or `2015:2020`.
@@ -579,7 +589,7 @@ psychosocial <- load_outpatient_procedures(
 The `load_oncology_case` function downloads and organizes data from the
 **Oncology Panel (Painel de Oncologia)**, part of DATASUS. This dataset
 is widely used in public health and epidemiological analyses related to
-cancer cases in Brazil.
+cancer cases in Brazil (since 2013 to present).
 
 ------------------------------------------------------------------------
 
@@ -587,6 +597,7 @@ The `load_oncology_case` function offers the following parameters:
 
 1.  **time_period**: a numeric value or vector indicating the year(s) of
     the data to be downloaded. For example, `2020` or `2015:2020`.
+    (since 2013 to present)
 
 2.  **raw_data**: Logical, default is `FALSE`.
 
@@ -606,15 +617,15 @@ library(datazoom.saude)
 
 # Download processed oncology data for the year 2023.
 # This will return data from the Oncology Panel for all Brazilian states.
-oncology_data_2023 <- load_oncology_case(
+oncology_cases_treated <- load_oncology_case(
   time_period = 2023,
   raw_data = FALSE,
   language = "eng"
 )
 
-# Download raw oncology data for the years 2020 to 2022 with labels in portuguese.
-oncology_data_raw <- load_oncology_case(
-  time_period = 2020:2022,
+# Download raw oncology data for the years 2021 to 2022 with labels in portuguese.
+oncology_cases_raw <- load_oncology_case(
+  time_period = 2021:2022,
   raw_data = TRUE,
   language = "pt"
 )
