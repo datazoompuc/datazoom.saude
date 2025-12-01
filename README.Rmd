@@ -53,8 +53,6 @@ install.packages("devtools")
 
 # Install datazoom.saude directly from GitHub
 devtools::install_github("datazoompuc/datazoom.saude")
-
-devtools::load_all()
 ```
 
 ## Supported Databases
