@@ -69,6 +69,8 @@
 #'                            states = "PI",
 #'                            language = "pt")
 #' }
+#'
+#' @export
 load_outpatient_procedures <- function(dataset,
                                        time_period,
                                        states = "all",

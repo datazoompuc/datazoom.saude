@@ -87,4 +87,5 @@ load_outpatient_procedures(dataset = "diverse_reports",
                            states = "PI",
                            language = "pt")
 }
+
 }
