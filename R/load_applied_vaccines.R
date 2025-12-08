@@ -167,7 +167,7 @@ load_applied_vaccines <- function(uf,
     b <- ChromoteSession$new()
     on.exit(try(b$close(), silent = TRUE), add = TRUE)
 
-    # b$view() # Comentado - remova o '#' da frente se precisar depurar visualmente
+    # b$view() # remova o '#' da frente se precisar depurar visualmente
     try(b$Browser$setDownloadBehavior(behavior = "allow", downloadPath = tempdir()), silent = TRUE)
 
     b$Page$navigate("http://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf")
@@ -597,8 +597,323 @@ load_applied_vaccines <- function(uf,
 
   } else {
 
-    # EM DESENVOLVIMENTO
+    message("Iniciando scraper do InfoMS (Qlik) para >= 2023...")
 
+    # --- Configuração ---
+    url_painel <- "https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA.html"
+
+    # Mapeamento de meses (o CSV virá com "jan", "fev", etc.)
+    meses_map <- setNames(
+      month.abb[1:12],
+      c("jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez")
+    )
+
+    # --- Funções Auxiliares (Helpers) ---
+    # Estas funções rodam dentro do navegador (via b$Runtime$evaluate)
+
+    # Helper 1: Clica em um item de filtro (ex: clica em '2023' no filtro 'Ano')
+    js_click_filter_item <- "
+    (function(filterTitle, itemValue) {
+      try {
+        let filter = Array.from(document.querySelectorAll('div.qv-filterpane-data'))
+                          .find(el => el.querySelector('div.qv-filter-title-text')?.innerText.trim() === filterTitle);
+        if (!filter) throw new Error('Filtro ' + filterTitle + ' não encontrado');
+
+        let item = Array.from(filter.querySelectorAll('li.qv-listbox-item'))
+                        .find(el => el.querySelector('.qv-listbox-text')?.innerText.trim() === itemValue);
+        if (!item) throw new Error('Item ' + itemValue + ' não encontrado no filtro ' + filterTitle);
+
+        item.click();
+        return { ok: true, filter: filterTitle, item: itemValue };
+      } catch (e) {
+        return { ok: false, error: e.message };
+      }
+    })"
+
+    # Helper 2: Clica em um botão/aba pelo texto
+    js_click_by_text <- "
+    (function(elementType, text) {
+      try {
+        let el = Array.from(document.querySelectorAll(elementType))
+                      .find(e => e.innerText.trim() === text);
+        if (!el) throw new Error('Elemento ' + elementType + ' com texto ' + text + ' não encontrado');
+
+        el.click();
+        return { ok: true, text: text };
+      } catch (e) {
+        return { ok: false, error: e.message };
+      }
+    })"
+
+    # Helper 3: Clica em um botão/aba pelo TÍTULO (title=)
+    js_click_by_title <- "
+    (function(elementType, title) {
+      try {
+        let el = document.querySelector(elementType + '[title=\"' + title + '\"]');
+        if (!el) throw new Error('Elemento ' + elementType + ' com título ' + title + ' não encontrado');
+
+        el.click();
+        return { ok: true, title: title };
+      } catch (e) {
+        return { ok: false, error: e.message };
+      }
+    })"
+
+
+    # 1. Cria o objeto NAVEGADOR
+    b_browser <- chromote::Chromote$new()
+    # 2. Cria a SESSÃO para a página principal
+    b_main <- b_browser$new_session()
+    # 3. Fecha o NAVEGADOR (e todas as sessões) ao sair
+    on.exit(try(b_browser$close(), silent = TRUE), add = TRUE)
+
+    # b_main$view() # remova o '#' da frente se precisar depurar visualmente
+
+    # Define um diretório de download temporário
+    temp_dir <- file.path(tempdir(), "pni_downloads")
+    if (!dir.exists(temp_dir)) dir.create(temp_dir)
+
+    # Define o comportamento de download no NAVEGADOR
+    try(b_browser$Browser$setDownloadBehavior(
+      behavior = "allow",
+      downloadPath = temp_dir,
+      eventsEnabled = TRUE
+    ), silent = TRUE)
+
+
+    message("Navegando para o painel... (Isso pode demorar até 30s)")
+    b_main$Page$navigate(url_painel)
+
+    # Espera longa para o Qlik carregar completely
+    Sys.sleep(20)
+
+    message("Buscando alvos (targets) do navegador...")
+
+    # O NAVEGADOR (b_browser) é quem sabe dos alvos
+    all_targets_df <- b_browser$get_targets()
+
+    # Pega o ID do ALVO da sessão principal para podermos ignorá-lo
+    main_target_id <- b_main$target_id
+    message(paste("Alvo (target) principal:", main_target_id))
+
+    # Converte o data.frame de alvos para uma lista de linhas
+    all_targets_list <- split(all_targets_df, seq(nrow(all_targets_df)))
+
+    iframe_target_info <- NULL
+
+    for (t in all_targets_list) {
+      # Verifica se 'type' e 'url' são válidos antes de usá-los
+      type_is_valid <- !is.null(t$type) && !is.na(t$type)
+      url_is_valid <- !is.null(t$url) && !is.na(t$url)
+
+      if (type_is_valid && url_is_valid) {
+
+        # LÓGICA:
+        # 1. Seja do tipo 'page' (iframes Qlik são tratados como 'page')
+        # 2. NÃO seja o nosso alvo principal
+        # 3. Tenha 'qlik' ou 'sense' na URL
+
+        is_page <- (t$type == 'page')
+        is_not_main <- (t$targetId != main_target_id)
+        is_qlik_url <- grepl("qlik|sense", t$url, ignore.case = TRUE)
+
+        if (is_page && is_not_main && is_qlik_url) {
+          message(paste("Debug: Alvo do Iframe encontrado! Tipo:", t$type, "URL:", t$url)) # Era tL$url
+          iframe_target_info <- t
+          break
+        }
+      }
+    }
+
+
+    if (is.null(iframe_target_info)) {
+      message("⚠️ Erro: Nenhum alvo (target) de iframe ativo foi encontrado. O painel pode ter mudado.")
+      # Imprime os alvos para depuração
+      print(all_targets_df)
+      return(NULL)
+    }
+
+    # Pega o ID da SESSÃO do alvo que encontramos
+    iframe_session_id <- iframe_target_info$sessionId
+
+    if (is.null(iframe_session_id) || is.na(iframe_session_id)) {
+      message("⚠️ Erro: Alvo do Iframe encontrado, mas não tem sessionId. Não é possível conectar.")
+      return(NULL)
+    }
+
+    message(paste("Sessão do Iframe encontrada:", iframe_session_id))
+
+    # Agora, crie um NOVO OBJETO DE SESSÃO apontado para o iframe
+    b_iframe <- b_browser$session(iframe_session_id)
+    message("Nova sessão para o iframe criada com sucesso.")
+
+
+    Sys.sleep(5) # Espera o contexto do iframe
+
+
+    # --- 1. Aplicando Filtros ---
+    message("Aplicando filtros...")
+
+    # Ano
+    # Note que agora usamos b_iframe
+    res_ano <- b_iframe$Runtime$evaluate(paste0(js_click_filter_item, "('Ano Vacina', '", ano, "');"))
+    if (!isTRUE(res_ano$result$value$ok)) message("Aviso: Filtro 'Ano' falhou. Continuando...")
+    Sys.sleep(2)
+
+    # UF Ocorrência
+    res_uf <- b_iframe$Runtime$evaluate(paste0(js_click_filter_item, "('UF Ocorrência', '", uf, "');"))
+    if (!isTRUE(res_uf$result$value$ok)) message("Aviso: Filtro 'UF' falhou. Continuando...")
+    Sys.sleep(2)
+
+    # Estratégia de Vacinação
+    res_estrategia <- b_iframe$Runtime$evaluate(paste0(js_click_filter_item, "('Estratégia de Vacinação', '", estrategia, "');"))
+    if (!isTRUE(res_estrategia$result$value$ok)) message("Aviso: Filtro 'Estratégia' falhou. Continuando...")
+    Sys.sleep(2)
+
+    # Imunobiológicos
+    res_produto <- b_iframe$Runtime$evaluate(paste0(js_click_filter_item, "('Imunobiológicos', '", produto, "');"))
+    if (!isTRUE(res_produto$result$value$ok)) message("Aviso: Filtro 'Imunobiológicos' falhou. Continuando...")
+    Sys.sleep(3)
+
+    # Doses (Vamos selecionar "Todas")
+    # (Assumindo que "Doses" é o título do filtro)
+    res_dose <- b_iframe$Runtime$evaluate(paste0(js_click_filter_item, "('Doses', '(Todas)');"))
+    if (!isTRUE(res_dose$result$value$ok)) message("Aviso: Filtro 'Doses' falhou. (Isso pode ser normal)")
+    Sys.sleep(3)
+
+
+    # --- 2. Navegando para a Tabela ---
+    message("Navegando para a aba 'Tabelas'...")
+    res_tab <- b_iframe$Runtime$evaluate(paste0(js_click_by_text, "('div.qv-tab-name', 'Tabelas');"))
+    if (!isTRUE(res_tab$result$value$ok)) {
+      message("⚠️ Erro: Não foi possível clicar na aba 'Tabelas'.")
+      return(NULL)
+    }
+    Sys.sleep(5) # Espera a tabela carregar
+
+
+    # --- 3. Adicionando Dimensões (CRUCIAL) ---
+    message("Adicionando dimensões à tabela...")
+
+    # Adiciona "Código Município"
+    res_dim_cod <- b_iframe$Runtime$evaluate(paste0(js_click_by_text, "('li.qv-dimension-list-item', 'Código Município');"))
+    if (!isTRUE(res_dim_cod$result$value$ok)) message("Aviso: Não foi possível adicionar 'Código Município'.")
+    Sys.sleep(2)
+
+    # Adiciona "Tipo de Dose"
+    res_dim_dose <- b_iframe$Runtime$evaluate(paste0(js_click_by_text, "('li.qv-dimension-list-item', 'Tipo de Dose');"))
+    if (!isTRUE(res_dim_dose$result$value$ok)) message("Aviso: Não foi possível adicionar 'Tipo de Dose'.")
+    Sys.sleep(2)
+
+
+    # --- 4. Expandindo a Tabela ---
+    message("Expandindo todas as linhas da tabela (clicando em '+')...")
+    # Esta é uma suposição de seletor. Pode precisar de ajuste.
+    js_expand_all <- "
+    (function() {
+      let plusButtons = document.querySelectorAll('button.lui-icon--plus');
+      let count = 0;
+      plusButtons.forEach(btn => {
+        btn.click();
+        count++;
+      });
+      return { clicked: count };
+    })"
+
+    res_expand <- b_iframe$Runtime$evaluate(js_expand_all)
+    message(paste("Foram clicados", res_expand$result$value$clicked, "botões de expandir."))
+    Sys.sleep(5) # Espera a expansão
+
+
+    # --- 5. Baixando os Dados ---
+    message("Clicando em 'Baixar Dados'...")
+
+    # O botão de download está FORA do iframe.
+    # Voltamos a usar a sessão principal 'b_main'
+    res_download <- b_main$Runtime$evaluate(paste0(js_click_by_text, "('button.bp-button', 'Baixar Dados');"))
+    if (!isTRUE(res_download$result$value$ok)) {
+      message("⚠️ Erro: Não foi possível clicar em 'Baixar Dados'.")
+      return(NULL)
+    }
+
+    # Espera o download ser concluído (pode precisar de ajuste)
+    message("Aguardando o download do CSV...")
+    Sys.sleep(10)
+
+
+    # Lista os arquivos no diretório de download
+    downloaded_files <- list.files(temp_dir, pattern = "\\.csv$", full.names = TRUE)
+    if (length(downloaded_files) == 0) {
+      message("⚠️ Erro: O arquivo CSV não foi encontrado no diretório temporário.")
+      return(NULL)
+    }
+
+    # Pega o arquivo mais recente
+    latest_csv <- downloaded_files[which.max(file.info(downloaded_files)$mtime)]
+    message(paste("Arquivo baixado:", latest_csv))
+
+
+    # --- 6. Processando e Formatando os Dados ---
+    message("Processando e formatando o CSV baixado...")
+
+    # O CSV do Qlik pode ter lixo no cabeçalho e rodapé.
+    # Esta é uma suposição; pode precisar de ajuste.
+    tryCatch({
+
+      # Tentativa de ler o CSV.
+      raw_data <- readr::read_csv(latest_csv, show_col_types = FALSE)
+
+      # 1. Renomear colunas
+      data_renamed <- raw_data %>%
+        janitor::clean_names() # Transforma "Código Município" em "codigo_municipio"
+
+      # 2. Pivotar (derreter) os meses
+      data_long <- data_renamed %>%
+        pivot_longer(
+          cols = c(jan, fev, mar, abr, mai, jun, jul, ago, set, out, nov, dez),
+          names_to = "mes_abrev",
+          values_to = "quantidade"
+        )
+
+      # 3. Mapear e Adicionar colunas
+      data_final <- data_long %>%
+        mutate(
+          # Adiciona colunas dos filtros
+          UF = uf,
+          ano = as.integer(ano),
+          estrategia = estrategia,
+
+          # Mapeia colunas existentes para o formato antigo
+          cod_municipio = as.numeric(codigo_municipio),
+          nome_municipio = municipio_ocorrencia,
+          produto = imunobiologico, # ou "abreviacao_vacina" se estiver disponível
+          dose = tipo_de_dose,
+          mes = tolower(meses_map[mes_abrev]),
+
+          # Limpa quantidade
+          quantidade = as.numeric(quantidade)
+        ) %>%
+        filter(!is.na(quantidade) & quantidade > 0) # Remove linhas sem dados
+
+      # 4. Selecionar e reordenar
+      data_final_formatada <- data_final %>%
+        select(
+          UF, ano, cod_municipio, nome_municipio,
+          estrategia, produto, mes, dose, quantidade
+        )
+
+      # Limpa o arquivo temporário
+      unlink(latest_csv)
+
+      message("✅ Dados do InfoMS (2023+) baixados e formatados com sucesso!")
+      return(data_final_formatada)
+
+    }, error = function(e) {
+      message("⚠️ Erro CRÍTICO ao processar o arquivo CSV baixado.")
+      message("O formato do CSV pode ter mudado. O scraper precisará de ajuste.")
+      message("Erro R: ", e$message)
+      return(NULL)
+    })
   }
 }
 
