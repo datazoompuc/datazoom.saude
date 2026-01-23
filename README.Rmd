@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-<a href="https://github.com/datazoompuc/datazoom.saude"><img src="man/figures/logo.png" align="left" width="100" hspace="10" vspace="6"></a>
+<a href="https://github.com/datazoompuc/datazoom.saude"><img src="https://raw.githubusercontent.com/datazoompuc/datazoom.saude/master/hex_dzsaude.png" align="left" width="100" hspace="10" vspace="6"></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -18,7 +18,6 @@ knitr::opts_chunk$set(
 # datazoom.saude
 
 <!-- badges: start -->
-[![R build status](https://github.com/datazoompuc/datazoom.saude/workflows/R-CMD-check/badge.svg)](https://github.com/datazoompuc/datazoom.saude/actions)
 [![Total de Downloads](https://cranlogs.r-pkg.org/badges/grand-total/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
 [![Downloads mensais](https://cranlogs.r-pkg.org/badges/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
 [![Linguagens](https://img.shields.io/github/languages/count/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude)
