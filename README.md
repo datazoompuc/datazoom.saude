@@ -1,5 +1,5 @@
 
-<a href="https://github.com/datazoompuc/datazoom.saude"><img src="man/figures/logo.png" align="left" width="100" hspace="10" vspace="6"></a>
+<a href="https://github.com/datazoompuc/datazoom.saude"><img src="https://raw.githubusercontent.com/datazoompuc/datazoom.saude/master/hex_dzsaude.png" align="left" width="100" hspace="10" vspace="6"></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -7,8 +7,6 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/datazoompuc/datazoom.saude/workflows/R-CMD-check/badge.svg)](https://github.com/datazoompuc/datazoom.saude/actions)
 [![Total de
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
 [![Downloads
@@ -59,8 +57,6 @@ install.packages("devtools")
 
 # Install datazoom.saude directly from GitHub
 devtools::install_github("datazoompuc/datazoom.saude")
-
-devtools::load_all()
 ```
 
 ## Supported Databases
