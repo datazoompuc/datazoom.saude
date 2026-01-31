@@ -1,0 +1,100 @@
+---
+title: "DATASUS - Vaccination Data (SI-PNI)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DATASUS - Vaccination Data (SI-PNI)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `load_vaccines` function provides access to the **National Immunization Program Information System (SI-PNI)**. This dataset contains records of vaccine doses applied across Brazil, allowing for the analysis of immunization coverage and public health strategies.
+
+Unlike other datasets, this function performs automated web scraping on the SI-PNI portal to retrieve the most up-to-date consolidated data directly from the official source.
+
+***
+The `load_vaccines` function offers the following parameters:
+  
+  1. **year**: A numeric value indicating the year of the data to be downloaded.
+      * Currently supported range: `1994` to `2022`.
+      * Note: You must input only one year at a time.
+
+  2. **state**: A string indicating the Brazilian state abbreviation for which the data should be downloaded (e.g., `"SP"`, `"RJ"`, `"AC"`).
+      * Note: You must input only one state at a time.
+  
+  3. **strategy**: Specifies the vaccination strategy.
+      * Common strategies include:
+          * `"Rotina"` – Routine vaccination schedule.
+          * `"Especial"` – Special immunobiologicals.
+          * `"Bloqueio"` – Blocking vaccination in outbreak areas.
+          * `"Intensificação"` – Intensification campaigns.
+          * `"Serviço Privado"` – Data from private clinics.
+      * Note: If set to `NULL`, a selection menu will appear.
+
+  
+  4. **product**: Specifies the specific vaccine or immunobiological product (e.g., `"BCG - BCG"`, `"Febre amarela - FA"`, `"Hepatite B - HB"`).
+      * The valid options for product depend strictly on the chosen **strategy**.
+      * Note: If set to `NULL`, a selection menu will appear.
+
+  5. **language**: A string indicating the desired language of variable names and labels.
+      * Accepts `"eng"` (default) for English or ``"pt"`` for Portuguese.
+  
+  
+***
+**Interactive Mode:**
+
+If you are unsure of the exact strings for `strategy` or `product`, you can run the function providing only the `year` and `state`. The function will provide an interactive menu in the R console for you to choose from valid combinations.
+
+
+
+***
+**Examples:**
+
+```{r, eval = FALSE}
+library(datazoom.saude)
+
+# Download data for Yellow Fever (Routine strategy) - State of Acre, 2020.
+# Variable names and labels in English.
+data_fa_acre <- load_vaccines(
+  year = 2020,
+  state = "AC",
+  strategy = "rotina",
+  product = "Febre amarela - FA",
+  language = "eng"
+)
+
+# Download data for BCG (Routine strategy) - State of São Paulo, 2018.
+# Descriptions in Portuguese.
+data_bcg_sp <- load_vaccines(
+  year = 2018,
+  state = "SP",
+  strategy = "rotina",
+  product = "BCG - BCG",
+  language = "pt"
+)
+
+# Download data for Private Service strategy - Rio de Janeiro, 2021.
+# Specifically for the Hexavalent vaccine.
+data_hexa_private <- load_vaccines(
+  year = 2021,
+  state = "RJ",
+  strategy = "serviço privado",
+  product = "Hexavalente - HEXA"
+)
+
+# Example of calling the function to trigger interactive selection:
+# Run this in your console to see the menus.
+# data_interactive <- load_vaccines(year = 2022, state = "MG")
+```
+
+***
+**Technical Note:** As this function relies on web scraping `(chromote)`, ensure you have a stable internet connection and a Chrome-based browser installed on your system.
+
+
+**Important:** Please be aware that the **SI-PNI** website (*https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf*) often experiences significant instability. This may result in connection timeouts, slow response times, or unexpected errors during the scraping process. If the function fails, it is recommended to wait a few minutes and try again. If the error persists, please check the **SI-PNI** portal status or report the issue on our GitHub repository.

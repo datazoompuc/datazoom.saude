@@ -70,6 +70,8 @@ For detailed usage examples and guides on each database, please refer to the vig
 
 **[6 - Oncology Cases (PO)](#oncology-cases)**
 
+**[7 - Vaccination (SI-PNI)](#vaccines)**
+
 <br>
 
 # Mortality
@@ -100,6 +102,11 @@ For detailed usage examples and guides on each database, please refer to the vig
 # Oncology Cases
 
 ```{r child = "vignettes/ONCOLOGY_CASES.Rmd"}
+```
+
+# Vaccines
+
+```{r child = "vignettes/VACCINES.Rmd"}
 ```
 
 <br>
