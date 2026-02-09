@@ -640,9 +640,28 @@ load_dictionary <- function(dataset) {
     }
   }
 
+  if (dataset == "pni") {
+    harmonization_dat <- tibble::tribble(
+      ~var_code, ~name_pt, ~name_eng, ~label_pt, ~label_eng,
+
+      # SI-PNI
+
+      "year", "ano", "year", "Ano de referencia", "Reference year",
+      "month", "mes", "month", "Mes de referencia", "Reference month",
+      "state", "estado", "state", "Estado de referencia", "Reference state",
+      "munic_code", "cod_munic", "munic_code", "Municipio de ocorrencia, conforme codigos IBGE", "Municipality of occurrence, according to IBGE codes",
+      "munic_name", "nome_munic", "munic_name", "Municipio de ocorrencia", "Municipality of occurrence",
+      "strategy", "estrategia", "strategy", "Estrategia de vacinacao", "Strategy of vaccination",
+      "product", "produto", "product", "Tipo de vacina", "Type of vaccine",
+      "dose", "dose", "dose", "Doses da vacina", "Vaccine doses",
+      "quantity", "quantidade", "quantity", "Quantidade de doses aplicadas", "Quantity of applied doses"
+    )
+  }
+
   ############
   ## Return ##
   ############
 
   return(harmonization_dat)
+
 }
