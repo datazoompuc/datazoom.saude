@@ -1,16 +1,26 @@
 #' Load Brazilian vaccination data from the SI-PNI system via DATASUS
 #'
 #' Retrieves vaccination records from Brazil's official National Immunization Program
-#' Information System (SI-PNI), made available through DATASUS. This function performs
-#' web scraping on the SI-PNI portal to extract consolidated data on applied doses
-#' based on specific strategies and vaccine products.
+#' Information System (SI-PNI), made available through DATASUS. This function supports
+#' two data ingestion modes. For historical data (1994-2022), it can perform automated web scraping
+#' on the legacy SI-PNI Web portal to extract consolidated records of applied doses.
+#' For more recent years (2023 to present), the user must provide a locally downloaded file, in which case
+#' the function performs only data validation, cleaning, harmonization, and
+#' standardization.
+#'
+#' Regardless of the ingestion mode, the returned dataset is fully harmonized and
+#' consistent with the historical SI-PNI data structure.
 #'
 #' @param year A numeric value indicating the year of the data to be downloaded (Supported range: 1994-2022).
 #' @param state A string indicating the Brazilian state abbreviation (e.g., "SP", "RJ", "AC").
-#' @param strategy A string identifying the vaccination strategy (e.g., "rotina", "especial", "bloqueio").
+#' @param strategy A string identifying the vaccination strategy (e.g., "Rotina", "Especial", "Bloqueio").
 #' If NULL and in an interactive session, a menu will appear.
 #' @param product A string identifying the specific vaccine product (e.g., "BCG - BCG", "Hepatite B - HB").
 #' Must be a valid product for the chosen strategy. If NULL and in an interactive session, a menu will appear.
+#' @param data An optional path to a local Excel (.xlsx) file downloaded manually from
+#' the official DATASUS vaccination dashboard. If provided, web scraping is skipped and
+#' the function performs only data cleaning and harmonization. This argument is mandatory
+#' for data from 2023 onwards.
 #' @param language A string indicating the desired language for variable names and labels.
 #' Accepts "eng" (default) or "pt".
 #'
@@ -22,7 +32,7 @@
 #' # Example: Loading Yellow Fever vaccine data for Acre in 2020
 #' data <- load_vaccines(year = 2020,
 #'                       state = "AC",
-#'                       strategy = "rotina",
+#'                       strategy = "Rotina",
 #'                       product = "Febre amarela - FA",
 #'                       language = "eng")
 #' }
@@ -32,33 +42,45 @@ load_vaccines <- function(year,
                           state,
                           strategy = NULL,
                           product = NULL,
+                          data = NULL,
                           language = "eng") {
 
   # -------------------------
   # Argument validation
   # -------------------------
-  # Ensure only a single year is processed at a time
-  if (length(year) != 1) {
-    message("Please, input only one year by turn.")
+
+  # Ensure data is a single value if provided
+  if (!is.null(data) && length(data) != 1) {
+    message("Please, input only one file by turn.")
     return(invisible(NULL))
   }
 
-  # Ensure only a single state is processed at a time
-  if (length(state) != 1) {
-    message("Please, input only one state by turn.")
-    return(invisible(NULL))
-  }
+  if (is.null(data)) {
 
-  # Ensure strategy is a single value if provided
-  if (!is.null(strategy) && length(strategy) != 1) {
-    message("Please, input only one strategy by turn.")
-    return(invisible(NULL))
-  }
+    # Ensure only a single year is processed at a time
+    if (length(year) != 1) {
+      message("Please, input only one year by turn.")
+      return(invisible(NULL))
+    }
 
-  # Ensure product is a single value if provided
-  if (!is.null(product) && length(product) != 1) {
-    message("Please, input only one product by turn.")
-    return(invisible(NULL))
+    # Ensure only a single state is processed at a time
+    if (length(state) != 1) {
+      message("Please, input only one state by turn.")
+      return(invisible(NULL))
+    }
+
+    # Ensure strategy is a single value if provided
+    if (!is.null(strategy) && length(strategy) != 1) {
+      message("Please, input only one strategy by turn.")
+      return(invisible(NULL))
+    }
+
+    # Ensure product is a single value if provided
+    if (!is.null(product) && length(product) != 1) {
+      message("Please, input only one product by turn.")
+      return(invisible(NULL))
+    }
+
   }
 
   # Consolidate parameters into a list for consistency
@@ -67,6 +89,7 @@ load_vaccines <- function(year,
     state    = toupper(state),
     strategy = tolower(strategy),
     product  = product,
+    data     = data,
     language = language
   )
 
@@ -252,69 +275,79 @@ load_vaccines <- function(year,
   if (year < 1994) {
 
     message("Please select a year between 1994 and 2022.")
+    return(invisible(NULL))
 
   } else if (year >= 1994 & year < 2023) {
 
     # Fetch raw data using the internal load_pni function
     dat <- load_pni(year = param$year, state = param$state, strategy = strategy, product = product)
 
-    #################
-    ### Labelling ###
-    #################
+  } else if (year >= 2023) {
 
-    # Load metadata dictionary for PNI datasets
-    dic <- load_dictionary("pni")
+    # Fetch raw data using the internal pni_after_2023 function
+    dat <- pni_after_2023(year = param$year, state = param$state, strategy = strategy, product = product, data = param$data)
 
-    # Map column names based on the user-selected language (PT vs ENG)
-    if (param$language == "pt") {
-      names_map <- setNames(dic$name_pt, dic$var_code)
-    } else {
-      names_map <- setNames(dic$name_eng, dic$var_code)
-    }
+  }
 
-    # Clean the map of any missing values
-    names_map <- names_map[!is.na(names_map)]
+  #################
+  ### Labelling ###
+  #################
 
-    rename_map <- setNames(names(names_map), names_map)
+  # Load metadata dictionary for PNI datasets
+  dic <- load_dictionary("pni")
 
-    # Apply renaming only to columns present in both the data and the map
+  # Map column names based on the user-selected language (PT vs ENG)
+  if (param$language == "pt") {
+    names_map <- setNames(dic$name_pt, dic$var_code)
+  } else {
+    names_map <- setNames(dic$name_eng, dic$var_code)
+  }
+
+  # Clean the map of any missing values
+  names_map <- names_map[!is.na(names_map)]
+
+  rename_map <- setNames(names(names_map), names_map)
+
+  # Apply renaming only to columns present in both the data and the map
+  if (!is.null(dat)) {
+
     dat <- dat %>%
       dplyr::rename(dplyr::any_of(rename_map))
 
-    # Construct the label map for variable descriptions
-    if (param$language == "pt") {
-      labels_map <- setNames(dic$label_pt, dic$name_pt)
-    } else {
-      labels_map <- setNames(dic$label_eng, dic$name_eng)
-    }
-    labels_map <- labels_map[!is.na(labels_map)]
-
-    # Extract labels for existing columns and apply using Hmisc
-    current_names <- names(dat)
-    new_labels <- labels_map[current_names]
-
-    labels_list <- as.list(new_labels)
-    names(labels_list) <- current_names
-    Hmisc::label(dat) <- labels_list
-
-    ############################
-    ### Harmonizing Variable ###
-    ############################
-
-    # Convert the resulting data frame into a tibble for better printing/handling
-    dat_mod <- dat %>%
-      tibble::as_tibble()
-
-    ######################
-    ### Returning Data ###
-    ######################
-
-    return(dat_mod)
-
   } else {
 
-    # Fallback for years outside the valid data range
-    message("Please select a year between 1994 and 2022.")
+    return(invisible(NULL))
 
   }
+
+  # Construct the label map for variable descriptions
+  if (param$language == "pt") {
+    labels_map <- setNames(dic$label_pt, dic$name_pt)
+  } else {
+    labels_map <- setNames(dic$label_eng, dic$name_eng)
+  }
+  labels_map <- labels_map[!is.na(labels_map)]
+
+  # Extract labels for existing columns and apply using Hmisc
+  current_names <- names(dat)
+  new_labels <- labels_map[current_names]
+
+  labels_list <- as.list(new_labels)
+  names(labels_list) <- current_names
+  Hmisc::label(dat) <- labels_list
+
+  ############################
+  ### Harmonizing Variable ###
+  ############################
+
+  # Convert the resulting data frame into a tibble for better printing/handling
+  dat_mod <- dat %>%
+    tibble::as_tibble()
+
+  ######################
+  ### Returning Data ###
+  ######################
+
+  return(dat_mod)
+
 }
