@@ -690,7 +690,7 @@ library(datazoom.saude)
 data_fa_acre <- load_vaccines(
   year = 2020,
   state = "AC",
-  strategy = "rotina",
+  strategy = "Rotina",
   product = "Febre amarela - FA",
   language = "eng"
 )
@@ -700,7 +700,7 @@ data_fa_acre <- load_vaccines(
 data_bcg_sp <- load_vaccines(
   year = 2018,
   state = "SP",
-  strategy = "rotina",
+  strategy = "Rotina",
   product = "BCG - BCG",
   language = "pt"
 )
@@ -710,7 +710,7 @@ data_bcg_sp <- load_vaccines(
 data_hexa_private <- load_vaccines(
   year = 2021,
   state = "RJ",
-  strategy = "serviço privado",
+  strategy = "Serviço Privado",
   product = "Hexavalente - HEXA"
 )
 
