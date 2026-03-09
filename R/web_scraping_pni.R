@@ -1,59 +1,62 @@
-load_pni <- function(year, state, strategy, product) {
+load_pni <- function(year, state, strategy, product, dose, data) {
 
-  # Notify the user that the scraping process is beginning
-  message("Please wait while web scraping is being performed.")
+  # Check if the mandatory data file path is provided
+  if (is.null(data)) {
 
-  # Increase timeout to handle slow government server responses
-  options(timeout = 2000)
+    # Notify the user that the scraping process is beginning
+    message("Please wait while web scraping is being performed.")
 
-  # Initialize a new Chrome session via Chromote
-  b <- ChromoteSession$new()
-  # Ensure the session closes automatically when the function exits (even on error)
-  on.exit(try(b$close(), silent = TRUE), add = TRUE)
+    # Increase timeout to handle slow government server responses
+    options(timeout = 2000)
 
-  # Remove the '#' from the line below if you need to debug visually (opens browser window)
-  #b$view()
+    # Initialize a new Chrome session via Chromote
+    b <- ChromoteSession$new()
+    # Ensure the session closes automatically when the function exits (even on error)
+    on.exit(try(b$close(), silent = TRUE), add = TRUE)
 
-  # Create a clean, exclusive temporary folder for downloads
-  download_dir <- file.path(tempdir(), "pni_downloads")
+    # Remove the '#' from the line below if you need to debug visually (opens browser window)
+    #b$view()
 
-  # Delete the directory if it already exists and recreate it
-  unlink(download_dir, recursive = TRUE, force = TRUE)
-  dir.create(download_dir, recursive = TRUE)
+    # Create a clean, exclusive temporary folder for downloads
+    download_dir <- file.path(tempdir(), "pni_downloads")
 
-  # Configure the browser to allow downloads in the specified directory
-  try(b$Browser$setDownloadBehavior(behavior = "allow", downloadPath = download_dir), silent = TRUE)
+    # Delete the directory if it already exists and recreate it
+    unlink(download_dir, recursive = TRUE, force = TRUE)
+    dir.create(download_dir, recursive = TRUE)
 
-  # Target URL for the SI-PNI consolidated monthly applied doses report
-  target_url <- "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
+    # Configure the browser to allow downloads in the specified directory
+    try(b$Browser$setDownloadBehavior(behavior = "allow", downloadPath = download_dir), silent = TRUE)
 
-  # Navigate to the site and wait for initial scripts to load
-  b$Page$navigate(target_url)
-  Sys.sleep(5)
+    # Target URL for the SI-PNI consolidated monthly applied doses report
+    target_url <- "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
 
-  ## State (UF) Selection
-  # Find and click the list item matching the specified State label
-  b$Runtime$evaluate(sprintf("
+    # Navigate to the site and wait for initial scripts to load
+    b$Page$navigate(target_url)
+    Sys.sleep(5)
+
+    ## State (UF) Selection
+    # Find and click the list item matching the specified State label
+    b$Runtime$evaluate(sprintf("
     (function(){
       var el=[...document.querySelectorAll('li[data-label]')].find(x=>x.dataset.label==='%s');
       if(el) el.click();
     })();
   ", state))
-  Sys.sleep(1)
+    Sys.sleep(1)
 
-  ## Aggregate by Municipality (Totalizar por município)
-  # Check the IBGE aggregation checkbox if it's not already active
-  b$Runtime$evaluate("
+    ## Aggregate by Municipality (Totalizar por município)
+    # Check the IBGE aggregation checkbox if it's not already active
+    b$Runtime$evaluate("
     (function(){
       var box = document.querySelector(\"[id='dosesAplicadasMensalForm:chkTotalizarIBGE'] .ui-chkbox-box\");
       if (box && !box.classList.contains('ui-state-active')) box.click();
     })();
   ")
-  Sys.sleep(15)
+    Sys.sleep(15)
 
-  ## Strategy Selection
-  # Select the vaccination strategy from the dynamic panel
-  b$Runtime$evaluate(sprintf("
+    ## Strategy Selection
+    # Select the vaccination strategy from the dynamic panel
+    b$Runtime$evaluate(sprintf("
     (function(){
       var panel = document.querySelector(\"[id='dosesAplicadasMensalForm:estrategiaPesquisa_panel']\");
       if(!panel) return;
@@ -61,11 +64,11 @@ load_pni <- function(year, state, strategy, product) {
       if (opt) opt.click();
     })();
   ", strategy))
-  Sys.sleep(15)
+    Sys.sleep(15)
 
-  ## Product Selection
-  # Select the vaccine product from the dynamic panel
-  b$Runtime$evaluate(sprintf("
+    ## Product Selection
+    # Select the vaccine product from the dynamic panel
+    b$Runtime$evaluate(sprintf("
     (function(){
       var panel = document.querySelector(\"[id='dosesAplicadasMensalForm:produtoPesquisa_panel']\");
       if(!panel) return;
@@ -73,35 +76,35 @@ load_pni <- function(year, state, strategy, product) {
       if (opt) opt.click();
     })();
   ", product))
-  Sys.sleep(15)
+    Sys.sleep(15)
 
-  ## Dose Options Extraction
-  # Capture the HTML of the dose selection container
-  html_doses <- b$Runtime$evaluate("
+    ## Dose Options Extraction
+    # Capture the HTML of the dose selection container
+    html_doses <- b$Runtime$evaluate("
   (function(){
     const el = document.querySelector('#dosesAplicadasMensalForm\\\\:dosePesquisa');
     return el ? el.outerHTML : null;
   })();
 ")$result$value
 
-  if (is.null(html_doses) || html_doses == "null") {
-    # Custom error message for missing dose container
-    message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
-    return(invisible(NULL))
-  }
+    if (is.null(html_doses) || html_doses == "null") {
+      # Custom error message for missing dose container
+      message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
+      return(invisible(NULL))
+    }
 
-  # Extract unique dose labels using regex, filtering out "REF" (Reference)
-  dose_labels <- stringr::str_match_all(html_doses, "<label[^>]*>(.*?)</label>")[[1]][,2]
-  dose_labels <- stringr::str_trim(dose_labels)
-  dose_labels <- unique(dose_labels[dose_labels != "REF"])
+    # Extract unique dose labels using regex, filtering out "REF" (Reference)
+    dose_labels <- stringr::str_match_all(html_doses, "<label[^>]*>(.*?)</label>")[[1]][,2]
+    dose_labels <- stringr::str_trim(dose_labels)
+    dose_labels <- unique(dose_labels[dose_labels != "REF"])
 
-  # Store dose labels as an attribute of the session object
-  attr(b, "dose_labels") <- dose_labels
-  dose_labels <- sort(dose_labels)
+    # Store dose labels as an attribute of the session object
+    attr(b, "dose_labels") <- dose_labels
+    dose_labels <- sort(dose_labels)
 
-  ## Manage Doses (Selection Logic)
-  # JavaScript to select all relevant doses while unchecking 'REF/REFORÇO' (booster) values
-  res_doses <- b$Runtime$evaluate("
+    ## Manage Doses (Selection Logic)
+    # JavaScript to select all relevant doses while unchecking 'REF/REFORÇO' (booster) values
+    res_doses <- b$Runtime$evaluate("
   (function(){
     // Normalizer: removes accents/diacritics, converts to uppercase, and trims whitespace
     const norm = s => (s||'')
@@ -166,21 +169,21 @@ load_pni <- function(year, state, strategy, product) {
   })();
 ")$result$value
 
-  if (!is.null(res_doses) && res_doses != "null") {
-    dd <- try(jsonlite::fromJSON(res_doses), silent = TRUE)
-    if (!inherits(dd, "try-error") && isTRUE(dd$ok)) {
-      # Success logic (no action required here)
-    } else {
-      # Error feedback if the dose selection logic fails
-      message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
-      return(invisible(NULL))
+    if (!is.null(res_doses) && res_doses != "null") {
+      dd <- try(jsonlite::fromJSON(res_doses), silent = TRUE)
+      if (!inherits(dd, "try-error") && isTRUE(dd$ok)) {
+        # Success logic (no action required here)
+      } else {
+        # Error feedback if the dose selection logic fails
+        message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
+        return(invisible(NULL))
+      }
     }
-  }
-  Sys.sleep(2)
+    Sys.sleep(2)
 
-  ## Year Selection
-  # Set the year input field value directly via JavaScript
-  b$Runtime$evaluate(sprintf("
+    ## Year Selection
+    # Set the year input field value directly via JavaScript
+    b$Runtime$evaluate(sprintf("
     (function(){
       function setAno(){
         let el = document.querySelector(\"[id='dosesAplicadasMensalForm:ano']\");
@@ -189,24 +192,24 @@ load_pni <- function(year, state, strategy, product) {
       setAno(); setTimeout(setAno, 2000);
     })();
   ", year))
-  Sys.sleep(2)
+    Sys.sleep(2)
 
-  ## Search Execution
-  # Click the submit button to generate the report
-  b$Runtime$evaluate("
+    ## Search Execution
+    # Click the submit button to generate the report
+    b$Runtime$evaluate("
     (function(){
       var btn = document.querySelector('input[type=submit][value=\"Pesquisar\"]');
       if (btn) btn.click();
     })();
   ")
-  Sys.sleep(20)
+    Sys.sleep(20)
 
-  t0 <- Sys.time()
-  data_status <- "loading"
+    t0 <- Sys.time()
+    data_status <- "loading"
 
-  # Polling loop to check if the result table has loaded or if no records were found
-  repeat {
-    status_js <- "
+    # Polling loop to check if the result table has loaded or if no records were found
+    repeat {
+      status_js <- "
       (function(){
         var tbody = document.querySelector(\"[id='dosesAplicadasMensalForm:listaDoseAplicadasTable_data']\");
         var txt = tbody ? (tbody.innerText || '') : '';
@@ -220,31 +223,31 @@ load_pni <- function(year, state, strategy, product) {
         return 'loading';
       })();
     "
-    data_status <- try(b$Runtime$evaluate(status_js)$result$value, silent = TRUE)
-    if (inherits(data_status, "try-error")) data_status <- "loading"
+      data_status <- try(b$Runtime$evaluate(status_js)$result$value, silent = TRUE)
+      if (inherits(data_status, "try-error")) data_status <- "loading"
 
-    if (data_status == "success") {
-      break
-    }
-
-    if (data_status == "empty") {
-      Sys.sleep(3)
-      if (try(b$Runtime$evaluate(status_js)$result$value, silent=TRUE) == "empty") {
-        return(data.frame())
+      if (data_status == "success") {
+        break
       }
+
+      if (data_status == "empty") {
+        Sys.sleep(3)
+        if (try(b$Runtime$evaluate(status_js)$result$value, silent=TRUE) == "empty") {
+          return(data.frame())
+        }
+      }
+
+      if (difftime(Sys.time(), t0, units = 'secs') > 90) {
+        message("⚠️ The table generation timed out. Please wait a few minutes for the website to stabilize and try again.")
+        return(invisible(NULL))
+      }
+
+      Sys.sleep(2)
     }
 
-    if (difftime(Sys.time(), t0, units = 'secs') > 90) {
-      message("⚠️ The table generation timed out. Please wait a few minutes for the website to stabilize and try again.")
-      return(invisible(NULL))
-    }
-
-    Sys.sleep(2)
-  }
-
-  ## CSV Download
-  # Trigger the CSV export by clicking the icon/link via JS
-  b$Runtime$evaluate("
+    ## CSV Download
+    # Trigger the CSV export by clicking the icon/link via JS
+    b$Runtime$evaluate("
 (function(){
   const anchors = document.querySelectorAll('a[onclick*=\"mojarra.jsfcljs\"]');
   for (const a of anchors) {
@@ -257,30 +260,44 @@ load_pni <- function(year, state, strategy, product) {
 })();
 ")
 
-  # Wait for the file to appear in the temporary download directory
-  csv_file <- NULL
-  t0 <- Sys.time()
+    # Wait for the file to appear in the temporary download directory
+    csv_file <- NULL
+    t0 <- Sys.time()
 
-  repeat {
-    files <- list.files(download_dir, pattern = "\\.csv$", full.names = TRUE)
-    if (length(files) > 0) {
-      csv_file <- files[which.max(file.info(files)$mtime)]
-      break
+    repeat {
+      files <- list.files(download_dir, pattern = "\\.csv$", full.names = TRUE)
+      if (length(files) > 0) {
+        csv_file <- files[which.max(file.info(files)$mtime)]
+        break
+      }
+      if (difftime(Sys.time(), t0, units = "secs") > 60) {
+        message("⚠️ The CSV download timed out. Please wait a few minutes for the website to stabilize and try again.")
+        return(invisible(NULL))
+      }
     }
-    if (difftime(Sys.time(), t0, units = "secs") > 60) {
-      message("⚠️ The CSV download timed out. Please wait a few minutes for the website to stabilize and try again.")
-      return(invisible(NULL))
-    }
+
+    # Load the downloaded CSV file using specific encoding for Brazilian characters
+    dat <- suppressMessages(
+      readr::read_csv(
+        csv_file,
+        show_col_types = FALSE,
+        locale = readr::locale(encoding = "ISO-8859-1")
+      )
+    )
+
+
+  } else {
+
+    dat <- suppressMessages(
+      readxl::read_excel(data)
+      )
+
+    # Extract dose labels directly from the spreadsheet structure
+    dose_labels <- toupper(dose)
+    dose_labels <- sort(dose_labels)
+
   }
 
-  # Load the downloaded CSV file using specific encoding for Brazilian characters
-  dat <- suppressMessages(
-    readr::read_csv(
-      csv_file,
-      show_col_types = FALSE,
-      locale = readr::locale(encoding = "ISO-8859-1")
-    )
-  )
 
   # Data Wrangling and Column Renaming
   df <- dat %>%
@@ -324,4 +341,5 @@ load_pni <- function(year, state, strategy, product) {
     dplyr::select(state, year, munic_code, munic_name, strategy, product, month, dose, quantity)
 
   return(dat_final)
+
 }
