@@ -122,7 +122,7 @@ DataZoom is developed by a team at the Pontifícia Universidade Católica do Rio
 To cite the `datazoom.saude` package in publications, use:
 
 > Data Zoom (2023). Data Zoom: Simplifying Access To Brazilian Microdata.
-> https://www.econ.puc-rio.br/datazoom/english/index.html
+> https://datazoom.com.br/en/
 
 A BibTeX entry for LaTeX users is:
 
