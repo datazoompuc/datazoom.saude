@@ -21,6 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com}
   \item Vanndher Amós B. A. de Souza \email{vanndheramos@gmail.com}
 }
 
