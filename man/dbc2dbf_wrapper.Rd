@@ -15,7 +15,7 @@ dbc2dbf_wrapper(input.file, output.file)
 \item{output.file}{The output file name (including extension)}
 }
 \value{
-Return TRUE if succeded, FALSE otherwise.
+Return TRUE if succeeded, FALSE otherwise.
 }
 \description{
 This function allows you decompress a DBC file into its DBF counterpart. Please note that this is the file format used by the Brazilian Ministry of Health (DATASUS), and it is not related to the FoxPro or CANdb DBC file formats.
