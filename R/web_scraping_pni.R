@@ -89,7 +89,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
 
     if (is.null(html_doses) || html_doses == "null") {
       # Custom error message for missing dose container
-      message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
+      message("Warning: Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
       return(invisible(NULL))
     }
 
@@ -175,7 +175,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
         # Success logic (no action required here)
       } else {
         # Error feedback if the dose selection logic fails
-        message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
+        message("Warning: Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
         return(invisible(NULL))
       }
     }
@@ -238,7 +238,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
       }
 
       if (difftime(Sys.time(), t0, units = 'secs') > 90) {
-        message("⚠️ The table generation timed out. Please wait a few minutes for the website to stabilize and try again.")
+        message("Warning: The table generation timed out. Please wait a few minutes for the website to stabilize and try again.")
         return(invisible(NULL))
       }
 
@@ -271,7 +271,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
         break
       }
       if (difftime(Sys.time(), t0, units = "secs") > 60) {
-        message("⚠️ The CSV download timed out. Please wait a few minutes for the website to stabilize and try again.")
+        message("Warning: The CSV download timed out. Please wait a few minutes for the website to stabilize and try again.")
         return(invisible(NULL))
       }
     }
