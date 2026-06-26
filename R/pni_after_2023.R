@@ -18,15 +18,15 @@ pni_after_2023 <- function(year, state, strategy, product, data) {
       dplyr::case_when(
         stringr::str_detect(x, "Dose Zero") ~ "D0",
         stringr::str_detect(x, "Dose Inicial") ~ "Inicial",
-        stringr::str_detect(x, "Dose Única|Única") ~ "DU",
-        stringr::str_detect(x, "1ª Dose|Dose") ~ "D1",
-        stringr::str_detect(x, "2ª Dose") ~ "D2",
-        stringr::str_detect(x, "3ª Dose") ~ "D3",
-        stringr::str_detect(x, "4ª Dose") ~ "D4",
-        stringr::str_detect(x, "5ª Dose") ~ "D5",
+        stringr::str_detect(x, "Dose \u00danica|\u00danica") ~ "DU",
+        stringr::str_detect(x, "1\u00aa Dose|Dose") ~ "D1",
+        stringr::str_detect(x, "2\u00aa Dose") ~ "D2",
+        stringr::str_detect(x, "3\u00aa Dose") ~ "D3",
+        stringr::str_detect(x, "4\u00aa Dose") ~ "D4",
+        stringr::str_detect(x, "5\u00aa Dose") ~ "D5",
         stringr::str_detect(x, "Dose Adicional") ~ "Adicional",
-        stringr::str_detect(x, "Reforço") ~ "REF",
-        stringr::str_detect(x, "Revacinação|Dose Revacinação") ~ "REV",
+        stringr::str_detect(x, "Refor\u00e7o") ~ "REF",
+        stringr::str_detect(x, "Revacina\u00e7\u00e3o|Dose Revacina\u00e7\u00e3o") ~ "REV",
         stringr::str_detect(x, "Fracionada") ~ "Fracionada",
         stringr::str_detect(x, "Profilaxia") ~ "Profilaxia",
         stringr::str_detect(x, "Tratamento") ~ "Tratamento",
@@ -44,10 +44,10 @@ pni_after_2023 <- function(year, state, strategy, product, data) {
     # Initial data cleaning and variable renaming
     dat <- raw %>%
       dplyr::rename(
-        state      = `UF Ocorrência`,
-        munic_name = `Município Ocorrência`,
-        product    = `Abreviação Vacina`,
-        dose_raw   = `Tipo de Dose`
+        state      = "UF Ocorr\u00eancia",
+        munic_name = "Munic\u00edpio Ocorr\u00eancia",
+        product    = "Abrevia\u00e7\u00e3o Vacina",
+        dose_raw   = "Tipo de Dose"
       ) %>%
       dplyr::mutate(
         year = as.integer(year),
