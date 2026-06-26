@@ -124,88 +124,88 @@ load_vaccines <- function(year,
   pni_valid_combos <- list(
     "Bloqueio" = c(
       "DTP/Hib - Tetra", "Dupla adulto - dT", "Dupla viral - SR", "Febre amarela - FA",
-      "Influenza Trivalente - FLU3V", "Meningocócica AC - Meningo AC",
-      "Meningocócica conjugada C - Men Conj C", "Pneumocócica 10V - Pncc10V",
+      "Influenza Trivalente - FLU3V", "Meningoc\u00f3cica AC - Meningo AC",
+      "Meningoc\u00f3cica conjugada C - Men Conj C", "Pneumoc\u00f3cica 10V - Pncc10V",
       "Poliomielite inativada - VIP", "Tetra Viral - Tetra Viral",
-      "Tríplice bacteriana - DTP", "Tríplice viral - SCR", "Varicela(atenuada) - Varc"
+      "Tr\u00edplice bacteriana - DTP", "Tr\u00edplice viral - SCR", "Varicela(atenuada) - Varc"
     ),
     "Campanha Indiscriminada" = c(
       "Influenza Trivalente - FLU3V", "Poliomielite oral (Bivalente) - VOP",
-      "Tríplice viral - SCR"
+      "Tr\u00edplice viral - SCR"
     ),
     "Especial" = c(
-      "Cólera oral - Cólera", "DTPa/Hib/Polio Inativa - PENTAinativada",
+      "C\u00f3lera oral - C\u00f3lera", "DTPa/Hib/Polio Inativa - PENTAinativada",
       "DTP/HB/Hib - Penta", "DTP/Hib - Tetra", "Dupla infantil - DT",
-      "Febre tifóide (atenuada) - Fta", "Febre tifóide (polissacarídica) - FTp",
-      "Haemophilus tipo b - Hib", "Hepatite A - HA", "Hepatite A Pediátrica - HAped",
+      "Febre tif\u00f3ide (atenuada) - Fta", "Febre tif\u00f3ide (polissacar\u00eddica) - FTp",
+      "Haemophilus tipo b - Hib", "Hepatite A - HA", "Hepatite A Pedi\u00e1trica - HAped",
       "Hepatite B - HB", "Hexavalente - HEXA", "HPV Quadrivalente - HPV Quadri",
-      "Imunoglobulina anti hepatite B - IGHB", "Imunoglobulina anti rábica - IGRH",
-      "Imunoglobulina anti tetânica - IGTH", "Imunoglobulina anti varicela zoster - IGVZ",
+      "Imunoglobulina anti hepatite B - IGHB", "Imunoglobulina anti r\u00e1bica - IGRH",
+      "Imunoglobulina anti tet\u00e2nica - IGTH", "Imunoglobulina anti varicela zoster - IGVZ",
       "Influenza H1N1 - H1N1", "Influenza Trivalente - FLU3V",
-      "Meningocócica A C W Y135 - Meningo ACWY135", "Meningocócica conjugada C - Men Conj C",
-      "Pneumocócica 10V - Pncc10V", "Pneumocócica 13V - Pncc13V",
-      "Pneumocócica 23V - Pncc23V", "Pneumocócica 7V - Pncc7V",
-      "Poliomielite inativada - VIP", "Raiva em cultivo celular (Embrião) - Embrião",
-      "Tríplice acelular infantil - DTPa", "Tríplice bacteriana acelular (adulto)- dTpa - dTpa adulto",
+      "Meningoc\u00f3cica A C W Y135 - Meningo ACWY135", "Meningoc\u00f3cica conjugada C - Men Conj C",
+      "Pneumoc\u00f3cica 10V - Pncc10V", "Pneumoc\u00f3cica 13V - Pncc13V",
+      "Pneumoc\u00f3cica 23V - Pncc23V", "Pneumoc\u00f3cica 7V - Pncc7V",
+      "Poliomielite inativada - VIP", "Raiva em cultivo celular (Embri\u00e3o) - Embri\u00e3o",
+      "Tr\u00edplice acelular infantil - DTPa", "Tr\u00edplice bacteriana acelular (adulto)- dTpa - dTpa adulto",
       "Vacina ads hepatite A (inativada, virossomal) - HAadulto", "Varicela(atenuada) - Varc"
     ),
-    "Intensificação" = c(
+    "Intensifica\u00e7\u00e3o" = c(
       "BCG - BCG", "DTP/HB/Hib - Penta", "DTP/Hib - Tetra", "Dupla adulto - dT",
       "Dupla viral - SR", "Febre amarela - FA", "Febre Amarela-Dose fracionada (0,1 ml) - FA(0,1 ml)",
-      "Hepatite A Pediátrica - HAped", "Hepatite B - HB", "HPV Quadrivalente - HPV Quadri",
-      "Meningocócica conjugada C - Men Conj C", "Pneumocócica 10V - Pncc10V",
+      "Hepatite A Pedi\u00e1trica - HAped", "Hepatite B - HB", "HPV Quadrivalente - HPV Quadri",
+      "Meningoc\u00f3cica conjugada C - Men Conj C", "Pneumoc\u00f3cica 10V - Pncc10V",
       "Poliomielite inativada - VIP", "Poliomielite oral (Bivalente) - VOP",
-      "Tetra Viral - Tetra Viral", "Tríplice bacteriana - DTP",
-      "Tríplice bacteriana acelular (adulto)- dTpa - dTpa adulto", "Tríplice viral - SCR",
+      "Tetra Viral - Tetra Viral", "Tr\u00edplice bacteriana - DTP",
+      "Tr\u00edplice bacteriana acelular (adulto)- dTpa - dTpa adulto", "Tr\u00edplice viral - SCR",
       "Vacina Dengue 1, 2, 3 e 4 (recomb e atenuada) - Dengue",
-      "Vacina rotavírus humano - VRH", "Varicela(atenuada) - Varc"
+      "Vacina rotav\u00edrus humano - VRH", "Varicela(atenuada) - Varc"
     ),
-    "Monitoramento Rápido de Cobertura Vacinal" = c(
-      "DTP/HB/Hib - Penta", "Febre amarela - FA", "Meningocócica conjugada C - Men Conj C",
-      "Pneumocócica 10V - Pncc10V", "Poliomielite inativada - VIP",
+    "Monitoramento R\u00e1pido de Cobertura Vacinal" = c(
+      "DTP/HB/Hib - Penta", "Febre amarela - FA", "Meningoc\u00f3cica conjugada C - Men Conj C",
+      "Pneumoc\u00f3cica 10V - Pncc10V", "Poliomielite inativada - VIP",
       "Poliomielite oral (Bivalente) - VOP", "Tetra Viral - Tetra Viral",
-      "Tríplice bacteriana - DTP", "Tríplice viral - SCR", "Vacina rotavírus humano - VRH"
+      "Tr\u00edplice bacteriana - DTP", "Tr\u00edplice viral - SCR", "Vacina rotav\u00edrus humano - VRH"
     ),
     "Rotina" = c(
       "BCG - BCG", "DTP/HB/Hib - Penta", "DTP/Hib - Tetra", "Dupla adulto - dT",
-      "Dupla viral - SR", "Febre amarela - FA", "Hepatite A Pediátrica - HAped",
+      "Dupla viral - SR", "Febre amarela - FA", "Hepatite A Pedi\u00e1trica - HAped",
       "Hepatite B - HB", "HPV Quadrivalente - HPV Quadri",
-      "Meningocócica A C W Y135 - Meningo ACWY135", "Meningocócica conjugada C - Men Conj C",
-      "Pneumocócica 10V - Pncc10V", "Pneumocócica 23V - Pncc23V",
-      "Pneumocócica 7V - Pncc7V", "Poliomielite inativada - VIP",
+      "Meningoc\u00f3cica A C W Y135 - Meningo ACWY135", "Meningoc\u00f3cica conjugada C - Men Conj C",
+      "Pneumoc\u00f3cica 10V - Pncc10V", "Pneumoc\u00f3cica 23V - Pncc23V",
+      "Pneumoc\u00f3cica 7V - Pncc7V", "Poliomielite inativada - VIP",
       "Poliomielite oral (Bivalente) - VOP", "Raiva em cultivo celular Vero - Vero",
-      "Rubéola - Rubéola", "Sarampo - Sarampo", "Tetra Viral - Tetra Viral",
-      "Toxóide Tetânico - TT", "Tríplice bacteriana - DTP",
-      "Tríplice bacteriana acelular (adulto)- dTpa - dTpa adulto", "Tríplice viral - SCR",
+      "Rub\u00e9ola - Rub\u00e9ola", "Sarampo - Sarampo", "Tetra Viral - Tetra Viral",
+      "Tox\u00f3ide Tet\u00e2nico - TT", "Tr\u00edplice bacteriana - DTP",
+      "Tr\u00edplice bacteriana acelular (adulto)- dTpa - dTpa adulto", "Tr\u00edplice viral - SCR",
       "Vacina Dengue 1, 2, 3 e 4 (recomb e atenuada) - Dengue",
-      "Vacina rotavírus humano - VRH", "Varicela(atenuada) - Varc"
+      "Vacina rotav\u00edrus humano - VRH", "Varicela(atenuada) - Varc"
     ),
-    "Serviço Privado" = c(
+    "Servi\u00e7o Privado" = c(
       "BCG - BCG", "DTPa/Hib/Polio Inativa - PENTAinativada", "Dupla adulto - dT",
-      "Febre amarela - FA", "Febre tifóide (atenuada) - Fta",
-      "Febre tifóide (polissacarídica) - FTp", "Haemophilus tipo b - Hib",
-      "Hepatite A - HA", "Hepatite A Pediátrica - HAped", "Hepatite AeB(pediátrica) - HAeHBped",
+      "Febre amarela - FA", "Febre tif\u00f3ide (atenuada) - Fta",
+      "Febre tif\u00f3ide (polissacar\u00eddica) - FTp", "Haemophilus tipo b - Hib",
+      "Hepatite A - HA", "Hepatite A Pedi\u00e1trica - HAped", "Hepatite AeB(pedi\u00e1trica) - HAeHBped",
       "Hepatite AeB(uso adulto) - HAeHB", "Hepatite B - HB", "Herpez Zoster - VHZ",
       "Hexavalente - HEXA", "HPV Bivalente - HPV", "HPV Quadrivalente - HPV Quadri",
       "Influenza ID - FLU ID", "Influenza Tetravalente (Quadrivalente) - FLU4V",
-      "Influenza Trivalente - FLU3V", "Meningocócica B - MEN B",
-      "Meningocócica A C W Y135 - Meningo ACWY135", "Meningocócica B/C - MEN B/C",
-      "Meningocócica conjugada C - Men Conj C", "Pneumocócica 13V - Pncc13V",
-      "Pneumocócica 23V - Pncc23V", "Poliomielite inativada - VIP",
-      "Rotavírus pentavalente - ROTA penta", "Tetra Viral - Tetra Viral",
-      "Toxóide Tetânico - TT", "Tríplice acelular infantil - DTPa",
-      "Tríplice acelular/poliomelite inativada - DTPaVIP", "Tríplice bacteriana - DTP",
-      "Tríplice bacteriana acelular (adulto)- dTpa - dTpa adulto", "Tríplice viral - SCR",
+      "Influenza Trivalente - FLU3V", "Meningoc\u00f3cica B - MEN B",
+      "Meningoc\u00f3cica A C W Y135 - Meningo ACWY135", "Meningoc\u00f3cica B/C - MEN B/C",
+      "Meningoc\u00f3cica conjugada C - Men Conj C", "Pneumoc\u00f3cica 13V - Pncc13V",
+      "Pneumoc\u00f3cica 23V - Pncc23V", "Poliomielite inativada - VIP",
+      "Rotav\u00edrus pentavalente - ROTA penta", "Tetra Viral - Tetra Viral",
+      "Tox\u00f3ide Tet\u00e2nico - TT", "Tr\u00edplice acelular infantil - DTPa",
+      "Tr\u00edplice acelular/poliomelite inativada - DTPaVIP", "Tr\u00edplice bacteriana - DTP",
+      "Tr\u00edplice bacteriana acelular (adulto)- dTpa - dTpa adulto", "Tr\u00edplice viral - SCR",
       "Vacina Dengue 1, 2, 3 e 4 (recomb e atenuada) - Dengue",
       "Vacina Herpes-Zoster (recombinante) - VZR", "Varicela(atenuada) - Varc"
     ),
     "Soroterapia" = c(
-      "soro antiaracnídico - SARC", "Soro botrópico - SBOTR",
-      "Soro botrópico/crotálico - SBOCR", "Soro botrópico/laquético - SBOLAQ",
-      "Soro botulínico bivalente - SBOTULBI", "Soro botulínico trivalente - SBOTULTRI",
-      "Soro crotálico - SCROT", "Soro diftérico - SAD", "Soro elapídico - SELAP",
-      "Soro escorpiônico - SESCOR", "Soro lonômico - SLONO", "Soro loxoscélico - SLOXO",
-      "Soro rábico humano - SARH", "Soro tetânico - SAT"
+      "soro antiaracn\u00eddico - SARC", "Soro botr\u00f3pico - SBOTR",
+      "Soro botr\u00f3pico/crot\u00e1lico - SBOCR", "Soro botr\u00f3pico/laqu\u00e9tico - SBOLAQ",
+      "Soro botul\u00ednico bivalente - SBOTULBI", "Soro botul\u00ednico trivalente - SBOTULTRI",
+      "Soro crot\u00e1lico - SCROT", "Soro dift\u00e9rico - SAD", "Soro elap\u00eddico - SELAP",
+      "Soro escorpi\u00f4nico - SESCOR", "Soro lon\u00f4mico - SLONO", "Soro loxosc\u00e9lico - SLOXO",
+      "Soro r\u00e1bico humano - SARH", "Soro tet\u00e2nico - SAT"
     )
   )
 
@@ -368,3 +368,4 @@ load_vaccines <- function(year,
   return(dat_mod)
 
 }
+
