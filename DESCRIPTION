@@ -1,5 +1,5 @@
 Package: datazoom.saude
-Title: Download and Process Brazilian Public Health Data from DATASUS
+Title: Download Brazilian Health Data from DATASUS
 Version: 0.10.0.9000
 Authors@R: c(
     person("João Paulo", "dos Santos P. Barbosa", , "joao.3158129@gmail.com", role = "aut"),
@@ -7,7 +7,7 @@ Authors@R: c(
     person("DataZoom (PUC-Rio)", , , "datazoom@econ.puc-rio.br", role = "fnd"),
     person("Vanndher Amós", "B. A. de Souza", , "vanndheramos@gmail.com", role = "aut")
   )
-Description: Provides a comprehensive set of functions to easily download, clean, and standardize various public health datasets from DATASUS, the IT department of the Brazilian Unified Health System (SUS). This package streamlines access to crucial health information, including mortality (SIM), hospital admissions (SIH), live births (SINASC), hospital beds (CNES-LT), and outpatient procedures (SIASUS), making the data ready for epidemiological and public health analyses.
+Description: Provides a comprehensive set of functions to easily download, clean, and standardize various public health datasets from DATASUS, the Department of Informatics of the Brazilian Unified Health System (SUS). This package streamlines access to crucial health information, including mortality (SIM), hospital admissions (SIH), live births (SINASC), hospital beds (CNES-LT), and outpatient procedures (SIASUS), making the data ready for epidemiological and public health analyses.
 License: MIT + file LICENSE
 URL: https://www.econ.puc-rio.br/datazoom/
 Depends: 
