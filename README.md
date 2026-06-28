@@ -886,7 +886,7 @@ issue](https://github.com/datazoompuc/datazoom.saude/issues).
 
 DataZoom is developed by a team at the Pontifícia Universidade Católica
 do Rio de Janeiro (PUC-Rio), Department of Economics. Our official
-website is: <https://datazoom.com.br/en/dz_saude>.
+website is: <https://datazoom.com.br/en/dz_saude/>.
 
 To cite the `datazoom.saude` package in publications, use:
 
@@ -898,6 +898,6 @@ A BibTeX entry for LaTeX users is:
     @Unpublished{DataZoom2023,
       author = {Data Zoom},
       title = {Data Zoom: Simplifying Access To Brazilian Microdata},
-      url = {[https://datazoom.com.br/en/dz_saude](https://datazoom.com.br/en/dz_saude)},
+      url = {[https://datazoom.com.br/en/dz_saude/](https://datazoom.com.br/en/dz_saude/)},
       year = {2023},
     }

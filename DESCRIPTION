@@ -9,7 +9,7 @@ Authors@R: c(
   )
 Description: Provides a comprehensive set of functions to easily download, clean, and standardize various public health datasets from DATASUS, the Department of Informatics of the Brazilian Unified Health System (SUS). This package streamlines access to crucial health information, including mortality (SIM), hospital admissions (SIH), live births (SINASC), hospital beds (CNES-LT), and outpatient procedures (SIASUS), making the data ready for epidemiological and public health analyses.
 License: MIT + file LICENSE
-URL: https://datazoom.com.br/en/dz_saude
+URL: https://datazoom.com.br/en/dz_saude/
 Depends: 
     R (>= 4.0)
 Imports:
