@@ -3,7 +3,7 @@ Title: Download Brazilian Health Data from DATASUS
 Version: 0.1.0
 Authors@R: c(
     person("João Paulo", "dos Santos P. Barbosa", , "joao.3158129@gmail.com", role = "aut"),
-    person("Luana", "Laport Santos", , "luanalaportsantos@icloud.com", role = "cre"),
+    person("Laura", "Tavares Regadas", , "lauratregadas@gmail.com", role = "cre"),
     person("DataZoom (PUC-Rio)", , , "datazoom@econ.puc-rio.br", role = "fnd"),
     person("Vanndher Amós", "B. A. de Souza", , "vanndheramos@gmail.com", role = "aut")
   )
