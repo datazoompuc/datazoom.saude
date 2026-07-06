@@ -2,8 +2,9 @@ Package: datazoom.saude
 Title: Download Brazilian Health Data from DATASUS
 Version: 0.1.0
 Authors@R: c(
+    person("Laura", "Tavares Regadas", , "lauratregadas@gmail.com", role = c("aut", "cre")),
+    person("Luana", "Laport Santos", , "luanalaportsantos@icloud.com", role = "aut"),
     person("João Paulo", "dos Santos P. Barbosa", , "joao.3158129@gmail.com", role = "aut"),
-    person("Laura", "Tavares Regadas", , "lauratregadas@gmail.com", role = "cre"),
     person("DataZoom (PUC-Rio)", , , "datazoom@econ.puc-rio.br", role = "fnd"),
     person("Vanndher Amós", "B. A. de Souza", , "vanndheramos@gmail.com", role = "aut")
   )
