@@ -17,10 +17,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Luana Laport Santos \email{luanalaportsantos@icloud.com}
+\strong{Maintainer}: Laura Tavares Regadas \email{lauratregadas@gmail.com}
 
 Authors:
 \itemize{
+  \item Laura Tavares Regadas \email{lauratregadas@gmail.com}
+  \item Luana Laport Santos \email{luanalaportsantos@icloud.com}
   \item João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com}
   \item Vanndher Amós B. A. de Souza \email{vanndheramos@gmail.com}
 }
