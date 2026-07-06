@@ -19,7 +19,7 @@
 #' This function allows you decompress a DBC file into its DBF counterpart. Please note that this is the file format used by the Brazilian Ministry of Health (DATASUS), and it is not related to the FoxPro or CANdb DBC file formats.
 #' @param input.file The name of the DBC file (including extension)
 #' @param output.file The output file name (including extension)
-#' @return Return TRUE if succeded, FALSE otherwise.
+#' @return Return TRUE if succeeded, FALSE otherwise.
 #' @details
 #' DBC is the extension for compressed DBF files (from the 'XBASE' family of databases). This is a proprietary file format used by the brazilian government to make available public healthcare datasets (by it's agency called DATASUS).
 #'

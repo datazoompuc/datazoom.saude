@@ -117,7 +117,7 @@ Thank you for your interest in contributing! If you have found a bug or have a s
 
 ## Credits
 
-DataZoom is developed by a team at the Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio), Department of Economics. Our official website is: <https://www.econ.puc-rio.br/datazoom/>.
+DataZoom is developed by a team at the Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio), Department of Economics. Our official website is: <https://datazoom.com.br/en/dz_saude/>.
 
 To cite the `datazoom.saude` package in publications, use:
 
@@ -130,7 +130,7 @@ A BibTeX entry for LaTeX users is:
 @Unpublished{DataZoom2023,
   author = {Data Zoom},
   title = {Data Zoom: Simplifying Access To Brazilian Microdata},
-  url = {[https://www.econ.puc-rio.br/datazoom/](https://www.econ.puc-rio.br/datazoom/)},
+  url = {[https://datazoom.com.br/en/dz_saude/](https://datazoom.com.br/en/dz_saude/)},
   year = {2023},
 }
 ```

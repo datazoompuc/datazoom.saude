@@ -44,7 +44,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
   ", state))
     Sys.sleep(1)
 
-    ## Aggregate by Municipality (Totalizar por município)
+    ## Aggregate by Municipality (Totalizar por munic\u00edpio)
     # Check the IBGE aggregation checkbox if it's not already active
     b$Runtime$evaluate("
     (function(){
@@ -89,7 +89,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
 
     if (is.null(html_doses) || html_doses == "null") {
       # Custom error message for missing dose container
-      message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
+      message("Warning: Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
       return(invisible(NULL))
     }
 
@@ -103,7 +103,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
     dose_labels <- sort(dose_labels)
 
     ## Manage Doses (Selection Logic)
-    # JavaScript to select all relevant doses while unchecking 'REF/REFORÇO' (booster) values
+    # JavaScript to select all relevant doses while unchecking 'REF/REFOR\u00c7O' (booster) values
     res_doses <- b$Runtime$evaluate("
   (function(){
     // Normalizer: removes accents/diacritics, converts to uppercase, and trims whitespace
@@ -137,7 +137,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
         return;
       }
 
-      // Robust identification of REF/REFORÇO:
+      // Robust identification of REF/REFOR\u00c7O:
       // Checks for exact matches or strings starting with/containing 'REF'
       const isRef = textN === 'REF' || textN.startsWith('REFORCO') || /\\bREF\\b/.test(textN);
       const wasActive = box.classList.contains('ui-state-active');
@@ -175,7 +175,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
         # Success logic (no action required here)
       } else {
         # Error feedback if the dose selection logic fails
-        message("⚠️ Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
+        message("Warning: Dose selection failed, please try again. (If the error persists, take a screenshot and send it to the Data Zoom team on GitHub)")
         return(invisible(NULL))
       }
     }
@@ -238,7 +238,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
       }
 
       if (difftime(Sys.time(), t0, units = 'secs') > 90) {
-        message("⚠️ The table generation timed out. Please wait a few minutes for the website to stabilize and try again.")
+        message("Warning: The table generation timed out. Please wait a few minutes for the website to stabilize and try again.")
         return(invisible(NULL))
       }
 
@@ -271,7 +271,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
         break
       }
       if (difftime(Sys.time(), t0, units = "secs") > 60) {
-        message("⚠️ The CSV download timed out. Please wait a few minutes for the website to stabilize and try again.")
+        message("Warning: The CSV download timed out. Please wait a few minutes for the website to stabilize and try again.")
         return(invisible(NULL))
       }
     }

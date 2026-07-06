@@ -5,3 +5,6 @@
 ^README\.Rmd$
 ^doc$
 ^Meta$
+^hex_dzsaude\.png$
+^cran-comments\.md$
+^CRAN-SUBMISSION$

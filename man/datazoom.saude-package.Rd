@@ -5,22 +5,23 @@
 \name{datazoom.saude-package}
 \alias{datazoom.saude}
 \alias{datazoom.saude-package}
-\title{datazoom.saude: Download and Process Brazilian Public Health Data from DATASUS}
+\title{datazoom.saude: Download Brazilian Health Data from DATASUS}
 \description{
 Functions to download and treat data regarding the Brazilian Amazon region from a variety of official sources.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://www.econ.puc-rio.br/datazoom/}
+  \item \url{https://datazoom.com.br/en/dz_saude/}
 }
 
 }
 \author{
-\strong{Maintainer}: João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com}
+\strong{Maintainer}: Luana Laport Santos \email{luanalaportsantos@icloud.com}
 
 Authors:
 \itemize{
+  \item João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com}
   \item Vanndher Amós B. A. de Souza \email{vanndheramos@gmail.com}
 }
 

@@ -886,18 +886,18 @@ issue](https://github.com/datazoompuc/datazoom.saude/issues).
 
 DataZoom is developed by a team at the Pontifícia Universidade Católica
 do Rio de Janeiro (PUC-Rio), Department of Economics. Our official
-website is: <https://www.econ.puc-rio.br/datazoom/>.
+website is: <https://datazoom.com.br/en/dz_saude/>.
 
 To cite the `datazoom.saude` package in publications, use:
 
 > Data Zoom (2023). Data Zoom: Simplifying Access To Brazilian
-> Microdata. <https://www.econ.puc-rio.br/datazoom/english/index.html>
+> Microdata. <https://datazoom.com.br/en/>
 
 A BibTeX entry for LaTeX users is:
 
     @Unpublished{DataZoom2023,
       author = {Data Zoom},
       title = {Data Zoom: Simplifying Access To Brazilian Microdata},
-      url = {[https://www.econ.puc-rio.br/datazoom/](https://www.econ.puc-rio.br/datazoom/)},
+      url = {[https://datazoom.com.br/en/dz_saude/](https://datazoom.com.br/en/dz_saude/)},
       year = {2023},
     }
