@@ -48,10 +48,14 @@ Each supported dataset is detailed in the sections below.
 
 ## Installation
 
-You can install the released version of `datazoom.saude` from the
-development version from GitHub.
+You can install the released version of `datazoom.saude` from CRAN, or
+the development version from GitHub.
 
 ``` r
+# From CRAN:
+install.packages("datazoom.saude")
+
+# Or the development version from GitHub:
 # Install the 'devtools' package if you don't have it yet
 install.packages("devtools")
 
