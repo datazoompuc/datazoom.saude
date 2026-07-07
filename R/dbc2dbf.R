@@ -51,6 +51,7 @@
 #'
 #' \code{blast-dbf}, DBC to DBF command-line decompression tool: \url{https://github.com/eaglebh/blast-dbf}
 #'
+#' @export
 dbc2dbf_wrapper <- function(input.file, output.file) {
   if (!file.exists(input.file)) {
     stop("Input file does not exist.")

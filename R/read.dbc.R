@@ -56,6 +56,8 @@
 #' head(dopr)
 #' str(dopr)
 #' }
+#' @export
+#' @export
 read.dbc <- function(file, ...) {
   # Output file name
   out <- tempfile(fileext = ".dbf")
