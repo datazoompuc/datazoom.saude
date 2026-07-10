@@ -13,5 +13,8 @@
 ## Notes
 
 * NOTE: New submission (expected for a first CRAN submission).
-* NOTE: Possibly misspelled words in DESCRIPTION (CNES, DATASUS, SIASUS, SIH, SINASC, SUS) -- these are all legitimate domain-specific acronyms for Brazilian health information systems, not spelling errors.
-* NOTE: A few URLs flagged as moved/timeout on the win-builder server (sipni.datasus.gov.br, www.ibge.gov.br, support.pkware.com) -- these are valid external sites; the timeouts appear to be transient network issues on the check server, and the pkware URL has a documented redirect.
+* NOTE: Possibly misspelled words in DESCRIPTION (CNES, DATASUS, SIASUS, SIH, SINASC, SUS) -- these are all legitimate and widely-used acronyms for Brazilian public health information systems: DATASUS (Department of Informatics of the Brazilian Unified Health System), SUS (Sistema Unico de Saude, the Brazilian public health system), SIH (Hospital Information System), SINASC (Live Births Information System), CNES (National Registry of Health Establishments), and SIASUS (Outpatient Information System). They are not spelling errors.
+* NOTE: URL https://support.pkware.com has been updated to https://pkware.my.site.com/s/ to avoid the 301 redirect.
+
+## References
+* This package does not implement statistical methods requiring references. It provides tools to download and standardize public health data from DATASUS.

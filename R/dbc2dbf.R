@@ -45,12 +45,13 @@
 #' }
 #'
 #' @references
-#' The PKWare ZIP file format documentation (contains the "implode" algorithm specification) available at \url{https://support.pkware.com}, current version \url{https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT}.
+#' The PKWare ZIP file format documentation (contains the "implode" algorithm specification) available at \url{https://pkware.my.site.com/s/}, current version \url{https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT}.
 #'
 #' \code{blast} source code in C: \url{https://github.com/madler/zlib/tree/master/contrib/blast}
 #'
 #' \code{blast-dbf}, DBC to DBF command-line decompression tool: \url{https://github.com/eaglebh/blast-dbf}
 #'
+#' @export
 dbc2dbf_wrapper <- function(input.file, output.file) {
   if (!file.exists(input.file)) {
     stop("Input file does not exist.")

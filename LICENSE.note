@@ -1,0 +1,9 @@
+# Licenses for bundled code
+
+## dbc2dbf and read.dbc
+
+The files R/dbc2dbf.R and R/read.dbc.R are based on code by Daniela Petruzalek,
+originally published under the GNU Affero General Public License v3 (AGPL-3).
+
+Source: https://github.com/danicat/read.dbc
+Copyright (C) 2016 Daniela Petruzalek
