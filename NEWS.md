@@ -1,4 +1,15 @@
-# datazoom.saude 0.1.0
+# datazoom.saude 0.1.1
 
-* Initial CRAN submission.
-* Functions to download, clean, and standardize public health datasets from DATASUS, including mortality (SIM), hospital admissions (SIH), live births (SINASC), hospital beds (CNES-LT), vaccination records (PNI), and outpatient procedures (SIASUS).
+* Fixed non-ASCII characters in R source files
+* Added missing imports (jsonlite, tidyr, stats) to DESCRIPTION
+* Excluded hex_dzsaude.png from build
+* Fixed global variable binding notes
+* Generated missing documentation for load_vaccines()
+* Fixed typo in dbc2dbf.R (succeded -> succeeded)
+* Updated Title and Description in DESCRIPTION
+* Updated institutional URL to datazoom.com.br/en/dz_saude/
+* Added CRAN install instructions to README
+* Added @export to dbc2dbf_wrapper and read.dbc
+* Added LICENSE.note for bundled third-party code
+* Updated LICENSE year to 2026
+* Added BugReports field to DESCRIPTION
