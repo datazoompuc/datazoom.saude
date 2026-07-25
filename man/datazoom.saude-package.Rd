@@ -13,6 +13,7 @@ Functions to download and treat data regarding the Brazilian Amazon region from 
 Useful links:
 \itemize{
   \item \url{https://datazoom.com.br/en/dz_saude/}
+  \item Report bugs at \url{https://github.com/datazoompuc/datazoom.saude/issues}
 }
 
 }
