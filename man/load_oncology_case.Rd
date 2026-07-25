@@ -21,7 +21,7 @@ This function downloads and organizes data from the Oncology Panel (Painel de On
 part of DATASUS, used in public health and epidemiological analyses.
 }
 \examples{
-\dontrun{
+\donttest{
 # Download processed oncology data for the year 2023.
 oncology_cases_treated <- load_oncology_case(time_period = 2023,
                                             raw_data = FALSE,

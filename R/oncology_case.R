@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Download processed oncology data for the year 2023.
 # This will return data from the Oncology Panel for all Brazilian states.
 #'oncology_cases_treated <- load_oncology_case(time_period = 2023,

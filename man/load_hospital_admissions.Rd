@@ -60,7 +60,7 @@ procedure incompatibility).}
 }
 }
 \examples{
-\dontrun{
+\donttest{
 load_hospital_admissions(dataset = "professional_services",
                          time_period = 2020,
                          states = "AC")

@@ -38,12 +38,12 @@
 #' @examples
 #' \dontrun{
 #' # The 'sids.dbc' file is the compressed version of 'sids.dbf' from the "foreign" package.
-#' x <- read.dbc(system.file("files/sids.dbc", package = "read.dbc"))
+#' x <- read.dbc(system.file("files/sids.dbc", package = "datazoom.saude"))
 #' str(x)
 #' summary(x)
 #'
 #' # This is a small subset of U.S. NOAA storm database.
-#' storm <- read.dbc(system.file("files/storm.dbc", package = "read.dbc"))
+#' storm <- read.dbc(system.file("files/storm.dbc", package = "datazoom.saude"))
 #' head(x)
 #' str(x)
 #'

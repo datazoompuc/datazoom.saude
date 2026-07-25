@@ -23,7 +23,7 @@ This function downloads and organizes data from SINASC (Live Birth Information S
 part of DATASUS, used in public health analyses.
 }
 \examples{
-\dontrun{
+\donttest{
 load_births(time_period = 2023,
             states = "RJ",
             raw_data = FALSE)

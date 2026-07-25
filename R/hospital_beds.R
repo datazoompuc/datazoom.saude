@@ -34,7 +34,7 @@
 #' to avoid installing them by default.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Load beds data for RO and AM in 2020
 #' beds <- load_hospital_beds(time_period = "2020",
 #'                            states = c("RO", "AM"),

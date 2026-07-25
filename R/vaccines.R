@@ -30,7 +30,7 @@
 #' municipality names, strategy, product, month, dose type, and the quantity of doses applied.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Example: Loading Yellow Fever vaccine data for Acre in 2020
 #' data <- load_vaccines(year = 2020,
 #'                       state = "AC",
