@@ -78,10 +78,6 @@ Home-based specialized care such as oxygen therapy and related services.}
 }
 \examples{
 \donttest{
-load_outpatient_procedures(dataset = "ambulatory_production",
-                           time_period = 2021,
-                           states = c("SP", "RJ"))
-
 load_outpatient_procedures(dataset = "diverse_reports",
                            time_period = 2016,
                            states = "PI",

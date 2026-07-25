@@ -52,16 +52,11 @@ to avoid installing them by default.
 }
 \examples{
 \donttest{
-# Load beds data for RO and AM in 2020
+# Load beds data for RO in 2020
 beds <- load_hospital_beds(time_period = "2020",
-                           states = c("RO", "AM"),
+                           states = "RO",
                            raw_data = FALSE,
                            language = "eng")
-
-# Load raw data for AC in 2019 and 2020
-raw <- load_hospital_beds(time_period = c("2019", "2020"),
-                          states = "AC",
-                          raw_data = TRUE)
 }
 
 }

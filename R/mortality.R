@@ -299,7 +299,7 @@ load_mortality <- function(dataset,
           num_de_mortes = dplyr::n(),
           .groups = "drop" # Removes the grouping after summarization
         ) %>%
-        rename(!!!rename_vars)
+        dplyr::rename(!!!rename_vars)
     } else {
       # If the required columns are not found, return a warning message and the non-aggregated data
       message("Warning: Columns 'codmunocor' or 'causabas' not found for aggregation. Returning non-aggregated data.")
