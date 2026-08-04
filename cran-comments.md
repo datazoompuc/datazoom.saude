@@ -17,11 +17,13 @@ Changes made in response to CRAN feedback on 0.1.1:
 ## Test environments
 
 * local macOS install (x86_64-apple-darwin20), R 4.5.1 -- 0 errors | 0 warnings | 0 notes (including --run-donttest)
-* win-builder (R-devel) -- pending (awaiting results)
+* win-builder (R-devel) -- 0 errors | 0 warnings | 2 notes
 
 ## Notes
 
 * NOTE: Possibly misspelled words in DESCRIPTION (CNES, DATASUS, SIASUS, SIH, SINASC, SUS) -- these are all legitimate and widely-used acronyms for Brazilian public health information systems. They are not spelling errors.
+* NOTE: URL sipni.datasus.gov.br timed out on the win-builder server -- this is a valid, working DATASUS URL; the connection issue appears to be transient/server-side.
+* NOTE: 'cc' is not on the path -- this is a win-builder-specific compiler check note unrelated to the package code.
 
 ## References
 
