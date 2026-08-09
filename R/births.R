@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' load_births(time_period = 2023,
 #'             states = "RJ",
 #'             raw_data = FALSE)

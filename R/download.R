@@ -2,6 +2,8 @@ external_download <- function(dataset = NULL, source = NULL, year = NULL,
                               geo_level = NULL, coords = NULL, dataset_code = NULL,
                               sheet = NULL, skip_rows = NULL, file_name = NULL,
                               state = NULL) {
+  old_opts <- options("download.file.method", "download.file.extra", "timeout")
+  on.exit(options(old_opts), add = TRUE)
   ## Bind Global Variables
 
   link <- NULL

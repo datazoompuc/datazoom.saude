@@ -49,7 +49,7 @@ This dataset includes detailed information on deaths by cause, location, sex, ag
 Data is useful for public health research, epidemiology, and demographic analysis.
 }
 \examples{
-\dontrun{
+\donttest{
 load_mortality(dataset = "general",
                time_period = 2022,
                states = "RJ")

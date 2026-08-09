@@ -28,7 +28,7 @@ It uses internally the PKWare's Data Compression Library (DCL) "implode" compres
 \examples{
 \dontrun{
 # Input file name
-in.f <- system.file("files/sids.dbc", package = "read.dbc")
+in.f <- system.file("files/sids.dbc", package = "datazoom.saude")
 
 # Output file name
 out.f <- tempfile(fileext = ".dbc")

@@ -7,6 +7,8 @@ load_pni <- function(year, state, strategy, product, dose, data) {
     message("Please wait while web scraping is being performed.")
 
     # Increase timeout to handle slow government server responses
+    old_timeout <- getOption("timeout")
+    on.exit(options(timeout = old_timeout), add = TRUE)
     options(timeout = 2000)
 
     # Initialize a new Chrome session via Chromote

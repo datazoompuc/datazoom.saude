@@ -21,17 +21,12 @@ This function downloads and organizes data from the Oncology Panel (Painel de On
 part of DATASUS, used in public health and epidemiological analyses.
 }
 \examples{
-\dontrun{
+\donttest{
 # Download processed oncology data for the year 2023.
+# This will return data from the Oncology Panel for all Brazilian states.
 oncology_cases_treated <- load_oncology_case(time_period = 2023,
-                                            raw_data = FALSE,
-                                            language = "eng"
-                                            )
-
-# Download raw oncology data for the years 2021 to 2022 with labels in portuguese.
-oncology_cases_raw <- load_oncology_case(time_period = 2021:2022,
-                                        raw_data = TRUE,
-                                        language = "pt"
-                                        )
+                                             raw_data = FALSE,
+                                             language = "eng"
+                                             )
 }
 }

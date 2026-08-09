@@ -54,7 +54,7 @@ Regardless of the ingestion mode, the returned dataset is fully harmonized and
 consistent with the historical SI-PNI data structure.
 }
 \examples{
-\dontrun{
+\donttest{
 # Example: Loading Yellow Fever vaccine data for Acre in 2020
 data <- load_vaccines(year = 2020,
                       state = "AC",

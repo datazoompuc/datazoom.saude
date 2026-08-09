@@ -51,17 +51,12 @@ The \code{foreign} and \code{RCurl} packages must be installed to use this funct
 to avoid installing them by default.
 }
 \examples{
-\dontrun{
-# Load beds data for RO and AM in 2020
+\donttest{
+# Load beds data for RO in 2020
 beds <- load_hospital_beds(time_period = "2020",
-                           states = c("RO", "AM"),
+                           states = "RO",
                            raw_data = FALSE,
                            language = "eng")
-
-# Load raw data for AC in 2019 and 2020
-raw <- load_hospital_beds(time_period = c("2019", "2020"),
-                          states = "AC",
-                          raw_data = TRUE)
 }
 
 }
