@@ -26,7 +26,7 @@ DBC is the extension for compressed DBF files (from the 'XBASE' family of databa
 It uses internally the PKWare's Data Compression Library (DCL) "implode" compression algorithm. When decompressed, it becomes a regular DBF file.
 }
 \examples{
-\dontrun{
+\donttest{
 # Input file name
 in.f <- system.file("files/sids.dbc", package = "datazoom.saude")
 

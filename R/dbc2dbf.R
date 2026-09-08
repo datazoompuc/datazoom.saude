@@ -30,7 +30,7 @@
 #' @author Daniela Petruzalek, \email{daniela.petruzalek@gmail.com}
 #' @seealso \code{read.dbc}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Input file name
 #' in.f <- system.file("files/sids.dbc", package = "datazoom.saude")
 #'

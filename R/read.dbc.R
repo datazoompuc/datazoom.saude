@@ -36,7 +36,7 @@
 #' @author Daniela Petruzalek, \email{daniela.petruzalek@gmail.com}
 #' @seealso \code{dbc2dbf}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # The 'sids.dbc' file is the compressed version of 'sids.dbf' from the "foreign" package.
 #' x <- read.dbc(system.file("files/sids.dbc", package = "datazoom.saude"))
 #' str(x)

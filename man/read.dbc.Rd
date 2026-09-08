@@ -31,7 +31,7 @@ This function was tested using files from both DATASUS and ANS to ensure complia
 As a final note, neither this project, nor its author, has any association with the brazilian government.
 }
 \examples{
-\dontrun{
+\donttest{
 # The 'sids.dbc' file is the compressed version of 'sids.dbf' from the "foreign" package.
 x <- read.dbc(system.file("files/sids.dbc", package = "datazoom.saude"))
 str(x)
