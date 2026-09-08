@@ -42,12 +42,13 @@ storm <- read.dbc(system.file("files/storm.dbc", package = "datazoom.saude"))
 head(x)
 str(x)
 
-## Don't run!
-## The following code will download data from the "Declarations of Death" database for
-## the Brazilian state of Parana, year 2013. Source: DATASUS / Brazilian Ministry of Health
+# The following code will download data from the "Declarations of Death" database for
+# the Brazilian state of Parana, year 2013. Source: DATASUS / Brazilian Ministry of Health
 url <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/DOPR2013.dbc"
-download.file(url, destfile = "DOPR2013.dbc")
-dopr <- read.dbc("DOPR2013.dbc")
+tf <- tempfile(fileext = ".dbc")
+download.file(url, destfile = tf)
+dopr <- read.dbc(tf)
+unlink(tf)
 head(dopr)
 str(dopr)
 }
