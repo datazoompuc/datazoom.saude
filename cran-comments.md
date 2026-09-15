@@ -48,3 +48,21 @@ This is a package update/resubmission for `datazoom.saude`.
 ### Notes:
 * `checking for future file timestamps ... NOTE: unable to verify current time`
   This note is due to local network time verification during checking and does not affect package functionality.
+
+## CRAN Resubmission / Submission Notes
+
+This is a package submission for `datazoom.saude`.
+
+## Test environments
+* local Windows / macOS / Linux
+* win-builder (R-devel)
+
+## R CMD check results
+There were 0 ERRORs, 0 WARNINGs, 1 NOTE.
+
+* NOTE: New submission.
+  - Words flagged in DESCRIPTION (CNES, DATASUS, SIASUS, SIH, SINASC, SUS) are official Brazilian healthcare acronyms and are spelled correctly.
+
+## Internal changes
+* Removed `@export` from `read.dbc` as it is an internal helper function.
+* Verified all DATASUS download links and functions.
