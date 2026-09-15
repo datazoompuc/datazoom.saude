@@ -28,3 +28,23 @@ Changes made in response to CRAN feedback on 0.1.1:
 ## References
 
 * This package does not implement statistical methods requiring references. It provides tools to download and standardize public health data from DATASUS.
+
+## Resubmission / Package Updates
+
+This is a package update/resubmission for `datazoom.saude`.
+
+### Changes in this version:
+* Removed `@export` from internal helper function `read.dbc`.
+* Fixed package badges and links in `README.Rmd`.
+
+## Test environments
+* Local macOS Sequoia 15.7.7, R 4.5.1
+* win-builder (devel and release)
+
+## R CMD check results
+
+0 errors | 0 warnings | 1 note
+
+### Notes:
+* `checking for future file timestamps ... NOTE: unable to verify current time`
+  This note is due to local network time verification during checking and does not affect package functionality.
