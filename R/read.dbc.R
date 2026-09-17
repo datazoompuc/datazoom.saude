@@ -1,4 +1,3 @@
-# read.dbc.R
 # Copyright (C) 2016 Daniela Petruzalek
 #
 # This program is free software: you can redistribute it and/or modify
@@ -36,27 +35,11 @@
 #' @author Daniela Petruzalek, \email{daniela.petruzalek@gmail.com}
 #' @seealso \code{dbc2dbf}
 #' @examples
-#' \dontrun{
-#' # The 'sids.dbc' file is the compressed version of 'sids.dbf' from the "foreign" package.
-#' x <- read.dbc(system.file("files/sids.dbc", package = "datazoom.saude"))
-#' str(x)
-#' summary(x)
-#'
-#' # This is a small subset of U.S. NOAA storm database.
-#' storm <- read.dbc(system.file("files/storm.dbc", package = "datazoom.saude"))
-#' head(x)
-#' str(x)
-#'
-#' ## Don't run!
-#' ## The following code will download data from the "Declarations of Death" database for
-#' ## the Brazilian state of Parana, year 2013. Source: DATASUS / Brazilian Ministry of Health
-#' url <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/DOPR2013.dbc"
-#' download.file(url, destfile = "DOPR2013.dbc")
-#' dopr <- read.dbc("DOPR2013.dbc")
-#' head(dopr)
-#' str(dopr)
+#' \donttest{
+#' # Chamada interna usando datazoom.saude:::read.dbc
+#' x <- datazoom.saude:::read.dbc(system.file("files/sids.dbc", package = "datazoom.saude"))
 #' }
-#' @export
+#' @noRd
 read.dbc <- function(file, ...) {
   # Output file name
   out <- tempfile(fileext = ".dbf")

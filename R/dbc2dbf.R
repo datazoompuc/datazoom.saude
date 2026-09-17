@@ -30,17 +30,11 @@
 #' @author Daniela Petruzalek, \email{daniela.petruzalek@gmail.com}
 #' @seealso \code{read.dbc}
 #' @examples
-#' \dontrun{
-#' # Input file name
+#' \donttest{
 #' in.f <- system.file("files/sids.dbc", package = "datazoom.saude")
-#'
-#' # Output file name
-#' out.f <- tempfile(fileext = ".dbc")
-#'
-#' # The call return logi = TRUE on success
-#' if (dbc2dbf(input.file = in.f, output.file = out.f)) {
-#'   print("File decompressed!")
-#'   file.remove(out.f)
+#' out.f <- tempfile(fileext = ".dbf")
+#' if (file.exists(in.f)) {
+#'   dbc2dbf_wrapper(input.file = in.f, output.file = out.f)
 #' }
 #' }
 #'

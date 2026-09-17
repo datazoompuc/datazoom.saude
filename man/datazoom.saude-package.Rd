@@ -31,6 +31,8 @@ Authors:
 Other contributors:
 \itemize{
   \item DataZoom (PUC-Rio) \email{datazoom@econ.puc-rio.br} [funder]
+  \item Daniela Petruzalek \email{daniela.petruzalek@gmail.com} [contributor]
+  \item Mark Adler [contributor]
 }
 
 }
