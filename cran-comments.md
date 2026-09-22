@@ -1,68 +1,9 @@
-## R CMD check results
-
-0 errors | 0 warnings | 0 notes
-
-## This is a resubmission addressing reviewer feedback (Konstanze Lauseker, 2026-07-21)
-
-Changes made in response to CRAN feedback on 0.1.1:
-
-* Added the DATASUS webservice URL to the Description field in the required format: <https://datasus.saude.gov.br/>
-* Fixed read.dbc() not being exported: a duplicated @export roxygen tag was preventing the NAMESPACE from being generated correctly. This also resolved the "example for unexported function" issue in read.dbc.Rd.
-* Replaced \dontrun{} with \donttest{} for all examples that download data from DATASUS. These examples are executable, just dependent on network access.
-* Reduced the data volume in several examples (load_hospital_beds, load_oncology_case, load_outpatient_procedures) to avoid long execution times and network timeouts during automated checks.
-* Fixed a missing dplyr:: namespace prefix on a rename() call in load_mortality(), which caused an error when the example was actually executed (previously masked by \dontrun{}).
-* Added on.exit() calls to restore user options (timeout, download.file.method, download.file.extra) that are modified within external_download() and load_pni(), as required by CRAN policies on changing user options/working directory.
-* Added Daniela Petruzalek and Mark Adler as contributors (ctb) in Authors@R, as they are the original authors of the bundled DBC-decompression code (dbc2dbf.R, read.dbc.R), previously acknowledged only in a LICENSE.note file.
-
 ## Test environments
-
-* local macOS install (x86_64-apple-darwin20), R 4.5.1 -- 0 errors | 0 warnings | 0 notes (including --run-donttest)
-* win-builder (R-devel) -- 0 errors | 0 warnings | 2 notes
-
-## Notes
-
-* NOTE: Possibly misspelled words in DESCRIPTION (CNES, DATASUS, SIASUS, SIH, SINASC, SUS) -- these are all legitimate and widely-used acronyms for Brazilian public health information systems. They are not spelling errors.
-* NOTE: URL sipni.datasus.gov.br timed out on the win-builder server -- this is a valid, working DATASUS URL; the connection issue appears to be transient/server-side.
-* NOTE: 'cc' is not on the path -- this is a win-builder-specific compiler check note unrelated to the package code.
-
-## References
-
-* This package does not implement statistical methods requiring references. It provides tools to download and standardize public health data from DATASUS.
-
-## Resubmission / Package Updates
-
-This is a package update/resubmission for `datazoom.saude`.
-
-### Changes in this version:
-* Removed `@export` from internal helper function `read.dbc`.
-* Fixed package badges and links in `README.Rmd`.
-
-## Test environments
-* Local macOS Sequoia 15.7.7, R 4.5.1
-* win-builder (devel and release)
+* R-devel (win-builder)
+* R-release
 
 ## R CMD check results
+There were 0 errors | 0 warnings | 1 NOTE
 
-0 errors | 0 warnings | 1 note
-
-### Notes:
-* `checking for future file timestamps ... NOTE: unable to verify current time`
-  This note is due to local network time verification during checking and does not affect package functionality.
-
-## CRAN Resubmission / Submission Notes
-
-This is a package submission for `datazoom.saude`.
-
-## Test environments
-* local Windows / macOS / Linux
-* win-builder (R-devel)
-
-## R CMD check results
-There were 0 ERRORs, 0 WARNINGs, 1 NOTE.
-
-* NOTE: New submission.
-  - Words flagged in DESCRIPTION (CNES, DATASUS, SIASUS, SIH, SINASC, SUS) are official Brazilian healthcare acronyms and are spelled correctly.
-
-## Internal changes
-* Removed `@export` from `read.dbc` as it is an internal helper function.
-* Verified all DATASUS download links and functions.
+* This is a new submission.
+* NOTE: "Possibly misspelled words in DESCRIPTION" flags standard Brazilian health system acronyms (CNES, DATASUS, SIASUS, SIH, SINASC, SUS). These have been added to `inst/WORDLIST`.
