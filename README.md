@@ -12,13 +12,20 @@
 [![Downloads mensais](https://cranlogs.r-pkg.org/badges/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
 -->
 
-[![Linguagens](https://img.shields.io/github/languages/count/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude)
-[![Atividade de
-Commits](https://img.shields.io/github/commit-activity/y/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/commits/main)
-[![Issues
-Abertas](https://img.shields.io/github/issues-raw/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/issues)
-[![Issues
-Fechadas](https://img.shields.io/github/issues-closed-raw/datazoompuc/datazoom.saude?style=flat)](https://github.com/datazoompuc/datazoom.saude/issues)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/datazoom.saude)](https://CRAN.R-project.org/package=datazoom.saude)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/datazoom.saude?color=blue)](https://cran.r-project.org/package=datazoom.saude)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/datazoom.saude?color=lightgrey)](https://cran.r-project.org/package=datazoom.saude)
+![Languages](https://img.shields.io/github/languages/count/datazoompuc/datazoom.saude?style=flat)
+![Commits](https://img.shields.io/github/commit-activity/y/datazoompuc/datazoom.saude?style=flat)
+![Open
+Issues](https://img.shields.io/github/issues-raw/datazoompuc/datazoom.saude?style=flat)
+![Closed
+Issues](https://img.shields.io/github/issues-closed-raw/datazoompuc/datazoom.saude?style=flat)
+![Files](https://img.shields.io/github/directory-file-count/datazoompuc/datazoom.saude?style=flat)
+![Followers](https://img.shields.io/github/followers/datazoompuc?style=flat)
 <!-- badges: end -->
 
 ## Overview
@@ -57,11 +64,11 @@ the development version from GitHub.
 install.packages("datazoom.saude")
 
 # Or the development version from GitHub:
-# Install the 'devtools' package if you don't have it yet
-install.packages("devtools")
+# Install the 'remotes' package if you don't have it yet
+install.packages("remotes")
 
 # Install datazoom.saude directly from GitHub
-devtools::install_github("datazoompuc/datazoom.saude")
+remotes::install_github("datazoompuc/datazoom.saude")
 ```
 
 ## Supported Databases
@@ -232,11 +239,11 @@ formulation.
 The `load_births` function offers the following parameters:
 
 1.  **time_period**: A numeric value or vector indicating the year(s) of
-    the data to be downloaded. For  
+    the data to be downloaded. For\
     example, `2020` or `2015:2020`. (since 1994 to present)
 
 2.  **states**: A string or array of strings indicating the Brazilian
-    state(s) for which data should be  
+    state(s) for which data should be\
     downloaded. Use “all” (by default) to download data for the entire
     country. For specific states, use abbreviations such as “SP”, “RJ”,
     or c(“SP”, “RJ”).
@@ -471,7 +478,7 @@ group.
 
 > **Note:** In all SIASUS datasets, variables related to the *Cadastro
 > Nacional de Saúde* (CNS – National Health Card number) are
-> **encrypted** by DATASUS.  
+> **encrypted** by DATASUS.\
 > This ensures patient confidentiality and means that individual-level
 > CNS identifiers cannot be directly used for linkage across datasets.
 > Because of this, this variable is removed when `raw_data = FALSE`.
@@ -734,7 +741,7 @@ This approach can be useful when:
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:  
+1.  Access the DATASUS vaccination dashboard:\
     *<https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf>*
 
 2.  In the filter panel, **fill only the following fields**:
@@ -769,7 +776,7 @@ harmonization, and standardization steps.
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:  
+1.  Access the DATASUS vaccination dashboard:\
     *<https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA.html>*
 
 2.  In the filter panel, **fill only the following fields**:
