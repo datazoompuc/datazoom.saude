@@ -8,3 +8,4 @@
 ^hex_dzsaude\.png$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^.*\.tar\.gz$
