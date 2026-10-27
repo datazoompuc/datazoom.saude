@@ -103,13 +103,7 @@ load_oncology_case <- function(time_period,
   #############################
 
   # Get dataset source URL
-  dat_url <- datasets_link()
-
-  url <- dat_url %>%
-    dplyr::filter(dataset == param$dataset) %>%
-    dplyr::select(link) %>%
-    base::unlist() %>%
-    as.character()
+  url <- dataset_url(param$source, param$dataset)
 
   # Use RCurl to extract the names of all files stored on the server
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%

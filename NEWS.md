@@ -1,5 +1,8 @@
 # datazoom.saude (development version)
 
+* Download URLs now live in a CSV manifest (`inst/extdata/manifest/v1/datasets_link.csv`) instead of being hardcoded. At runtime the package reads the latest copy from GitHub, so a fixed link reaches users without a new CRAN release, and falls back silently to the copy shipped with the package when offline. Set `options(datazoom.saude.use_remote_manifest = FALSE)` to always use the packaged copy.
+* Removed unused dependencies: `data.table`, `sf` and `XML` from Imports; `googledrive`, `terra` and `units` from Suggests.
+
 # datazoom.saude 0.1.1
 
 * Fixed non-ASCII characters in R source files
