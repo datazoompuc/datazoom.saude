@@ -144,13 +144,7 @@ load_outpatient_procedures <- function(dataset,
   ## Downloading SIASUS Data ##
   #############################
 
-  dat_url <- datasets_link()
-
-  url <- dat_url %>%
-    dplyr::filter(dataset == param$dataset) %>%
-    dplyr::select(link) %>%
-    base::unlist() %>%
-    as.character()
+  url <- dataset_url(param$source, param$dataset)
 
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
     stringr::str_split("\r*\n") %>%

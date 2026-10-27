@@ -16,7 +16,6 @@ URL: https://datazoom.com.br/en/dz_saude/
 Depends: 
     R (>= 4.0)
 Imports:
-    data.table,
     dplyr,
     Hmisc,
     janitor,
@@ -24,11 +23,9 @@ Imports:
     purrr,
     readr,
     readxl,
-    sf,
     stringr,
     tibble,
     utils,
-    XML,
     lubridate,
     tidyselect,
     jsonlite,
@@ -36,13 +33,11 @@ Imports:
     stats
 Suggests: 
     foreign,
-    googledrive,
     knitr,
     RCurl,
     rmarkdown,
-    terra,
     testthat (>= 3.0.0),
-    units
+    withr
 LinkingTo: 
     Rcpp
 VignetteBuilder: knitr
