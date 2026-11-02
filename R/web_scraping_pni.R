@@ -30,7 +30,11 @@ load_pni <- function(year, state, strategy, product, dose, data) {
     try(b$Browser$setDownloadBehavior(behavior = "allow", downloadPath = download_dir), silent = TRUE)
 
     # Target URL for the SI-PNI consolidated monthly applied doses report
-    target_url <- "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
+    # FRAGILE: Assumes legacy SI-PNI Web portal (JSF/PrimeFaces) endpoint and DOM structure remain unchanged.
+    target_url <- dataset_url("datasus", "datasus_sipni")
+    if (is.na(target_url) || !nzchar(target_url)) {
+      target_url <- "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
+    }
 
     # Navigate to the site and wait for initial scripts to load
     b$Page$navigate(target_url)
