@@ -19,8 +19,21 @@ if (length(sinasc_idx) == 1) {
   expected$available_time[sinasc_idx] <- "1996-2024"
 }
 
-# - datasus_sipni: SI-PNI Web URL added post-migration
+# - datasus_po: available_time updated from generic "1979-2026" to "2013-2026"
+#   based on actual FTP availability.
 po_idx <- which(expected$survey == "datasus" & expected$dataset == "datasus_po")
+if (length(po_idx) == 1) {
+  expected$available_time[po_idx] <- "2013-2026"
+}
+
+# - datasus_sim (fetal, ext, inf, mat): available_time updated from "1996-2024" to "1996-2025"
+sim_2025 <- c("datasus_sim_dofet", "datasus_sim_doext", "datasus_sim_doinf", "datasus_sim_domat")
+sim_idx <- which(expected$survey == "datasus" & expected$dataset %in% sim_2025)
+if (length(sim_idx) > 0) {
+  expected$available_time[sim_idx] <- "1996-2025"
+}
+
+# - datasus_sipni: SI-PNI Web URL added post-migration
 sipni_row <- tibble::tibble(
   survey = "datasus",
   dataset = "datasus_sipni",
@@ -48,6 +61,9 @@ test_that("datasets_link() filters by source and dataset", {
 
   one <- datasets_link(source = "datasus", dataset = "datasus_sinasc")
   expect_equal(nrow(one), 1)
+
+  po <- datasets_link(source = "datasus", dataset = "datasus_po")
+  expect_equal(nrow(po), 1)
 
   pni <- datasets_link(source = "datasus", dataset = "datasus_sipni")
   expect_equal(nrow(pni), 1)

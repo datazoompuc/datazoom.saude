@@ -1,9 +1,9 @@
 survey,dataset,geo_level,year,url,docs_url,available_time,available_geo,resolver
-datasus,datasus_sim_do,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/$file_name$,,1996-2024,State,
-datasus,datasus_sim_dofet,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,,1996-2024,State,
-datasus,datasus_sim_doext,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,,1996-2024,State,
-datasus,datasus_sim_doinf,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,,1996-2024,State,
-datasus,datasus_sim_domat,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,,1996-2024,State,
+datasus,datasus_sim_do,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/$file_name$,https://datasus.saude.gov.br/estatisticas-vitais/,1996-2024,State,datasus
+datasus,datasus_sim_dofet,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,https://datasus.saude.gov.br/estatisticas-vitais/,1996-2025,State,datasus
+datasus,datasus_sim_doext,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,https://datasus.saude.gov.br/estatisticas-vitais/,1996-2025,State,datasus
+datasus,datasus_sim_doinf,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,https://datasus.saude.gov.br/estatisticas-vitais/,1996-2025,State,datasus
+datasus,datasus_sim_domat,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOFET/$file_name$,https://datasus.saude.gov.br/estatisticas-vitais/,1996-2025,State,datasus
 datasus,datasus_cnes_lt,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/LT/$file_name$,,2005-2026,State,
 datasus,datasus_cnes_st,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/ST/$file_name$,,2005-2026,State,
 datasus,datasus_cnes_dc,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/DC/$file_name$,,2005-2026,State,
@@ -18,7 +18,7 @@ datasus,datasus_cnes_ee,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508
 datasus,datasus_cnes_ef,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/EF/$file_name$,,2005-2026,State,
 datasus,datasus_cnes_gm,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/GM/$file_name$,,2005-2026,State,
 datasus,datasus_sinasc,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/1996_/Dados/DNRES/$file_name$,https://datasus.saude.gov.br/nascidos-vivos-desde-1994/,1996-2024,State,datasus
-datasus,datasus_po,,,ftp://ftp.datasus.gov.br/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/$file_name$,,1979-2026,State,
+datasus,datasus_po,,,ftp://ftp.datasus.gov.br/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/$file_name$,https://datasus.saude.gov.br/,2013-2026,State,datasus
 datasus,datasus_sipni,,,https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf,https://datasus.saude.gov.br/acesso-a-informacao/imunizacoes-desde-1994/,1994-2022,State,
 datasus_sih,datasus_sih_rd,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,,1979-2026,State,
 datasus_sih,datasus_sih_rj,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,,1979-2026,State,

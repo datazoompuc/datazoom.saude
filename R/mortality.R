@@ -134,6 +134,8 @@ load_mortality <- function(dataset,
 
   # DO
   if (param$suffix == "DO") {
+    # FRAGILE: Assumes FTP filenames strictly follow pattern DO<UF><YYYY>.dbc,
+    # with a 4-digit year at positions 5:8.
     file_years <- filenames %>%
       substr(5, 8)
 
@@ -141,6 +143,7 @@ load_mortality <- function(dataset,
       filenames <- filenames[file_years %in% param$time_period]
     }
 
+    # FRAGILE: Assumes state abbreviation is at positions 3:4 and 'BR' denotes countrywide files.
     file_state <- filenames %>%
       substr(3, 4)
 
@@ -158,6 +161,8 @@ load_mortality <- function(dataset,
     filenames <- filenames[stringr::str_starts(filenames, param$suffix)]
 
     # Extract the years YY and filter
+    # FRAGILE: Assumes filename year is 2-digit YY after prefix (e.g. DOEXT00.DBC).
+    # Two-digit YY will collide or break if naming convention shifts to 4 digits.
     file_years_yy <- filenames %>%
       stringr::str_extract("\\d+")
 
@@ -216,6 +221,7 @@ load_mortality <- function(dataset,
   if ("dtobito" %in% names(dat)) {
     dat <- dat %>%
       dplyr::mutate(
+        # FRAGILE: Assumes date of death (dtobito) is formatted as day-month-year without separators (%d%m%Y).
         dtobito = as.Date(as.character(dtobito), format = "%d%m%Y")
       )
   }

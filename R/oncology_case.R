@@ -111,6 +111,8 @@ load_oncology_case <- function(time_period,
     unlist()
 
   # Filter by year
+  # FRAGILE: Assumes FTP filenames strictly follow pattern POBR<YYYY>.dbc,
+  # with a 4-digit year at positions 5:8. If naming convention changes, filtering breaks.
   file_years <- filenames %>%
     substr(5, 8)
 
@@ -201,6 +203,7 @@ load_oncology_case <- function(time_period,
   # Formatting data
   dat <- dat %>%
     dplyr::mutate(
+      # FRAGILE: Assumes date fields (dt_diag, dt_trat, dt_nasc) are formatted as day-month-year (DMY) strings.
       dt_diag = lubridate::dmy((dt_diag)),
       dt_trat = lubridate::dmy((dt_trat)),
       dt_nasc = lubridate::dmy((dt_nasc)),
