@@ -1,0 +1,133 @@
+name: Update Dataset Manifest
+
+on:
+  schedule:
+    # Every Monday at 05:00 UTC
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+    inputs:
+      check_all:
+        description: 'Probe every URL in manifest (slow)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev
+
+      - name: Install R package dependencies
+        run: |
+          install.packages(c("curl", "RCurl", "readr", "dplyr", "tibble", "jsonlite", "purrr", "stringr", "lubridate", "devtools", "testthat"), repos = "https://cloud.r-project.org")
+        shell: Rscript {0}
+
+      - name: Run manifest builder
+        id: build
+        run: |
+          CHECK_FLAG=""
+          if [ "${{ inputs.check_all }}" = "true" ]; then
+            CHECK_FLAG="--check-all"
+          fi
+
+          set +e
+          Rscript actions/scripts/build_manifest.R $CHECK_FLAG
+          EXIT_CODE=$?
+          set -e
+
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "status=unchanged" >> $GITHUB_OUTPUT
+          elif [ $EXIT_CODE -eq 10 ] || [ $EXIT_CODE -eq 11 ]; then
+            echo "status=changed" >> $GITHUB_OUTPUT
+            if [ $EXIT_CODE -eq 11 ]; then
+              echo "partial=true" >> $GITHUB_OUTPUT
+            fi
+          elif [ $EXIT_CODE -eq 20 ]; then
+            echo "status=validation_error" >> $GITHUB_OUTPUT
+            exit 1
+          elif [ $EXIT_CODE -eq 30 ]; then
+            echo "status=resolver_failed" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "status=unknown_error" >> $GITHUB_OUTPUT
+            exit $EXIT_CODE
+          fi
+
+      - name: Smoke test package
+        if: steps.build.outputs.status == 'changed'
+        run: |
+          Rscript -e "devtools::load_all(); devtools::test()"
+
+      - name: Prepare PR body
+        if: steps.build.outputs.status == 'changed'
+        id: pr_body
+        run: |
+          cat << 'EOF' > generate_body.R
+          if (file.exists("actions/output/manifest_report.json")) {
+            rep <- jsonlite::fromJSON("actions/output/manifest_report.json")
+            body <- c("### Automated Dataset Manifest Update\n")
+            body <- c(body, sprintf("- **Changed keys:** %d\n", rep$n_changed))
+            for (k in rep$changed_keys) {
+              body <- c(body, paste0("  - `", gsub("\r", " / ", k), "`"))
+            }
+            if (length(rep$fragility_notes) > 0) {
+              body <- c(body, "\n### ⚠️ Fragile Treatment Lines to Review:\n")
+              for (fn in names(rep$fragility_notes)) {
+                for (note in rep$fragility_notes[[fn]]) {
+                  body <- c(body, paste0("- ", note))
+                }
+              }
+            }
+            writeLines(body, "pr_body.md")
+          } else {
+            writeLines("Automated update of datasets_link.csv from upstream DATASUS.", "pr_body.md")
+          }
+          EOF
+          Rscript generate_body.R
+          rm generate_body.R
+
+      - name: Create Pull Request
+        if: steps.build.outputs.status == 'changed'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update dataset manifest (automated CI run)"
+          branch: "manifest-refresh"
+          delete-branch: true
+          title: "[automated] Update dataset manifest"
+          body-path: "pr_body.md"
+          labels: |
+            automated-pr
+            manifest
+
+      - name: Upload manifest report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest-report
+          path: |
+            actions/output/manifest_report.json
+            actions/output/candidate_manifest.csv
+          if-no-files-found: ignore
+
