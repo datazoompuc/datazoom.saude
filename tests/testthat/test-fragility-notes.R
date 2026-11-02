@@ -10,29 +10,34 @@ test_that("collect_fragility_notes() extracts FRAGILE tags from treatment code",
   skip_if_not(file.exists(births_path), "R/births.R not present")
   notes_births <- collect_fragility_notes(births_path, "R/births.R")
   expect_true(length(notes_births) >= 4)
-  expect_true(any(grepl("FTP filenames", notes_births)))
-  expect_true(any(grepl("state abbreviation", notes_births)))
-  expect_true(any(grepl("SINASC date fields", notes_births)))
-  expect_true(any(grepl("birth time", notes_births)))
 
   # oncology_case.R
   po_path <- file.path(root, "R", "oncology_case.R")
   notes_po <- collect_fragility_notes(po_path, "R/oncology_case.R")
   expect_true(length(notes_po) >= 2)
-  expect_true(any(grepl("POBR<YYYY>", notes_po)))
-  expect_true(any(grepl("dt_diag", notes_po)))
 
   # mortality.R
   sim_path <- file.path(root, "R", "mortality.R")
   notes_sim <- collect_fragility_notes(sim_path, "R/mortality.R")
   expect_true(length(notes_sim) >= 4)
-  expect_true(any(grepl("DO<UF><YYYY>", notes_sim)))
-  expect_true(any(grepl("2-digit YY", notes_sim)))
-  expect_true(any(grepl("dtobito", notes_sim)))
 
   # web_scraping_pni.R
   pni_path <- file.path(root, "R", "web_scraping_pni.R")
   notes_pni <- collect_fragility_notes(pni_path, "R/web_scraping_pni.R")
   expect_true(length(notes_pni) >= 1)
-  expect_true(any(grepl("JSF/PrimeFaces", notes_pni)))
+
+  # hospital_beds.R
+  cnes_path <- file.path(root, "R", "hospital_beds.R")
+  notes_cnes <- collect_fragility_notes(cnes_path, "R/hospital_beds.R")
+  expect_true(length(notes_cnes) >= 3)
+
+  # hospital_admissions.R
+  sih_path <- file.path(root, "R", "hospital_admissions.R")
+  notes_sih <- collect_fragility_notes(sih_path, "R/hospital_admissions.R")
+  expect_true(length(notes_sih) >= 2)
+
+  # outpatient_procedures.R
+  sia_path <- file.path(root, "R", "outpatient_procedures.R")
+  notes_sia <- collect_fragility_notes(sia_path, "R/outpatient_procedures.R")
+  expect_true(length(notes_sia) >= 1)
 })

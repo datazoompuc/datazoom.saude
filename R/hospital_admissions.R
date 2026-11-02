@@ -141,12 +141,14 @@ load_hospital_admissions <- function(dataset,
   filenames <- filenames[stringr::str_starts(filenames, param$suffix)]
 
   # Filter by requested states
+  # FRAGILE: Assumes 2-letter state abbreviation is at positions 3:4 of SIHSUS filename.
   file_state <- substr(filenames, 3, 4)   # state code (UF)
   if (paste0(param$states, collapse = "") != "ALL") {
     filenames <- filenames[file_state %in% param$states]
   }
 
   # Filter by requested years
+  # FRAGILE: Assumes 2-digit year is at positions 5:6 followed by 2-digit month 7:8.
   file_year <- substr(filenames, 5, 6)   # year (2 digits)
   file_year <- as.integer(file_year)
   file_year <- ifelse(file_year >= 90, 1900 + file_year, 2000 + file_year)

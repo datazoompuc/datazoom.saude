@@ -11,29 +11,34 @@ expected <- old %>%
   dplyr::select(-sidra_code) %>%
   dplyr::rename(url = link)
 
-# Documented post-migration deltas:
-# - datasus_sinasc: available_time updated from generic "1979-2026" to "1996-2024"
-#   based on actual FTP availability.
-sinasc_idx <- which(expected$survey == "datasus" & expected$dataset == "datasus_sinasc")
-if (length(sinasc_idx) == 1) {
-  expected$available_time[sinasc_idx] <- "1996-2024"
-}
+# Documented post-migration deltas based on empirical FTP coverage:
 
-# - datasus_po: available_time updated from generic "1979-2026" to "2013-2026"
-#   based on actual FTP availability.
-po_idx <- which(expected$survey == "datasus" & expected$dataset == "datasus_po")
-if (length(po_idx) == 1) {
-  expected$available_time[po_idx] <- "2013-2026"
-}
+# 1. SINASC & Painel de Oncologia
+expected$available_time[expected$dataset == "datasus_sinasc"] <- "1996-2024"
+expected$available_time[expected$dataset == "datasus_po"] <- "2013-2026"
 
-# - datasus_sim (fetal, ext, inf, mat): available_time updated from "1996-2024" to "1996-2025"
+# 2. SIM (DOFET, DOEXT, DOINF, DOMAT)
 sim_2025 <- c("datasus_sim_dofet", "datasus_sim_doext", "datasus_sim_doinf", "datasus_sim_domat")
-sim_idx <- which(expected$survey == "datasus" & expected$dataset %in% sim_2025)
-if (length(sim_idx) > 0) {
-  expected$available_time[sim_idx] <- "1996-2025"
-}
+expected$available_time[expected$dataset %in% sim_2025] <- "1996-2025"
 
-# - datasus_sipni: SI-PNI Web URL added post-migration
+# 3. CNES
+cnes_2007 <- c("datasus_cnes_hb", "datasus_cnes_ep", "datasus_cnes_rc", "datasus_cnes_in", "datasus_cnes_ef", "datasus_cnes_gm")
+expected$available_time[expected$dataset %in% cnes_2007] <- "2007-2026"
+expected$available_time[expected$dataset == "datasus_cnes_ee"] <- "2007-2021"
+
+# 4. SIHSUS
+expected$available_time[expected$dataset %in% c("datasus_sih_rd", "datasus_sih_rj", "datasus_sih_sp")] <- "2008-2026"
+expected$available_time[expected$dataset == "datasus_sih_er"] <- "2011-2026"
+
+# 5. SIASUS
+expected$available_time[expected$dataset == "datasus_siasus_ab"] <- "2008-2025"
+expected$available_time[expected$dataset == "datasus_siasus_pa"] <- "2008-2026"
+expected$available_time[expected$dataset == "datasus_siasus_ps"] <- "2012-2026"
+expected$available_time[expected$dataset %in% c("datasus_siasus_abo", "datasus_siasus_acf")] <- "2014-2026"
+expected$available_time[expected$dataset == "datasus_siasus_sad"] <- "2012-2018"
+
+# 6. SI-PNI Web URL added post-migration
+po_idx <- which(expected$survey == "datasus" & expected$dataset == "datasus_po")
 sipni_row <- tibble::tibble(
   survey = "datasus",
   dataset = "datasus_sipni",

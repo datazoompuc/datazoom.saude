@@ -158,6 +158,7 @@ load_outpatient_procedures <- function(dataset,
   filenames <- filenames[stringr::str_starts(filenames, param$suffix)]
 
   # Extract year and state from filenames
+  # FRAGILE: Assumes 2-digit vs 3-digit prefix layout (UF at 3:4/4:5 and year at 5:6/6:7).
 if (param$dataset %in% siasus_two_digits) {
   file_state <- substr(filenames, 3, 4)
   file_years_yy <- substr(filenames, 5, 6)
