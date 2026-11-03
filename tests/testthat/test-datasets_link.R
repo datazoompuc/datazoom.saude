@@ -24,14 +24,14 @@ expected$available_time[expected$dataset %in% sim_2025] <- "1996-2025"
 # 3. CNES
 cnes_2007 <- c("datasus_cnes_hb", "datasus_cnes_ep", "datasus_cnes_rc", "datasus_cnes_in", "datasus_cnes_ef", "datasus_cnes_gm")
 expected$available_time[expected$dataset %in% cnes_2007] <- "2007-2026"
-expected$available_time[expected$dataset == "datasus_cnes_ee"] <- "2007-2021"
+expected$available_time[expected$dataset == "datasus_cnes_ee"] <- "2007-2019, 2021"
 
 # 4. SIHSUS
 expected$available_time[expected$dataset %in% c("datasus_sih_rd", "datasus_sih_rj", "datasus_sih_sp")] <- "2008-2026"
 expected$available_time[expected$dataset == "datasus_sih_er"] <- "2011-2026"
 
 # 5. SIASUS
-expected$available_time[expected$dataset == "datasus_siasus_ab"] <- "2008-2025"
+expected$available_time[expected$dataset == "datasus_siasus_ab"] <- "2008-2017, 2025"
 expected$available_time[expected$dataset == "datasus_siasus_pa"] <- "2008-2026"
 expected$available_time[expected$dataset == "datasus_siasus_ps"] <- "2012-2026"
 expected$available_time[expected$dataset %in% c("datasus_siasus_abo", "datasus_siasus_acf")] <- "2014-2026"

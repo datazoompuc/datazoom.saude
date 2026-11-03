@@ -12,6 +12,10 @@ on:
         default: false
         type: boolean
 
+concurrency:
+  group: update-manifest
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
@@ -20,6 +24,7 @@ permissions:
 jobs:
   update-manifest:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,16 +35,12 @@ jobs:
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: 'release'
+          use-public-rspm: true
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev
-
-      - name: Install R package dependencies
-        run: |
-          install.packages(c("curl", "RCurl", "readr", "dplyr", "tibble", "jsonlite", "purrr", "stringr", "lubridate", "devtools", "testthat"), repos = "https://cloud.r-project.org")
-        shell: Rscript {0}
+      - name: Set up R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::RCurl, any::devtools, any::testthat, any::jsonlite
 
       - name: Run manifest builder
         id: build
@@ -65,14 +66,16 @@ jobs:
             fi
           elif [ $EXIT_CODE -eq 20 ]; then
             echo "status=validation_error" >> $GITHUB_OUTPUT
-            exit 1
           elif [ $EXIT_CODE -eq 30 ]; then
             echo "status=resolver_failed" >> $GITHUB_OUTPUT
-            exit 1
           else
             echo "status=unknown_error" >> $GITHUB_OUTPUT
-            exit $EXIT_CODE
           fi
+
+      - name: Stage candidate manifest
+        if: steps.build.outputs.exit_code == '10' || steps.build.outputs.exit_code == '11'
+        run: |
+          cp "${{ steps.build.outputs.candidate_path }}" inst/extdata/manifest/v1/datasets_link.csv
 
       - name: Smoke test package
         if: steps.build.outputs.status == 'changed'
@@ -84,8 +87,9 @@ jobs:
         id: pr_body
         run: |
           cat << 'EOF' > generate_body.R
-          if (file.exists("actions/output/manifest_report.json")) {
-            rep <- jsonlite::fromJSON("actions/output/manifest_report.json")
+          report_file <- Sys.getenv("REPORT_PATH", "actions/output/manifest_report.json")
+          if (file.exists(report_file)) {
+            rep <- jsonlite::fromJSON(report_file)
             body <- c("### Automated Dataset Manifest Update\n")
             body <- c(body, sprintf("- **Changed keys:** %d\n", rep$n_changed))
             for (k in rep$changed_keys) {
@@ -104,7 +108,7 @@ jobs:
             writeLines("Automated update of datasets_link.csv from upstream DATASUS.", "pr_body.md")
           }
           EOF
-          Rscript generate_body.R
+          REPORT_PATH="${{ steps.build.outputs.report_path }}" Rscript generate_body.R
           rm generate_body.R
 
       - name: Create Pull Request
@@ -121,6 +125,71 @@ jobs:
             automated-pr
             manifest
 
+      - name: Report failure as GitHub Issue
+        if: steps.build.outputs.exit_code == '11' || steps.build.outputs.exit_code == '20' || steps.build.outputs.exit_code == '30'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = "${{ steps.build.outputs.report_path }}";
+            let bodyLines = [
+              "Automated manifest run detected an issue.",
+              `- **Exit code:** ${{ steps.build.outputs.exit_code }}`,
+              `- **Status:** ${{ steps.build.outputs.status }}`,
+              ""
+            ];
+
+            try {
+              if (fs.existsSync(reportPath)) {
+                const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+                if (report.resolvers_failed && Object.keys(report.resolvers_failed).length > 0) {
+                  bodyLines.push("### Failed Resolvers:");
+                  for (const [k, v] of Object.entries(report.resolvers_failed)) {
+                    bodyLines.push(`- **${k}**: ${v}`);
+                  }
+                }
+                if (report.resolvers_partial_failed && Object.keys(report.resolvers_partial_failed).length > 0) {
+                  bodyLines.push("### Partially Failed Resolvers:");
+                  for (const [k, v] of Object.entries(report.resolvers_partial_failed)) {
+                    bodyLines.push(`- **${k}**: ${Array.isArray(v) ? v.join(", ") : v}`);
+                  }
+                }
+                if (report.errors && report.errors.length > 0) {
+                  bodyLines.push("### Validation Errors:");
+                  for (const e of report.errors) {
+                    bodyLines.push(`- ${e}`);
+                  }
+                }
+              }
+            } catch (err) {
+              bodyLines.push(`Could not parse report file: ${err.message}`);
+            }
+
+            const title = "[manifest] Automated scraper or validation failure";
+            const { data: existing } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "manifest"
+            });
+            const match = existing.find(i => i.title === title);
+            if (match) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: match.number,
+                body: [`**Run failure update (${new Date().toISOString().slice(0, 10)}):**`, "", ...bodyLines].join("\n")
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                labels: ["manifest"],
+                body: bodyLines.join("\n")
+              });
+            }
+
       - name: Upload manifest report artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -131,3 +200,6 @@ jobs:
             actions/output/candidate_manifest.csv
           if-no-files-found: ignore
 
+      - name: Fail workflow on fatal error
+        if: steps.build.outputs.exit_code == '20' || steps.build.outputs.exit_code == '30'
+        run: exit 1

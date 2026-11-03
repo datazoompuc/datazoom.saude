@@ -33,7 +33,7 @@ load_pni <- function(year, state, strategy, product, dose, data) {
     # FRAGILE: Assumes legacy SI-PNI Web portal (JSF/PrimeFaces) endpoint and DOM structure remain unchanged.
     target_url <- dataset_url("datasus", "datasus_sipni")
     if (is.na(target_url) || !nzchar(target_url)) {
-      target_url <- "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
+      stop("SI-PNI endpoint is not available in the manifest. The dataset may be temporarily disabled or unavailable.")
     }
 
     # Navigate to the site and wait for initial scripts to load

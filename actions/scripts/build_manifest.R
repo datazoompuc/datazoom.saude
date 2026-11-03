@@ -32,10 +32,8 @@ source(file.path(repo_root, "actions", "scripts", "fragility_notes.R"))
 MANIFEST_PATH <- file.path(repo_root, "inst", "extdata", "manifest", "v1", "datasets_link.csv")
 SCRAPERS_DIR <- file.path(repo_root, "actions", "scrapers")
 
-OUT_DIR <- {
-  d <- Sys.getenv("RUNNER_TEMP", "")
-  if (nzchar(d)) d else tempdir()
-}
+OUT_DIR <- file.path(repo_root, "actions", "output")
+dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 args <- commandArgs(trailingOnly = TRUE)
 dry_run <- "--dry-run" %in% args
@@ -145,6 +143,14 @@ for (src in names(registry)) {
   p_fails <- attr(result, "partial_failures")
   if (!is.null(p_fails) && length(p_fails) > 0) {
     resolver_partial_failed[[src]] <- p_fails
+  }
+
+  # Verify that non-exempt owned rows received an available_time
+  unrefreshed <- available_time_not_refreshed(owned_rows, result)
+  if (length(unrefreshed) > 0) {
+    cat("FAILED: available_time missing for non-exempt row(s):", paste(unrefreshed, collapse = ", "), "\n")
+    resolver_failed[[src]] <- paste("missing available_time for:", paste(unrefreshed, collapse = ", "))
+    next
   }
 
   for (i in seq_len(nrow(result))) {
@@ -271,9 +277,19 @@ report_json_path <- file.path(OUT_DIR, "manifest_report.json")
 readr::write_csv(candidate, candidate_csv_path, na = "")
 jsonlite::write_json(report, report_json_path, pretty = TRUE, auto_unbox = TRUE)
 
-if (!dry_run && length(errors) == 0 && changes$n_changed > 0) {
-  cat("Writing candidate to", MANIFEST_PATH, "\n")
-  readr::write_csv(candidate, MANIFEST_PATH, na = "")
+cat("Candidate manifest written to:", candidate_csv_path, "\n")
+cat("Manifest report written to:", report_json_path, "\n")
+
+gh_output_path <- Sys.getenv("GITHUB_OUTPUT", "")
+if (nzchar(gh_output_path)) {
+  con <- file(gh_output_path, open = "a")
+  on.exit(try(close(con), silent = TRUE), add = TRUE)
+  writeLines(enc2utf8(c(
+    sprintf("candidate_path=%s", candidate_csv_path),
+    sprintf("report_path=%s", report_json_path),
+    sprintf("n_changed=%d", changes$n_changed),
+    sprintf("exit_code=%d", exit_code)
+  )), con, useBytes = TRUE)
 }
 
 total_failed <- length(resolver_failed) + length(resolver_partial_failed)

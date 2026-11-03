@@ -35,9 +35,27 @@ resolve_datasus <- function(rows) {
   results <- list()
   block_failures <- character(0)
 
+  record_failure <- function(msg) {
+    block_failures <<- c(block_failures, msg)
+  }
+
+  # Formats integer years into gap-aware ranges, e.g. c(2008:2017, 2025) -> "2008-2017, 2025"
+  format_year_spans <- function(years) {
+    if (length(years) == 0) return(NA_character_)
+    years <- sort(unique(as.integer(years[!is.na(years)])))
+    if (length(years) == 0) return(NA_character_)
+    diffs <- c(1L, diff(years))
+    group_ids <- cumsum(diffs > 1L)
+    groups <- split(years, group_ids)
+    spans <- vapply(groups, function(g) {
+      if (length(g) == 1) as.character(g) else paste0(min(g), "-", max(g))
+    }, character(1))
+    paste(spans, collapse = ", ")
+  }
+
   # Helper to fetch and split FTP directory listing
   ftp_list_files <- function(url) {
-    listing <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE)
+    listing <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE, timeout = 30, connecttimeout = 15)
     lines <- trimws(strsplit(listing, "\r*\n")[[1]])
     lines[nzchar(lines)]
   }
@@ -59,11 +77,11 @@ resolve_datasus <- function(rows) {
         dataset = "datasus_sinasc",
         geo_level = NA_character_,
         year = NA_character_,
-        available_time = paste0(min(years), "-", max(years)),
+        available_time = format_year_spans(years),
         docs_url = "https://datasus.saude.gov.br/nascidos-vivos-desde-1994/"
       )
     }, error = function(e) {
-      block_failures <<- c(block_failures, paste("SINASC:", conditionMessage(e)))
+      record_failure(paste("SINASC:", conditionMessage(e)))
       NULL
     })
 
@@ -87,11 +105,11 @@ resolve_datasus <- function(rows) {
         dataset = "datasus_po",
         geo_level = NA_character_,
         year = NA_character_,
-        available_time = paste0(min(years), "-", max(years)),
+        available_time = format_year_spans(years),
         docs_url = "https://datasus.saude.gov.br/"
       )
     }, error = function(e) {
-      block_failures <<- c(block_failures, paste("PO:", conditionMessage(e)))
+      record_failure(paste("PO:", conditionMessage(e)))
       NULL
     })
 
@@ -115,11 +133,11 @@ resolve_datasus <- function(rows) {
         dataset = "datasus_sim_do",
         geo_level = NA_character_,
         year = NA_character_,
-        available_time = paste0(min(years), "-", max(years)),
+        available_time = format_year_spans(years),
         docs_url = "https://datasus.saude.gov.br/estatisticas-vitais/"
       )
     }, error = function(e) {
-      block_failures <<- c(block_failures, paste("SIM_DO:", conditionMessage(e)))
+      record_failure(paste("SIM_DO:", conditionMessage(e)))
       NULL
     })
 
@@ -145,14 +163,14 @@ resolve_datasus <- function(rows) {
         pfx <- dofet_targets[[ds]]
         m <- grep(paste0("^", pfx, "[0-9]{2}\\.dbc$"), lines, ignore.case = TRUE, value = TRUE)
         if (length(m) == 0) {
-          block_failures <<- c(block_failures, paste0(ds, ": no ", pfx, "*.dbc files found"))
+          record_failure(paste0(ds, ": no ", pfx, "*.dbc files found"))
           next
         }
 
         yy <- as.integer(stringr::str_extract(m, "\\d+"))
         years <- sort(unique(ifelse(yy >= 90, 1900 + yy, 2000 + yy)))
         if (length(years) == 0) {
-          block_failures <<- c(block_failures, paste0(ds, ": failed to parse 2-digit years"))
+          record_failure(paste0(ds, ": failed to parse 2-digit years"))
           next
         }
 
@@ -161,14 +179,14 @@ resolve_datasus <- function(rows) {
           dataset = ds,
           geo_level = NA_character_,
           year = NA_character_,
-          available_time = paste0(min(years), "-", max(years)),
+          available_time = format_year_spans(years),
           docs_url = "https://datasus.saude.gov.br/estatisticas-vitais/"
         )
       }
 
       if (length(sub_rows) > 0) dplyr::bind_rows(sub_rows) else NULL
     }, error = function(e) {
-      block_failures <<- c(block_failures, paste("SIM_DOFET_DIR:", conditionMessage(e)))
+      record_failure(paste("SIM_DOFET_DIR:", conditionMessage(e)))
       NULL
     })
 
@@ -203,11 +221,11 @@ resolve_datasus <- function(rows) {
           dataset = ds,
           geo_level = NA_character_,
           year = NA_character_,
-          available_time = paste0(min(years), "-", max(years)),
+          available_time = format_year_spans(years),
           docs_url = "https://datasus.saude.gov.br/cnes/"
         )
       }, error = function(e) {
-        block_failures <<- c(block_failures, paste0("CNES_", pfx, ": ", conditionMessage(e)))
+        record_failure(paste0("CNES_", pfx, ": ", conditionMessage(e)))
         NULL
       })
 
@@ -231,14 +249,14 @@ resolve_datasus <- function(rows) {
         pfx <- sih_targets[[ds]]
         m <- grep(paste0("^", pfx, "[A-Z]{2}[0-9]{4}\\.dbc$"), lines, ignore.case = TRUE, value = TRUE)
         if (length(m) == 0) {
-          block_failures <<- c(block_failures, paste0(ds, ": no ", pfx, "*.dbc files found"))
+          record_failure(paste0(ds, ": no ", pfx, "*.dbc files found"))
           next
         }
 
         yy <- as.integer(substr(m, 5, 6))
         years <- sort(unique(ifelse(yy >= 90, 1900 + yy, 2000 + yy)))
         if (length(years) == 0) {
-          block_failures <<- c(block_failures, paste0(ds, ": could not parse years"))
+          record_failure(paste0(ds, ": could not parse years"))
           next
         }
 
@@ -247,14 +265,14 @@ resolve_datasus <- function(rows) {
           dataset = ds,
           geo_level = NA_character_,
           year = NA_character_,
-          available_time = paste0(min(years), "-", max(years)),
+          available_time = format_year_spans(years),
           docs_url = "https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus/"
         )
       }
 
       if (length(sub_rows) > 0) dplyr::bind_rows(sub_rows) else NULL
     }, error = function(e) {
-      block_failures <<- c(block_failures, paste("SIHSUS_DIR:", conditionMessage(e)))
+      record_failure(paste("SIHSUS_DIR:", conditionMessage(e)))
       NULL
     })
 
@@ -280,7 +298,7 @@ resolve_datasus <- function(rows) {
         pfx <- siasus_targets[[ds]]
         m <- grep(paste0("^", pfx, "[A-Z]{2}[0-9]{4}\\.dbc$"), lines, ignore.case = TRUE, value = TRUE)
         if (length(m) == 0) {
-          block_failures <<- c(block_failures, paste0(ds, ": no ", pfx, "*.dbc files found"))
+          record_failure(paste0(ds, ": no ", pfx, "*.dbc files found"))
           next
         }
 
@@ -289,7 +307,7 @@ resolve_datasus <- function(rows) {
         yy <- as.integer(substr(m, yy_start, yy_start + 1))
         years <- sort(unique(ifelse(yy >= 90, 1900 + yy, 2000 + yy)))
         if (length(years) == 0) {
-          block_failures <<- c(block_failures, paste0(ds, ": could not parse years"))
+          record_failure(paste0(ds, ": could not parse years"))
           next
         }
 
@@ -298,14 +316,14 @@ resolve_datasus <- function(rows) {
           dataset = ds,
           geo_level = NA_character_,
           year = NA_character_,
-          available_time = paste0(min(years), "-", max(years)),
+          available_time = format_year_spans(years),
           docs_url = "https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus/"
         )
       }
 
       if (length(sub_rows) > 0) dplyr::bind_rows(sub_rows) else NULL
     }, error = function(e) {
-      block_failures <<- c(block_failures, paste("SIASUS_DIR:", conditionMessage(e)))
+      record_failure(paste("SIASUS_DIR:", conditionMessage(e)))
       NULL
     })
 

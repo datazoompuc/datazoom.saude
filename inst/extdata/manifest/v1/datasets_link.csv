@@ -14,7 +14,7 @@ datasus,datasus_cnes_pf,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508
 datasus,datasus_cnes_ep,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/EP/$file_name$,https://datasus.saude.gov.br/cnes/,2007-2026,State,datasus
 datasus,datasus_cnes_rc,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/RC/$file_name$,https://datasus.saude.gov.br/cnes/,2007-2026,State,datasus
 datasus,datasus_cnes_in,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/IN/$file_name$,https://datasus.saude.gov.br/cnes/,2007-2026,State,datasus
-datasus,datasus_cnes_ee,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/EE/$file_name$,https://datasus.saude.gov.br/cnes/,2007-2021,State,datasus
+datasus,datasus_cnes_ee,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/EE/$file_name$,https://datasus.saude.gov.br/cnes/,"2007-2019, 2021",State,datasus
 datasus,datasus_cnes_ef,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/EF/$file_name$,https://datasus.saude.gov.br/cnes/,2007-2026,State,datasus
 datasus,datasus_cnes_gm,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/GM/$file_name$,https://datasus.saude.gov.br/cnes/,2007-2026,State,datasus
 datasus,datasus_sinasc,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/1996_/Dados/DNRES/$file_name$,https://datasus.saude.gov.br/nascidos-vivos-desde-1994/,1996-2024,State,datasus
@@ -24,7 +24,7 @@ datasus_sih,datasus_sih_rd,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/2
 datasus_sih,datasus_sih_rj,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus/,2008-2026,State,datasus
 datasus_sih,datasus_sih_sp,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus/,2008-2026,State,datasus
 datasus_sih,datasus_sih_er,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus/,2011-2026,State,datasus
-datasus_siasus,datasus_siasus_ab,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus/,2008-2025,State,datasus
+datasus_siasus,datasus_siasus_ab,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus/,"2008-2017, 2025",State,datasus
 datasus_siasus,datasus_siasus_ad,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus/,2008-2026,State,datasus
 datasus_siasus,datasus_siasus_am,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus/,2008-2026,State,datasus
 datasus_siasus,datasus_siasus_an,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-ambulatorial-sia-sus/,2008-2014,State,datasus

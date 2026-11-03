@@ -65,6 +65,33 @@ validate_no_deletions <- function(old, candidate) {
 
 VALIDATOR_META_COLS <- c("available_time", "available_geo", "resolver")
 
+AVAILABLE_TIME_EXEMPT <- list(
+  list(survey = "datasus", dataset = "datasus_sipni") # frozen historical series (1994-2022)
+)
+
+is_available_time_exempt <- function(survey, dataset) {
+  any(vapply(AVAILABLE_TIME_EXEMPT, function(k) {
+    identical(k$survey, survey) && (is.na(k$dataset) || identical(k$dataset, dataset))
+  }, logical(1)))
+}
+
+available_time_not_refreshed <- function(owned_rows, result) {
+  same_key <- function(a, b) (is.na(a) & is.na(b)) | (!is.na(a) & !is.na(b) & a == b)
+  missing <- character(0)
+  for (i in seq_len(nrow(owned_rows))) {
+    r <- owned_rows[i, ]
+    if (is_available_time_exempt(r$survey, r$dataset)) next
+    hit <- result$survey == r$survey & result$dataset == r$dataset &
+      same_key(result$geo_level, r$geo_level) & same_key(result$year, r$year)
+    has_value <- "available_time" %in% names(result) && any(!is.na(result$available_time[hit]))
+    if (!has_value) {
+      key <- c(r$geo_level, r$year)
+      missing <- c(missing, paste(c(r$survey, r$dataset, key[!is.na(key)]), collapse = "/"))
+    }
+  }
+  missing
+}
+
 validate_row_grouping <- function(candidate) {
   errors <- character(0)
 
