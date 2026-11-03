@@ -2,15 +2,12 @@
 #
 # Resolver for SI-PNI (Sistema de Informação do Programa Nacional de Imunizações).
 #
-# SI-PNI is a frozen historical series (1994-2022). Microdata from 2023 onwards
-# migrated to the RNDS / Novo SI-PNI platform. Unlike dynamic resolvers, there
-# are no new years to discover here.
-#
+# SI-PNI is a historical series published on the legacy web portal (1994-2023).
 # Following the resolve_degrad.R verification model (datazoom.amazonia):
 # - Its role is pure verification (liveness check of the legacy portal URL).
 # - It never disables SSL/TLS verification (no ssl_verifypeer = FALSE).
 # - It does not write available_time (the dataset is marked AVAILABLE_TIME_EXEMPT
-#   in actions/scripts/manifest_validate.R, leaving the committed "1994-2022" intact).
+#   in actions/scripts/manifest_validate.R, leaving the committed "1994-2023" intact).
 
 sipni_transport_error <- function(url, curl_msg) {
   reason <- if (grepl("certificate has expired|CERT_EXPIRED|certificate expired", curl_msg, ignore.case = TRUE)) {

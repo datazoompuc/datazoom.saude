@@ -126,7 +126,7 @@ jobs:
             manifest
 
       - name: Report failure as GitHub Issue
-        if: steps.build.outputs.exit_code == '11' || steps.build.outputs.exit_code == '20' || steps.build.outputs.exit_code == '30'
+        if: steps.build.outputs.exit_code == '11' || steps.build.outputs.exit_code == '20' || steps.build.outputs.exit_code == '30' || steps.build.outputs.status == 'unknown_error'
         uses: actions/github-script@v7
         with:
           script: |
@@ -201,5 +201,5 @@ jobs:
           if-no-files-found: ignore
 
       - name: Fail workflow on fatal error
-        if: steps.build.outputs.exit_code == '20' || steps.build.outputs.exit_code == '30'
+        if: steps.build.outputs.exit_code != '0' && steps.build.outputs.exit_code != '10' && steps.build.outputs.exit_code != '11'
         run: exit 1

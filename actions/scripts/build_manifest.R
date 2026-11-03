@@ -148,9 +148,9 @@ for (src in names(registry)) {
   # Verify that non-exempt owned rows received an available_time
   unrefreshed <- available_time_not_refreshed(owned_rows, result)
   if (length(unrefreshed) > 0) {
-    cat("FAILED: available_time missing for non-exempt row(s):", paste(unrefreshed, collapse = ", "), "\n")
-    resolver_failed[[src]] <- paste("missing available_time for:", paste(unrefreshed, collapse = ", "))
-    next
+    unref_msg <- paste("missing available_time for:", paste(unrefreshed, collapse = ", "))
+    cat("WARNING (partial failure):", unref_msg, "\n")
+    resolver_partial_failed[[src]] <- c(resolver_partial_failed[[src]], unref_msg)
   }
 
   for (i in seq_len(nrow(result))) {
@@ -280,18 +280,6 @@ jsonlite::write_json(report, report_json_path, pretty = TRUE, auto_unbox = TRUE)
 cat("Candidate manifest written to:", candidate_csv_path, "\n")
 cat("Manifest report written to:", report_json_path, "\n")
 
-gh_output_path <- Sys.getenv("GITHUB_OUTPUT", "")
-if (nzchar(gh_output_path)) {
-  con <- file(gh_output_path, open = "a")
-  on.exit(try(close(con), silent = TRUE), add = TRUE)
-  writeLines(enc2utf8(c(
-    sprintf("candidate_path=%s", candidate_csv_path),
-    sprintf("report_path=%s", report_json_path),
-    sprintf("n_changed=%d", changes$n_changed),
-    sprintf("exit_code=%d", exit_code)
-  )), con, useBytes = TRUE)
-}
-
 total_failed <- length(resolver_failed) + length(resolver_partial_failed)
 
 exit_code <- if (length(errors) > 0) {
@@ -304,6 +292,18 @@ exit_code <- if (length(errors) > 0) {
   30L
 } else {
   0L
+}
+
+gh_output_path <- Sys.getenv("GITHUB_OUTPUT", "")
+if (nzchar(gh_output_path)) {
+  con <- file(gh_output_path, open = "a")
+  writeLines(enc2utf8(c(
+    sprintf("candidate_path=%s", candidate_csv_path),
+    sprintf("report_path=%s", report_json_path),
+    sprintf("n_changed=%d", changes$n_changed),
+    sprintf("exit_code=%d", exit_code)
+  )), con, useBytes = TRUE)
+  close(con)
 }
 
 cat("Exit code:", exit_code, "\n")

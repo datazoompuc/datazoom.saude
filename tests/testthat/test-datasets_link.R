@@ -42,7 +42,7 @@ po_idx <- which(expected$survey == "datasus" & expected$dataset == "datasus_po")
 sipni_row <- tibble::tibble(
   survey = "datasus",
   dataset = "datasus_sipni",
-  available_time = "1994-2022",
+  available_time = "1994-2023",
   available_geo = "State",
   url = "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
 )

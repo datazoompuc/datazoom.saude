@@ -66,7 +66,7 @@ validate_no_deletions <- function(old, candidate) {
 VALIDATOR_META_COLS <- c("available_time", "available_geo", "resolver")
 
 AVAILABLE_TIME_EXEMPT <- list(
-  list(survey = "datasus", dataset = "datasus_sipni") # frozen historical series (1994-2022)
+  list(survey = "datasus", dataset = "datasus_sipni") # legacy web portal series (1994-2023)
 )
 
 is_available_time_exempt <- function(survey, dataset) {
