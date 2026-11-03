@@ -19,7 +19,7 @@ datasus,datasus_cnes_ef,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508
 datasus,datasus_cnes_gm,,,ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/GM/$file_name$,https://datasus.saude.gov.br/cnes/,2007-2026,State,datasus
 datasus,datasus_sinasc,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/1996_/Dados/DNRES/$file_name$,https://datasus.saude.gov.br/nascidos-vivos-desde-1994/,1996-2024,State,datasus
 datasus,datasus_po,,,ftp://ftp.datasus.gov.br/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/$file_name$,https://datasus.saude.gov.br/,2013-2026,State,datasus
-datasus,datasus_sipni,,,https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf,https://datasus.saude.gov.br/acesso-a-informacao/imunizacoes-desde-1994/,1994-2022,State,
+datasus,datasus_sipni,,,https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf,https://datasus.saude.gov.br/acesso-a-informacao/imunizacoes-desde-1994/,1994-2022,State,sipni
 datasus_sih,datasus_sih_rd,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus/,2008-2026,State,datasus
 datasus_sih,datasus_sih_rj,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus/,2008-2026,State,datasus
 datasus_sih,datasus_sih_sp,,,ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/$file_name$,https://datasus.saude.gov.br/acesso-a-informacao/producao-hospitalar-sih-sus/,2008-2026,State,datasus
