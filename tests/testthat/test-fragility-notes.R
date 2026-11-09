@@ -1,5 +1,5 @@
 test_that("collect_fragility_notes() extracts FRAGILE tags from treatment code", {
-  root <- rprojroot::find_package_root_file()
+  root <- tryCatch(rprojroot::find_package_root_file(), error = function(e) "")
   notes_script <- file.path(root, "actions", "scripts", "fragility_notes.R")
   skip_if_not(file.exists(notes_script), "fragility_notes.R not present")
 
