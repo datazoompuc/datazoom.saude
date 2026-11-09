@@ -84,13 +84,7 @@ load_hospital_beds <- function(time_period,
   ###########################
 
   # Get dataset source URL
-  dat_url <- datasets_link()
-
-  url <- dat_url %>%
-    dplyr::filter(dataset == param$dataset) %>%
-    dplyr::select(link) %>%
-    base::unlist() %>%
-    as.character()
+  url <- dataset_url(param$source, param$dataset)
 
   # Use RCurl to extract the names of all files stored in the server
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
@@ -98,12 +92,14 @@ load_hospital_beds <- function(time_period,
     unlist()
 
   # Filter by requested states
+  # FRAGILE: Assumes 2-letter state abbreviation is at positions 3:4 of CNES filename.
   file_state <- substr(filenames, 3, 4)   # state code (UF)
   if (paste0(param$states, collapse = "") != "ALL") {
     filenames <- filenames[file_state %in% param$states]
   }
 
   # Filter by requested years
+  # FRAGILE: Assumes 2-digit year is at positions 5:6 followed by 2-digit month 7:8.
   file_year <- substr(filenames, 5, 6)   # year (2 digits)
   file_year <- as.integer(file_year)
   file_year <- ifelse(file_year >= 90, 1900 + file_year, 2000 + file_year)
@@ -143,6 +139,7 @@ load_hospital_beds <- function(time_period,
   dat <- dat %>%
     janitor::clean_names() %>%
     dplyr::mutate(
+      # FRAGILE: Hardcodes '20' century prefix for CNES file years.
       year = as.numeric(paste0("20", substr(file_name, 5, 6))),
       month = as.numeric(substr(file_name, 7, 8))
     )

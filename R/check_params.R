@@ -14,21 +14,8 @@ check_params <- function(param) {
     supp_time_period_str <- datasets_link(source = param$source, dataset = param$dataset) %>%
       purrr::pluck("available_time")
 
-    # separates by commas: 2003, 2007, 2014 -> c(2003, 2007, 2014)
-    supp_time_period <- supp_time_period_str %>%
-      stringr::str_split(",", simplify = TRUE)
-
-    # separates by hyphens: 2003 - 2007 -> 2003:2007
-    supp_time_period <- supp_time_period %>%
-      purrr::map(
-        function(str) {
-          str %>%
-            stringr::str_replace("-", ":") %>%
-            parse(text = .) %>%
-            eval()
-        }
-      ) %>%
-      unlist()
+    # "2003, 2007-2009" -> c(2003, 2007, 2008, 2009) (see R/manifest.R)
+    supp_time_period <- parse_years(supp_time_period_str)
 
     if (!all(param$time_period %in% supp_time_period)) {
       time_period_error <- paste("Option time_period must be in", supp_time_period_str)

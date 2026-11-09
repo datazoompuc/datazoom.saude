@@ -1,4 +1,4 @@
-#' @description Functions to download and treat data regarding the Brazilian Amazon region from a variety of official sources.
+#' @description Functions to download, clean, and standardize Brazilian public health microdata from DATASUS.
 #' @useDynLib datazoom.saude, .registration = TRUE
 #'
 #' @keywords internal

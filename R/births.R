@@ -96,13 +96,7 @@ load_births <- function(time_period,
   #############################
 
   # Get dataset source URL
-  dat_url <- datasets_link()
-
-  url <- dat_url %>%
-    dplyr::filter(dataset == param$dataset) %>%
-    dplyr::select(link) %>%
-    base::unlist() %>%
-    as.character()
+  url <- dataset_url(param$source, param$dataset)
 
   # Use RCurl to extract the names of all files stored in the server
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
@@ -110,12 +104,16 @@ load_births <- function(time_period,
     unlist()
 
   ### Filtering by year
+  # FRAGILE: Assumes FTP filenames strictly follow pattern DN<UF><YYYY>.dbc,
+  # with a 4-digit year at positions 5:8. If DATASUS alters naming convention, this slice breaks.
   file_years <- filenames %>%
     substr(5, 8)
 
   filenames <- filenames[file_years %in% param$time_period]
 
   ### Filtering for chosen states
+  # FRAGILE: Assumes the 2-letter state abbreviation is at positions 3:4 of the filename
+  # and that 'BR' denotes countrywide files. If DATASUS changes prefix/length, state filtering fails.
   file_state <- filenames %>%
     substr(3, 4)
 
@@ -275,6 +273,7 @@ load_births <- function(time_period,
   # Formatting data
   dat <- dat %>%
     dplyr::mutate(
+      # FRAGILE: Assumes SINASC date fields are formatted as day-month-year (DMY) strings.
       dtcadastro = lubridate::dmy(as.character(dtcadastro)),
       dtrecebim = lubridate::dmy(as.character(dtrecebim)),
       dtnascmae = lubridate::dmy(as.character(dtnascmae)),
@@ -285,6 +284,7 @@ load_births <- function(time_period,
 
       horanasc = as.character(horanasc),
       horanasc = ifelse(horanasc %in% c("", "NA"), NA, horanasc),
+      # FRAGILE: Assumes birth time (horanasc) is formatted as a 4-digit HHMM string.
       horanasc = paste0(substr(horanasc, 1, 2), ":", substr(horanasc, 3, 4)),
 
       # INTEGER

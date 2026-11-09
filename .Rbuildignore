@@ -9,3 +9,6 @@
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^.*\.tar\.gz$
+^actions$
+^SKILL\.md$
+^\.claude$

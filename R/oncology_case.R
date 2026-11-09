@@ -103,13 +103,7 @@ load_oncology_case <- function(time_period,
   #############################
 
   # Get dataset source URL
-  dat_url <- datasets_link()
-
-  url <- dat_url %>%
-    dplyr::filter(dataset == param$dataset) %>%
-    dplyr::select(link) %>%
-    base::unlist() %>%
-    as.character()
+  url <- dataset_url(param$source, param$dataset)
 
   # Use RCurl to extract the names of all files stored on the server
   filenames <- RCurl::getURL(url, ftp.use.epsv = TRUE, dirlistonly = TRUE) %>%
@@ -117,6 +111,8 @@ load_oncology_case <- function(time_period,
     unlist()
 
   # Filter by year
+  # FRAGILE: Assumes FTP filenames strictly follow pattern POBR<YYYY>.dbc,
+  # with a 4-digit year at positions 5:8. If naming convention changes, filtering breaks.
   file_years <- filenames %>%
     substr(5, 8)
 
@@ -207,6 +203,7 @@ load_oncology_case <- function(time_period,
   # Formatting data
   dat <- dat %>%
     dplyr::mutate(
+      # FRAGILE: Assumes date fields (dt_diag, dt_trat, dt_nasc) are formatted as day-month-year (DMY) strings.
       dt_diag = lubridate::dmy((dt_diag)),
       dt_trat = lubridate::dmy((dt_trat)),
       dt_nasc = lubridate::dmy((dt_nasc)),
