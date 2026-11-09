@@ -12,3 +12,6 @@
 ^actions$
 ^SKILL\.md$
 ^\.claude$
+^\.github$
+^\.gitignore$
+^\.Rhistory$
