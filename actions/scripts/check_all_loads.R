@@ -15,7 +15,7 @@ repo_root <- getwd()
 test_cases <- list(
   list(
     name = "load_births (SINASC)",
-    call = "load_births(time_period = 2020, state = 'AC', raw_data = TRUE)"
+    call = "load_births(time_period = 2020, states = 'AC', raw_data = TRUE)"
   ),
   list(
     name = "load_oncology_case (Painel de Oncologia)",
@@ -23,19 +23,19 @@ test_cases <- list(
   ),
   list(
     name = "load_mortality (SIM Mortalidade Geral)",
-    call = "load_mortality(dataset = 'datasus_sim_do', time_period = 2020, state = 'AC', raw_data = TRUE)"
+    call = "load_mortality(dataset = 'general', time_period = 2020, states = 'AC', raw_data = TRUE)"
   ),
   list(
     name = "load_hospital_beds (CNES Leitos)",
-    call = "load_hospital_beds(time_period = 2020, state = 'AC', month = 1, raw_data = TRUE)"
+    call = "load_hospital_beds(time_period = 2020, states = 'AC', raw_data = TRUE)"
   ),
   list(
     name = "load_hospital_admissions (SIHSUS RD)",
-    call = "load_hospital_admissions(dataset = 'datasus_sih_rd', time_period = 2020, state = 'AC', month = 1, raw_data = TRUE)"
+    call = "load_hospital_admissions(dataset = 'reduced_aih', time_period = 2020, states = 'AC', raw_data = TRUE)"
   ),
   list(
     name = "load_outpatient_procedures (SIASUS PA)",
-    call = "load_outpatient_procedures(dataset = 'datasus_siasus_pa', time_period = 2020, state = 'AC', month = 1, raw_data = TRUE)"
+    call = "load_outpatient_procedures(dataset = 'ambulatory_production', time_period = 2020, states = 'AC', raw_data = TRUE)"
   )
 )
 
@@ -44,7 +44,7 @@ run_in_dir <- function(target_dir, call_str) {
   rscript_bin <- file.path(R.home("bin"), if (.Platform$OS.type == "windows") "Rscript.exe" else "Rscript")
   
   expr <- sprintf("
-    suppressPackageStartupMessages(devtools::load_all('%s', quiet = TRUE))
+    suppressPackageStartupMessages(devtools::load_all('%s', recompile = FALSE, quiet = TRUE))
     res <- tryCatch(%s, error = function(e) e)
     saveRDS(res, '%s')
   ", gsub("\\\\", "/", target_dir), call_str, gsub("\\\\", "/", out_rds))
@@ -73,6 +73,13 @@ if (compare_main) {
   if (!dir.exists(main_dir)) {
     cat("Warning: could not create worktree for main. Running branch-only checks.\n")
     compare_main <- FALSE
+  } else {
+    # Copy compiled shared objects (DLL/so) from repo_root so load_all doesn't require Rtools
+    compiled_files <- list.files(file.path(repo_root, "src"), pattern = "\\.(dll|so|dylib|o)$", full.names = TRUE)
+    if (length(compiled_files) > 0) {
+      dir.create(file.path(main_dir, "src"), showWarnings = FALSE, recursive = TRUE)
+      file.copy(compiled_files, file.path(main_dir, "src"), overwrite = TRUE)
+    }
   }
 }
 

@@ -140,6 +140,9 @@ load_hospital_admissions <- function(dataset,
   # Filter by dataset suffix (RD, SP, RJ, ER)
   filenames <- filenames[stringr::str_starts(filenames, param$suffix)]
 
+  # Keep only .dbc files (avoids legacy/corrupt .zip archives on FTP, e.g. RDAC2017.zip)
+  filenames <- filenames[grepl("\\.dbc$", filenames, ignore.case = TRUE)]
+
   # Filter by requested states
   # FRAGILE: Assumes 2-letter state abbreviation is at positions 3:4 of SIHSUS filename.
   file_state <- substr(filenames, 3, 4)   # state code (UF)
