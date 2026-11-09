@@ -16,6 +16,7 @@ URL: https://datazoom.com.br/en/dz_saude/
 Depends: 
     R (>= 4.0)
 Imports:
+    curl,
     dplyr,
     Hmisc,
     janitor,

@@ -1,5 +1,6 @@
 # datazoom.saude (development version)
 
+* Replaced headless Chrome (`chromote`) web scraping in `load_vaccines()` with direct, fast HTTP requests using `curl`. Removed external Google Chrome requirement, eliminated 70 seconds of fixed sleeps and download timeouts, and expanded automated ingestion coverage through 2023.
 * Download URLs now live in a CSV manifest (`inst/extdata/manifest/v1/datasets_link.csv`) instead of being hardcoded. At runtime the package reads the latest copy from GitHub, so a fixed link reaches users without a new CRAN release, and falls back silently to the copy shipped with the package when offline. Set `options(datazoom.saude.use_remote_manifest = FALSE)` to always use the packaged copy.
 * Corrected and gap-aware available year ranges across DATASUS datasets to reflect actual upstream FTP holdings:
   * `datasus_sinasc`: available from 1996 to 2024 (pre-1996 files removed upstream).

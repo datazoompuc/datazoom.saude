@@ -15,7 +15,7 @@ load_vaccines(
 )
 }
 \arguments{
-\item{year}{A numeric value indicating the year of the data to be downloaded (Supported range: 1994-2022).}
+\item{year}{A numeric value indicating the year of the data to be downloaded (Supported range: 1994-2023).}
 
 \item{state}{A string indicating the Brazilian state abbreviation (e.g., "SP", "RJ", "AC").}
 
@@ -43,9 +43,9 @@ municipality names, strategy, product, month, dose type, and the quantity of dos
 \description{
 Retrieves vaccination records from Brazil's official National Immunization Program
 Information System (SI-PNI), made available through DATASUS. This function supports
-two data ingestion modes. For historical data (1994-2022), it can perform automated web scraping
-on the legacy SI-PNI Web portal to extract consolidated records of applied doses.
-For more recent years (2023 to present), the user must provide a locally downloaded file, in which case
+two data ingestion modes. For historical data (1994-2023), it performs direct HTTP
+requests on the legacy SI-PNI Web portal to extract consolidated records of applied doses.
+For more recent years (2024 to present), the user must provide a locally downloaded file, in which case
 the function performs only data validation, cleaning, harmonization, and
 standardization.
 }
