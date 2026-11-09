@@ -36,6 +36,7 @@ Suggests:
     knitr,
     RCurl,
     rmarkdown,
+    rprojroot,
     testthat (>= 3.0.0),
     withr
 LinkingTo: 
