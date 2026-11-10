@@ -273,12 +273,53 @@ if (length(errors) > 0) {
 
 candidate_csv_path <- file.path(OUT_DIR, "candidate_manifest.csv")
 report_json_path <- file.path(OUT_DIR, "manifest_report.json")
+pr_body_path <- file.path(OUT_DIR, "pr_body.md")
 
 readr::write_csv(candidate, candidate_csv_path, na = "")
 jsonlite::write_json(report, report_json_path, pretty = TRUE, auto_unbox = TRUE)
 
+pr_body_lines <- c(
+  "One or more resolvers found a change to the manifest (`inst/extdata/manifest/v1/datasets_link.csv`).",
+  "Nothing is ever auto-committed -- every change, however small,",
+  "is opened as a PR for human review. See `manifest_report.json` in",
+  "the run artifacts for the full diff.",
+  "",
+  "Checklist before merging:",
+  "- [ ] Confirm the new URL(s) actually serve the expected data",
+  "- [ ] Re-run check_all_loads.R or load functions for the modified dataset",
+  "- [ ] If a year/version bump, check whether R/*.R hardcodes anything that also needs to change"
+)
+
+if (changes$n_changed > 0) {
+  pr_body_lines <- c(
+    pr_body_lines,
+    "",
+    sprintf("**Changed dataset keys (%d):**", changes$n_changed),
+    paste0("- `", gsub("\r", " / ", changes$changed_keys), "`")
+  )
+}
+
+if (length(fragility_matching) > 0) {
+  for (lbl in names(fragility_matching)) {
+    matching_src <- Find(function(x) x$label == lbl, FRAGILITY_SOURCES)
+    treat_fn <- if (!is.null(matching_src)) matching_src$treat_fn else "treatment code"
+    pr_body_lines <- c(
+      pr_body_lines,
+      "",
+      sprintf("**%s structural fragility check** -- a manifest row changed this run.", lbl),
+      sprintf("%s's treatment makes assumptions about file layout/shape that a year/version bump can silently violate.", lbl),
+      sprintf("Re-check these specifically (see `%s` in `%s`):", treat_fn, lbl),
+      "",
+      paste0("- ", fragility_matching[[lbl]])
+    )
+  }
+}
+
+writeLines(pr_body_lines, pr_body_path)
+
 cat("Candidate manifest written to:", candidate_csv_path, "\n")
 cat("Manifest report written to:", report_json_path, "\n")
+cat("PR body written to:", pr_body_path, "\n")
 
 total_failed <- length(resolver_failed) + length(resolver_partial_failed)
 
@@ -300,6 +341,7 @@ if (nzchar(gh_output_path)) {
   writeLines(enc2utf8(c(
     sprintf("candidate_path=%s", candidate_csv_path),
     sprintf("report_path=%s", report_json_path),
+    sprintf("pr_body_path=%s", pr_body_path),
     sprintf("n_changed=%d", changes$n_changed),
     sprintf("exit_code=%d", exit_code)
   )), con, useBytes = TRUE)
