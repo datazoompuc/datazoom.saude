@@ -271,9 +271,10 @@ load_vaccines <- function(year,
     dat <- load_pni(year = param$year,
                     state = param$state,
                     strategy = strategy,
-                    dose = param$dose,
                     product = product,
-                    data = param$data)
+                    dose = param$dose,
+                    data = NULL,
+                    language = language)
 
   } else if (!is.null(param$data)) {
 
@@ -281,9 +282,10 @@ load_vaccines <- function(year,
       dat <- load_pni(year = param$year,
                       state = param$state,
                       strategy = strategy,
-                      dose = param$dose,
                       product = product,
-                      data = param$data)
+                      dose = param$dose,
+                      data = param$data,
+                      language = language)
     } else {
       dat <- pni_after_2023(year = param$year,
                             state = param$state,

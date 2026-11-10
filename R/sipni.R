@@ -63,7 +63,18 @@ parse_pni_table <- function(dat, state, year, strategy, product, dose_labels) {
   return(dat_final)
 }
 
-load_pni <- function(year, state, strategy, product, language = "eng") {
+load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL, language = "eng") {
+  if (!is.null(data)) {
+    is_xls <- grepl("\\.xlsx?$", data, ignore.case = TRUE)
+    dat <- if (is_xls) {
+      suppressMessages(readxl::read_excel(data))
+    } else {
+      suppressMessages(readr::read_csv(data, show_col_types = FALSE, locale = readr::locale(encoding = "ISO-8859-1")))
+    }
+    dose_labels <- if (!is.null(dose)) dose else character(0)
+    return(parse_pni_table(dat, state, year, strategy, product, dose_labels))
+  }
+
   target_url <- "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
   form_id <- "dosesAplicadasMensalForm"
 
