@@ -2,16 +2,16 @@
 #'
 #' Retrieves vaccination records from Brazil's official National Immunization Program
 #' Information System (SI-PNI), made available through DATASUS. This function supports
-#' two data ingestion modes. For historical data (1994-2022), it can perform automated web scraping
-#' on the legacy SI-PNI Web portal to extract consolidated records of applied doses.
-#' For more recent years (2023 to present), the user must provide a locally downloaded file, in which case
+#' two data ingestion modes. For historical data (1994-2023), it performs direct HTTP
+#' requests on the legacy SI-PNI Web portal to extract consolidated records of applied doses.
+#' For more recent years (2024 to present), the user must provide a locally downloaded file, in which case
 #' the function performs only data validation, cleaning, harmonization, and
 #' standardization.
 #'
 #' Regardless of the ingestion mode, the returned dataset is fully harmonized and
 #' consistent with the historical SI-PNI data structure.
 #'
-#' @param year A numeric value indicating the year of the data to be downloaded (Supported range: 1994-2022).
+#' @param year A numeric value indicating the year of the data to be downloaded (Supported range: 1994-2023).
 #' @param state A string indicating the Brazilian state abbreviation (e.g., "SP", "RJ", "AC").
 #' @param strategy A string identifying the vaccination strategy (e.g., "Rotina", "Especial", "Bloqueio").
 #' If NULL and in an interactive session, a menu will appear.
@@ -29,15 +29,15 @@
 #' @return A tibble (data frame) containing state, year, municipality codes,
 #' municipality names, strategy, product, month, dose type, and the quantity of doses applied.
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf interactive()
 #' # Example: Loading Yellow Fever vaccine data for Acre in 2020
-#' data <- load_vaccines(year = 2020,
-#'                       state = "AC",
-#'                       strategy = "Rotina",
-#'                       product = "Febre amarela - FA",
-#'                       language = "eng")
-#' }
+#' data <- load_vaccines(
+#'   year = 2020,
+#'   state = "AC",
+#'   strategy = "Rotina",
+#'   product = "Febre amarela - FA",
+#'   language = "eng"
+#' )
 #'
 #' @export
 load_vaccines <- function(year,
@@ -96,27 +96,10 @@ load_vaccines <- function(year,
   )
 
 
-  # --- Package Verification and Loading ---
-  # List of required dependencies for the function to execute
-  pacotes_necessarios <- c("chromote", "httr", "readr", "dplyr", "tidyr", "stringr", "janitor")
-
-  # Identify which required packages are NOT currently installed
-  pacotes_faltando <- pacotes_necessarios[!sapply(pacotes_necessarios, requireNamespace, quietly = TRUE)]
-
-  # If dependencies are missing, stop execution and provide installation instructions
-  if (length(pacotes_faltando) > 0) {
-    msg_stop <- paste(
-      "Error: Required package(s) not found:",
-      paste(shQuote(pacotes_faltando), collapse = ", "),
-      "\n\nPlease install them before continuing:",
-      sprintf("\ninstall.packages(c(%s))", paste(shQuote(pacotes_faltando), collapse = ", "))
-    )
-    message(msg_stop)
-    return(invisible(NULL))
+  # --- Package Verification ---
+  if (!requireNamespace("curl", quietly = TRUE)) {
+    stop("Package 'curl' must be installed to use load_vaccines().", call. = FALSE)
   }
-
-  # Load all required packages into the session
-  lapply(pacotes_necessarios, library, character.only = TRUE)
 
 
   ## 1. DATA DICTIONARY (Strategy x Product)
@@ -279,27 +262,42 @@ load_vaccines <- function(year,
   # Check if year is within the supported legacy range
   if (year < 1994) {
 
-    message("Please select a year between 1994 and 2022.")
+    message("Please select a year between 1994 and 2023.")
     return(invisible(NULL))
 
-  } else if (year >= 1994 & year < 2023) {
+  } else if (year >= 1994 && year <= 2023 && is.null(param$data)) {
 
-    # Fetch raw data using the internal load_pni function
+    # Fetch raw data using the internal load_pni function via HTTP
     dat <- load_pni(year = param$year,
                     state = param$state,
                     strategy = strategy,
-                    dose = param$dose,
                     product = product,
-                    data = param$data)
+                    dose = param$dose,
+                    data = NULL,
+                    language = language)
 
-  } else if (year >= 2023) {
+  } else if (!is.null(param$data)) {
 
-    # Fetch raw data using the internal pni_after_2023 function
-    dat <- pni_after_2023(year = param$year,
-                          state = param$state,
-                          strategy = strategy,
-                          product = product,
-                          data = param$data)
+    if (year < 2023) {
+      dat <- load_pni(year = param$year,
+                      state = param$state,
+                      strategy = strategy,
+                      product = product,
+                      dose = param$dose,
+                      data = param$data,
+                      language = language)
+    } else {
+      dat <- pni_after_2023(year = param$year,
+                            state = param$state,
+                            strategy = strategy,
+                            product = product,
+                            data = param$data)
+    }
+
+  } else {
+
+    message("For data from 2024 onwards, please download the file manually and provide the file path via the 'data' argument.")
+    return(invisible(NULL))
 
   }
 

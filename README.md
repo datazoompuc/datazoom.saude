@@ -239,11 +239,11 @@ formulation.
 The `load_births` function offers the following parameters:
 
 1.  **time_period**: A numeric value or vector indicating the year(s) of
-    the data to be downloaded. For\
+    the data to be downloaded. For  
     example, `2020` or `2015:2020`. (since 1994 to present)
 
 2.  **states**: A string or array of strings indicating the Brazilian
-    state(s) for which data should be\
+    state(s) for which data should be  
     downloaded. Use “all” (by default) to download data for the entire
     country. For specific states, use abbreviations such as “SP”, “RJ”,
     or c(“SP”, “RJ”).
@@ -478,7 +478,7 @@ group.
 
 > **Note:** In all SIASUS datasets, variables related to the *Cadastro
 > Nacional de Saúde* (CNS – National Health Card number) are
-> **encrypted** by DATASUS.\
+> **encrypted** by DATASUS.  
 > This ensures patient confidentiality and means that individual-level
 > CNS identifiers cannot be directly used for linkage across datasets.
 > Because of this, this variable is removed when `raw_data = FALSE`.
@@ -676,15 +676,15 @@ The `load_vaccines` function offers the following parameters:
 5.  **dose**: A character vector indicating the dose categories that
     were selected when downloading the data.
     - This argument is **only required when using manually downloaded
-      files** up to 2022.
+      files** up to 2023.
       - The values must correspond to the **“Dose”** filter used (e.g.,
         `"D1"`, `c("D1", "2")`, `"Única"`, etc.).
 6.  **data**: Optional path to a local `.xls` or `.xlsx` file downloaded
     manually.
-    - If provided, `load_vaccines()` will **skip web scraping** and only
-      perform data cleaning and harmonization.
-    - This argument is optional for data up to 2022, but **required for
-      data from 2023 onwards**.
+    - If provided, `load_vaccines()` will **skip HTTP retrieval** and
+      only perform data cleaning and harmonization.
+    - This argument is optional for data up to 2023, but **required for
+      data from 2024 onwards**.
 7.  **language**: A string indicating the desired language of variable
     names and labels.
     - Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
@@ -696,37 +696,38 @@ The `load_vaccines` function offers the following parameters:
 The function supports **two distinct data ingestion modes**, depending
 on the availability and stability of the official SI-PNI portals:
 
-1.  **Automated web scraping** of the legacy SI-PNI Web system (for data
-    up to 2022).
+1.  **Automated retrieval via HTTP** of the legacy SI-PNI Web system
+    (for data up to 2023).
 2.  **Manual data ingestion**, where the user downloads the data
     directly from the official DATASUS dashboard and the function
     performs only cleaning, harmonization, and standardization (optional
-    for data up to 2022, but required for 2023 onwards).
+    for data up to 2023, but required for 2024 onwards).
 
 Both modes produce a **fully harmonized output**, consistent with the
 historical SI-PNI data structure.
 
-### 1. Automated web scraping (1994 - 2022)
+### 1. Automated retrieval via HTTP (1994 - 2023)
 
-For historical data (`1994`–`2022`), `load_vaccines()` can automatically
+For historical data (`1994`–`2023`), `load_vaccines()` can automatically
 retrieve consolidated vaccination data directly from the legacy SI-PNI
-Web portal using web scraping techniques.
+Web portal using direct HTTP requests.
 
 This mode:
 
 1.  Requires a stable internet connection.
 2.  Depends on the availability and responsiveness of the SI-PNI Web
     system.
-3.  Uses a Chrome-based browser via the `chromote` package.
+3.  Uses fast, direct HTTP requests via the `curl` package without
+    requiring Google Chrome or headless browsers.
 
 No manual intervention is required from the user.
 
-### 2.1. Manual download (1994 - 2022)
+### 2.1. Manual download (1994 - 2023)
 
-From **1994 to 2022**, vaccination data are available through the
+From **1994 to 2023**, vaccination data are available through the
 **legacy SI-PNI Web system**. Although `load_vaccines()` can retrieve
-these data automatically via web scraping, users may also choose to
-**manually download the data and provide the file to the function for
+these data automatically via direct HTTP requests, users may also choose
+to **manually download the data and provide the file to the function for
 harmonization**.
 
 In this case, `load_vaccines()` will perform only the cleaning,
@@ -741,7 +742,7 @@ This approach can be useful when:
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:\
+1.  Access the DATASUS vaccination dashboard:  
     *<https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf>*
 
 2.  In the filter panel, **fill only the following fields**:
@@ -764,9 +765,9 @@ This approach can be useful when:
 6.  Provide the downloaded file to `load_vaccines()` using the `data`
     argument.
 
-### 2.2. Manual download (2023 - present)
+### 2.2. Manual download (2024 - present)
 
-From **2023 onwards**, vaccination data are published exclusively
+From **2024 onwards**, vaccination data are published exclusively
 through the new DATASUS interactive dashboard. Due to technical and
 legal constraints, automated scraping is not supported for this
 platform.
@@ -776,7 +777,7 @@ harmonization, and standardization steps.
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:\
+1.  Access the DATASUS vaccination dashboard:  
     *<https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA.html>*
 
 2.  In the filter panel, **fill only the following fields**:
@@ -869,22 +870,21 @@ data_interactive <- load_vaccines(
 
 **Technical Note:**
 
-1.  Automated web scraping relies on the legacy SI-PNI Web system and is
-    subject to instability, timeouts, and unexpected failures.
-2.  For recent years (2023 onwards), manual download via the DATASUS
-    dashboard is the only supported data source.
+1.  Automated retrieval relies on the legacy SI-PNI Web system and is
+    subject to instability, timeouts, and unexpected failures on the
+    DATASUS side.
+2.  For recent years (2024 onwards), manual download via the DATASUS
+    dashboard is the supported data source.
 3.  Regardless of the ingestion mode, `load_vaccines()` always returns a
     harmonized dataset with consistent variable names, dose categories,
     and structure.
 
-**Important:** For the web scraping mode, please be aware that the
-**SI-PNI** website
+**Important:** For the automated retrieval mode, please be aware that
+the **SI-PNI** website
 (*<https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf>*)
-often experiences significant instability. This may result in connection
-timeouts, slow response times, or unexpected errors during the scraping
-process. If the function fails, it is recommended to wait a few minutes
-and try again. If the error persists, please check the **SI-PNI** portal
-status or report the issue on our GitHub repository.
+can experience temporary server-side instability. The function includes
+built-in retries to handle connection resets. If the function fails, it
+is recommended to wait a few minutes and try again.
 
 <br>
 

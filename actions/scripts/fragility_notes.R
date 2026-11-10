@@ -33,5 +33,5 @@ FRAGILITY_SOURCES <- list(
   list(changed_prefix = "datasus\rdatasus_cnes", r_path = file.path("R", "hospital_beds.R"), label = "R/hospital_beds.R", treat_fn = "load_hospital_beds()"),
   list(changed_prefix = "datasus_sih\rdatasus_sih", r_path = file.path("R", "hospital_admissions.R"), label = "R/hospital_admissions.R", treat_fn = "load_hospital_admissions()"),
   list(changed_prefix = "datasus_siasus\rdatasus_siasus", r_path = file.path("R", "outpatient_procedures.R"), label = "R/outpatient_procedures.R", treat_fn = "load_outpatient_procedures()"),
-  list(changed_prefix = "datasus\rdatasus_sipni", r_path = file.path("R", "web_scraping_pni.R"), label = "R/web_scraping_pni.R", treat_fn = "load_pni()")
+  list(changed_prefix = "datasus\rdatasus_sipni", r_path = file.path("R", "sipni.R"), label = "R/sipni.R", treat_fn = "load_pni()")
 )

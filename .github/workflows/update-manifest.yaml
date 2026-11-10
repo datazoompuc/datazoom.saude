@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   update-manifest:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 30
     steps:
       - name: Checkout repository
@@ -40,7 +40,7 @@ jobs:
       - name: Set up R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::RCurl, any::devtools, any::testthat, any::jsonlite
+          extra-packages: any::RCurl, any::devtools, any::testthat, any::jsonlite, any::curl
 
       - name: Run manifest builder
         id: build
@@ -132,8 +132,9 @@ jobs:
           script: |
             const fs = require('fs');
             const reportPath = "${{ steps.build.outputs.report_path }}";
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             let bodyLines = [
-              "Automated manifest run detected an issue.",
+              `See the \`Run manifest builder\` step log in [this workflow run](${runUrl}) for the full report.`,
               `- **Exit code:** ${{ steps.build.outputs.exit_code }}`,
               `- **Status:** ${{ steps.build.outputs.status }}`,
               ""
@@ -142,27 +143,53 @@ jobs:
             try {
               if (fs.existsSync(reportPath)) {
                 const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-                if (report.resolvers_failed && Object.keys(report.resolvers_failed).length > 0) {
-                  bodyLines.push("### Failed Resolvers:");
-                  for (const [k, v] of Object.entries(report.resolvers_failed)) {
-                    bodyLines.push(`- **${k}**: ${v}`);
+
+                // Formatting helper for multi-line diagnostic evidence (e.g. HTTP headers/WAF block excerpt)
+                const fmtMsg = (k, msg) => {
+                  const [first, ...rest] = String(msg).split(/\r?\n/);
+                  const detail = rest.join("\n").trim();
+                  const head = `- \`${k}\`: ${first}`;
+                  if (!detail) return [head];
+                  const longestRun = Math.max(0, ...(detail.match(/`+/g) || []).map(r => r.length));
+                  const fence = "`".repeat(Math.max(3, longestRun + 1));
+                  return [head, ...[fence, ...detail.split("\n"), fence].map(l => `  ${l}`)];
+                };
+
+                const fmtFailures = (obj, label) => {
+                  const entries = Object.entries(obj || {});
+                  if (entries.length === 0) return [];
+                  return [
+                    `**${label}:**`,
+                    ...entries.flatMap(([k, v]) =>
+                      (Array.isArray(v) ? v : [v]).flatMap(msg => fmtMsg(k, msg))
+                    ),
+                    ""
+                  ];
+                };
+
+                if (report.resolvers_ok && report.resolvers_ok.length > 0) {
+                  bodyLines.push("**Resolvers succeeded:**");
+                  for (const r of report.resolvers_ok) {
+                    bodyLines.push(`- \`${r}\`: OK`);
                   }
+                  bodyLines.push("");
                 }
-                if (report.resolvers_partial_failed && Object.keys(report.resolvers_partial_failed).length > 0) {
-                  bodyLines.push("### Partially Failed Resolvers:");
-                  for (const [k, v] of Object.entries(report.resolvers_partial_failed)) {
-                    bodyLines.push(`- **${k}**: ${Array.isArray(v) ? v.join(", ") : v}`);
-                  }
-                }
-                if (report.errors && report.errors.length > 0) {
-                  bodyLines.push("### Validation Errors:");
-                  for (const e of report.errors) {
-                    bodyLines.push(`- ${e}`);
-                  }
+
+                bodyLines = bodyLines.concat(
+                  fmtFailures(report.resolvers_failed, "Resolvers failed"),
+                  fmtFailures(report.resolvers_partial_failed, "Resolvers partially failed (some rows still updated)")
+                );
+
+                if ((report.errors || []).length > 0) {
+                  bodyLines.push(
+                    "**Validation errors:**",
+                    ...report.errors.map(e => `- ${e}`),
+                    ""
+                  );
                 }
               }
             } catch (err) {
-              bodyLines.push(`Could not parse report file: ${err.message}`);
+              bodyLines.push(`(Could not parse report file: ${err.message})`);
             }
 
             const title = "[manifest] Automated scraper or validation failure";
@@ -178,7 +205,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: match.number,
-                body: [`**Run failure update (${new Date().toISOString().slice(0, 10)}):**`, "", ...bodyLines].join("\n")
+                body: [`**Still failing -- run of ${new Date().toISOString().slice(0, 10)}**`, "", ...bodyLines].join("\n")
               });
             } else {
               await github.rest.issues.create({
