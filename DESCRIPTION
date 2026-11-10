@@ -29,7 +29,6 @@ Imports:
     utils,
     lubridate,
     tidyselect,
-    jsonlite,
     tidyr,
     stats
 Suggests: 

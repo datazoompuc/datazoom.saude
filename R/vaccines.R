@@ -29,15 +29,15 @@
 #' @return A tibble (data frame) containing state, year, municipality codes,
 #' municipality names, strategy, product, month, dose type, and the quantity of doses applied.
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf interactive()
 #' # Example: Loading Yellow Fever vaccine data for Acre in 2020
-#' data <- load_vaccines(year = 2020,
-#'                       state = "AC",
-#'                       strategy = "Rotina",
-#'                       product = "Febre amarela - FA",
-#'                       language = "eng")
-#' }
+#' data <- load_vaccines(
+#'   year = 2020,
+#'   state = "AC",
+#'   strategy = "Rotina",
+#'   product = "Febre amarela - FA",
+#'   language = "eng"
+#' )
 #'
 #' @export
 load_vaccines <- function(year,

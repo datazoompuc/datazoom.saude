@@ -1,52 +1,102 @@
-load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL) {
+# R/sipni.R
+#
+# SI-PNI (Sistema de Informacao do Programa Nacional de Imunizacoes) Web Scraper
+#
+# Downloads consolidated municipal vaccination data from DATASUS SI-PNI Web portal:
+# https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf
+#
+# Architecture:
+# - Connects directly via plain HTTP/1.1 requests using 'curl'
+# - Maintains JSF/PrimeFaces session state (javax.faces.ViewState and JSF IDs)
+# - Performs sequential AJAX partial requests: UF -> IBGE totals -> Strategy -> Product -> Doses -> Search -> Export CSV
+# - Parses returned ISO-8859-1 / UTF-8 CSV or binary Excel into harmonized tibbles
 
-  # Check if a manual local file path was provided
-  if (!is.null(data)) {
+#' @keywords internal
+parse_pni_table <- function(dat, state, year, strategy, product, dose_labels) {
+  if (is.null(dat) || nrow(dat) == 0) {
+    return(tibble::tibble(
+      state = character(0), year = integer(0), munic_code = numeric(0),
+      munic_name = character(0), strategy = character(0), product = character(0),
+      month = character(0), dose = character(0), quantity = numeric(0)
+    ))
+  }
 
-    dat <- suppressMessages(
-      readxl::read_excel(data)
+  df <- dat %>%
+    dplyr::rename(municipio = 1) %>%
+    dplyr::mutate(
+      munic_code = stringr::str_extract(municipio, "^[0-9]+"),
+      munic_name = stringr::str_remove(municipio, "^[0-9]+ - "),
+      .before = municipio
+    ) %>%
+    dplyr::select(-municipio)
+
+  # FRAGILE: The portal exports monthly columns ordered 1:12 with dose columns nested.
+  # If the table header sequence cannot be resolved, doses match sorted checkbox labels.
+  ndoses <- length(dose_labels)
+  nmeses <- 12
+  meses <- rep(month.name[1:nmeses], each = ndoses)
+  doses <- rep(dose_labels, nmeses)
+
+  if ((ncol(df) - 2) == length(meses)) {
+    names(df)[-(1:2)] <- sprintf("%s_%s", meses, doses)
+  }
+
+  dat_final <- df %>%
+    tidyr::pivot_longer(
+      cols = -c(munic_code, munic_name),
+      names_to = c("mes", "dose"),
+      names_sep = "_",
+      values_to = "quantity"
+    ) %>%
+    dplyr::mutate(
+      munic_code = as.numeric(munic_code),
+      munic_name = stringr::str_to_lower(munic_name),
+      month      = stringr::str_to_lower(mes),
+      quantity   = suppressWarnings(as.numeric(quantity)),
+      state      = state,
+      year       = as.integer(year),
+      strategy   = strategy,
+      product    = product
+    ) %>%
+    dplyr::select(state, year, munic_code, munic_name, strategy, product, month, dose, quantity)
+
+  return(dat_final)
+}
+
+load_pni <- function(year, state, strategy, product, language = "eng") {
+  target_url <- "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
+  form_id <- "dosesAplicadasMensalForm"
+
+  f <- function(x) paste0(form_id, ":", x)
+
+  enc <- function(fields) {
+    paste(
+      paste0(curl::curl_escape(names(fields)), "=", curl::curl_escape(unlist(fields))),
+      collapse = "&"
     )
+  }
 
-    # Extract dose labels directly from the spreadsheet structure
-    dose_labels <- toupper(dose)
-    dose_labels <- sort(dose_labels)
-
-  } else {
-
-    # Automated retrieval from legacy SI-PNI Web portal via plain HTTP
-    # FRAGILE: Assumes legacy SI-PNI Web portal (JSF/PrimeFaces) endpoint and DOM structure remain unchanged.
-    target_url <- dataset_url("datasus", "datasus_sipni")
-    if (is.na(target_url) || !nzchar(target_url)) {
-      stop("SI-PNI endpoint is not available in the manifest. The dataset may be temporarily disabled or unavailable.")
-    }
-
-    message("Retrieving SI-PNI vaccination data from DATASUS via HTTP...")
-
-    form_id <- "dosesAplicadasMensalForm"
-    f <- function(x) paste0(form_id, ":", x)
-    enc <- function(fields) {
-      paste(paste0(curl::curl_escape(names(fields)), "=", curl::curl_escape(unlist(fields))), collapse = "&")
-    }
-
-    # Helper for robust HTTP fetch with retries (handles DATASUS transient drops)
-    fetch_retry <- function(url, handle, max_retries = 4, delay = 2) {
-      for (att in seq_len(max_retries)) {
-        res <- tryCatch(
-          curl::curl_fetch_memory(url, handle = handle),
-          error = function(e) e
-        )
-        if (!inherits(res, "error") && res$status_code %in% c(200, 302)) {
-          return(res)
-        }
-        if (att < max_retries) {
-          Sys.sleep(delay * att)
-        }
+  fetch_retry <- function(url, handle, max_retries = 3) {
+    for (i in seq_len(max_retries)) {
+      res <- tryCatch(
+        curl::curl_fetch_memory(url, handle = handle),
+        error = function(e) e
+      )
+      if (!inherits(res, "error") && res$status_code %in% c(200, 302)) {
+        return(res)
       }
-      if (inherits(res, "error")) {
-        stop("Failed to connect to SI-PNI portal: ", conditionMessage(res))
-      }
-      stop("SI-PNI portal returned HTTP error ", res$status_code)
+      Sys.sleep(1.5 * i)
     }
+    if (inherits(res, "error")) {
+      stop("Failed to connect to SI-PNI portal: ", conditionMessage(res))
+    }
+    stop("SI-PNI portal returned HTTP status ", res$status_code)
+  }
+
+  message("Retrieving SI-PNI vaccination data from DATASUS via HTTP...")
+
+  # Handle environment isolation for temporary session cookies
+  withr::with_tempfile("cookie_jar", {
 
     # Initialize curl handle with session cookies and forced HTTP/1.1 (prevents ALPN resets)
     h <- curl::new_handle(
@@ -82,16 +132,14 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL) {
     }
     uf_val <- sub('.*value="([^"]+)".*', "\\1", state_opt)
 
-    # Dynamic extraction of Strategy code
-    strat_clean <- stringr::str_squish(strategy)
+    # Dynamic extraction of Strategy code (strictly require exact match, avoiding silent mis-selection)
+    strat_clean <- tolower(stringr::str_squish(strategy))
     strat_opts <- regmatches(init_html, gregexpr('<option\\s+value="([^"]+)">([^<]+)</option>', init_html))[[1]]
     strat_labels <- sub('.*>([^<]+)<.*', "\\1", strat_opts)
-    strat_idx <- which(tolower(stringr::str_squish(strat_labels)) == tolower(strat_clean))
+    strat_idx <- which(tolower(stringr::str_squish(strat_labels)) == strat_clean)
     if (length(strat_idx) == 0) {
-      strat_idx <- grep(strat_clean, strat_labels, ignore.case = TRUE)
-    }
-    if (length(strat_idx) == 0) {
-      stop("Strategy '", strategy, "' not found in SI-PNI options.")
+      avail_strats <- strat_labels[nzchar(trimws(strat_labels)) & !grepl("^selecione", strat_labels, ignore.case = TRUE)]
+      stop("Strategy '", strategy, "' not found in SI-PNI options. Available: ", paste(avail_strats, collapse = ", "))
     }
     strat_val <- sub('.*value="([^"]+)".*', "\\1", strat_opts[strat_idx[1]])
 
@@ -143,7 +191,7 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL) {
     extra_strat[[f("estrategiaPesquisa_input")]] <- strat_val
     resp_strat <- ajax_req("estrategiaPesquisa", c("produtoPesquisa", "dosePesquisa"), extra_strat)
 
-    # 5. Find matching product in strategy options
+    # 5. Find matching product in strategy options (strictly require exact match, avoiding silent mis-selection)
     prod_opts <- regmatches(resp_strat, gregexpr('<option\\s+value="([^"]+)"[^>]*>([^<]+)</option>', resp_strat))[[1]]
     if (length(prod_opts) == 0) {
       stop("No products returned for strategy '", strategy, "'.")
@@ -152,11 +200,11 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL) {
     prod_clean <- tolower(stringr::str_squish(product))
     prod_idx <- which(tolower(stringr::str_squish(prod_labels)) == prod_clean)
     if (length(prod_idx) == 0) {
-      first_term <- strsplit(product, "[-–]")[[1]][1]
-      prod_idx <- grep(stringr::str_squish(first_term), prod_labels, ignore.case = TRUE)
-    }
-    if (length(prod_idx) == 0) {
-      stop("Product '", product, "' not available for strategy '", strategy, "'.")
+      avail_prods <- prod_labels[nzchar(trimws(prod_labels)) & !grepl("^selecione", prod_labels, ignore.case = TRUE)]
+      stop(
+        "Product '", product, "' not available for strategy '", strategy, "'. ",
+        "Available products: ", paste(avail_prods, collapse = ", ")
+      )
     }
     prod_val <- sub('.*value="([^"]+)".*', "\\1", prod_opts[prod_idx[1]])
 
@@ -216,6 +264,17 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL) {
       curr_vs <- vs_search
     }
 
+    # Inspect the search response table header (<thead>) to verify dose columns order
+    thead_match <- regmatches(txt_search, regexpr("<thead[^>]*>([\\s\\S]*?)</thead>", txt_search, perl = TRUE))
+    if (length(thead_match) > 0) {
+      th_matches <- regmatches(thead_match, gregexpr("<th[^>]*>([\\s\\S]*?)</th>", thead_match, perl = TRUE))[[1]]
+      th_texts <- trimws(gsub("<[^>]+>", "", th_matches))
+      th_candidates <- unique(th_texts[th_texts %in% dose_labels_raw])
+      if (length(th_candidates) == length(dose_labels)) {
+        dose_labels <- th_candidates
+      }
+    }
+
     # 8. Export CSV
     csv_id <- NULL
     csv_links <- regmatches(txt_search, gregexpr('mojarra\\.jsfcljs\\([^,]+,\\{\'([^:]+:j_idt[0-9]+)\'', txt_search))[[1]]
@@ -236,7 +295,7 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL) {
 
     curl::handle_setopt(h, copypostfields = enc(ex_fields), post = TRUE)
     curl::handle_setheaders(h,
-      "Content-Type" = "application/x-www-form-urlencoded",
+      "Content-Type" = "application/x-www-form-urlencoded; charset=UTF-8",
       "Faces-Request" = "",
       "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     )
@@ -259,48 +318,7 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL) {
         )
       )
     }
-  }
+  })
 
-  # Data Wrangling and Column Renaming
-  df <- dat %>%
-    dplyr::rename(municipio = 1) %>% # The first column contains municipality info
-    dplyr::mutate(
-      munic_code  = stringr::str_extract(municipio, "^[0-9]+"), # Extract IBGE code
-      munic_name  = stringr::str_remove(municipio, "^[0-9]+ - "), # Extract city name
-      .before = municipio
-    ) %>%
-    dplyr::select(-municipio)
-
-  # Calculate column mappings based on months and extracted dose labels
-  ndoses  <- length(dose_labels)
-  nmeses  <- 12
-  meses   <- rep(month.name[1:nmeses], each = ndoses)
-  doses   <- rep(dose_labels, nmeses)
-
-  # Dynamically assign meaningful names to data columns
-  if ((ncol(df) - 2) == length(meses)) {
-    names(df)[-(1:2)] <- sprintf("%s_%s", meses, doses)
-  }
-
-  # Final transformation: pivot to long format and clean up data types
-  dat_final <- df %>%
-    tidyr::pivot_longer(
-      cols = -c(munic_code, munic_name),
-      names_to = c("mes", "dose"),
-      names_sep = "_",
-      values_to = "quantity"
-    ) %>%
-    dplyr::mutate(
-      munic_code = as.numeric(munic_code),
-      munic_name = stringr::str_to_lower(munic_name),
-      month      = stringr::str_to_lower(mes),
-      quantity   = suppressWarnings(as.numeric(quantity)),
-      state      = state,
-      year       = as.integer(year),
-      strategy   = strategy,
-      product    = product
-    ) %>%
-    dplyr::select(state, year, munic_code, munic_name, strategy, product, month, dose, quantity)
-
-  return(dat_final)
+  return(parse_pni_table(dat, state, year, strategy, product, dose_labels))
 }
