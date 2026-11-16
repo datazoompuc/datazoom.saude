@@ -52,6 +52,15 @@ The `datazoom.saude` package streamlines access to these resources by:
 
 Each supported dataset is detailed in the sections below.
 
+### Session Disk Caching
+
+Downloaded `.dbc` files are cached on disk in temporary session
+directories (`tempdir()`) for the lifetime of the current R session.
+Re-running a query for the same file (for example, switching `language`
+or `raw_data`) reuses the local cached file instead of hitting DATASUS
+FTP again. Set `options(datazoom.saude.cache = FALSE)` to disable
+caching.
+
 ------------------------------------------------------------------------
 
 ## Installation
