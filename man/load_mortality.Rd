@@ -48,6 +48,12 @@ made available through DATASUS (Department of Informatics of the Brazilian Unifi
 This dataset includes detailed information on deaths by cause, location, sex, age, and other demographic characteristics.
 Data is useful for public health research, epidemiology, and demographic analysis.
 }
+\section{Connection Reliability}{
+
+The DATASUS FTP server (\code{ftp.datasus.gov.br}) intermittently drops connections
+mid-transfer. Downloads are automatically retried up to 3 times.
+}
+
 \examples{
 \donttest{
 load_mortality(dataset = "general",

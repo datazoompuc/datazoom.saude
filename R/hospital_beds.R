@@ -32,6 +32,9 @@
 #' @note
 #' The \code{foreign} and \code{RCurl} packages must be installed to use this function. They are listed in \code{Suggests}
 #' to avoid installing them by default.
+#' @section Connection Reliability:
+#' The DATASUS FTP server (`ftp.datasus.gov.br`) intermittently drops connections
+#' mid-transfer. Downloads are automatically retried up to 3 times.
 #'
 #' @examples
 #' \donttest{

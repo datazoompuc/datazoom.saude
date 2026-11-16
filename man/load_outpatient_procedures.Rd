@@ -76,6 +76,12 @@ Procedures related to therapies such as chemotherapy and radiotherapy.}
 Home-based specialized care such as oxygen therapy and related services.}
 }
 }
+\section{Connection Reliability}{
+
+The DATASUS FTP server (\code{ftp.datasus.gov.br}) intermittently drops connections
+mid-transfer. Downloads are automatically retried up to 3 times.
+}
+
 \examples{
 \donttest{
 load_outpatient_procedures(dataset = "diverse_reports",

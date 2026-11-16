@@ -48,6 +48,10 @@ The `datazoom.saude` package streamlines access to these resources by:
 
 Each supported dataset is detailed in the sections below.
 
+### Connection Reliability & Automatic Retries
+
+The official DATASUS FTP server (`ftp.datasus.gov.br`) intermittently drops connections mid-transfer. To prevent transient network failures from interrupting multi-year or multi-state queries, every FTP file transfer is automatically retried up to **3 times** with backoff when a connection drops or a partial file is received.
+
 ***
 ## Installation
 
