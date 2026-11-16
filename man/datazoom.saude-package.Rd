@@ -9,6 +9,11 @@
 \description{
 Functions to download, clean, and standardize Brazilian public health microdata from DATASUS.
 }
+\details{
+Downloaded \code{.dbc} files are cached on disk in \code{tempdir()} for the duration
+of the current R session to avoid redundant transfers on repeated queries.
+To disable session caching, set \code{options(datazoom.saude.cache = FALSE)}.
+}
 \seealso{
 Useful links:
 \itemize{
