@@ -9,6 +9,9 @@
 #' @param language A string indicating the desired language of variable names and labels. Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
 #'
 #' @return A data frame containing birth records from SINASC for the specified period and states.
+#' @section Connection Reliability:
+#' The DATASUS FTP server (`ftp.datasus.gov.br`) intermittently drops connections
+#' mid-transfer. Downloads are automatically retried up to 3 times.
 #' @export
 #'
 #' @examples

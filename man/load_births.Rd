@@ -22,6 +22,12 @@ A data frame containing birth records from SINASC for the specified period and s
 This function downloads and organizes data from SINASC (Live Birth Information System),
 part of DATASUS, used in public health analyses.
 }
+\section{Connection Reliability}{
+
+The DATASUS FTP server (\code{ftp.datasus.gov.br}) intermittently drops connections
+mid-transfer. Downloads are automatically retried up to 3 times.
+}
+
 \examples{
 \donttest{
 load_births(time_period = 2023,

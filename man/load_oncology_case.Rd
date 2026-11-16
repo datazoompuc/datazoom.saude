@@ -20,6 +20,12 @@ A data table containing oncology case records from the Oncology Panel of all Bra
 This function downloads and organizes data from the Oncology Panel (Painel de Oncologia),
 part of DATASUS, used in public health and epidemiological analyses.
 }
+\section{Connection Reliability}{
+
+The DATASUS FTP server (\code{ftp.datasus.gov.br}) intermittently drops connections
+mid-transfer. Downloads are automatically retried up to 3 times.
+}
+
 \examples{
 \donttest{
 # Download processed oncology data for the year 2023.
