@@ -13,6 +13,10 @@ Functions to download, clean, and standardize Brazilian public health microdata 
 Downloaded \code{.dbc} files are cached on disk in \code{tempdir()} for the duration
 of the current R session to avoid redundant transfers on repeated queries.
 To disable session caching, set \code{options(datazoom.saude.cache = FALSE)}.
+
+The DATASUS FTP server (\code{ftp.datasus.gov.br}) intermittently drops connections
+mid-transfer. All FTP loaders automatically retry each file download up to
+3 times before failing.
 }
 \seealso{
 Useful links:

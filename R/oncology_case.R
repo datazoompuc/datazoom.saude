@@ -8,6 +8,9 @@
 #' @param language A string indicating the desired language of variable names and labels. Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
 #'
 #' @return A data table containing oncology case records from the Oncology Panel of all Brazilian states for the specified period.
+#' @section Connection Reliability:
+#' The DATASUS FTP server (`ftp.datasus.gov.br`) intermittently drops connections
+#' mid-transfer. Downloads are automatically retried up to 3 times.
 #' @export
 #'
 #' @examplesIf interactive()

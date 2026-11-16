@@ -58,6 +58,10 @@
 #'   Home-based specialized care such as oxygen therapy and related services.}
 #' }
 #'
+#' @section Connection Reliability:
+#' The DATASUS FTP server (`ftp.datasus.gov.br`) intermittently drops connections
+#' mid-transfer. Downloads are automatically retried up to 3 times.
+#'
 #' @examplesIf interactive()
 #' load_outpatient_procedures(dataset = "diverse_reports",
 #'                            time_period = 2016,
