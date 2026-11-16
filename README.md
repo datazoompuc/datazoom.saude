@@ -696,29 +696,32 @@ The `load_vaccines` function offers the following parameters:
 The function supports **two distinct data ingestion modes**, depending
 on the availability and stability of the official SI-PNI portals:
 
-1.  **Automated retrieval via HTTP** of the legacy SI-PNI Web system
-    (for data up to 2023).
-2.  **Manual data ingestion**, where the user downloads the data
-    directly from the official DATASUS dashboard and the function
-    performs only cleaning, harmonization, and standardization (optional
-    for data up to 2023, but required for 2024 onwards).
+1.  **Automated retrieval** for all supported years:
+    - `1994`–`2023`: via direct HTTP requests to the legacy SI-PNI Web
+      system.
+    - `2024`–present: via direct Qlik Engine queries to the new DATASUS
+      interactive dashboard (`infoms.saude.gov.br`).
+2.  **Manual data ingestion** (optional), where the user downloads the
+    data directly from the official DATASUS dashboard and provides it
+    via `data`, in which case the function performs only cleaning,
+    harmonization, and standardization.
 
 Both modes produce a **fully harmonized output**, consistent with the
 historical SI-PNI data structure.
 
-### 1. Automated retrieval via HTTP (1994 - 2023)
+### 1. Automated retrieval (1994 - present)
 
-For historical data (`1994`–`2023`), `load_vaccines()` can automatically
-retrieve consolidated vaccination data directly from the legacy SI-PNI
-Web portal using direct HTTP requests.
+`load_vaccines()` can automatically retrieve consolidated vaccination
+data across the entire historical and recent series (`1994` to present)
+without requiring Google Chrome or headless browsers.
 
 This mode:
 
 1.  Requires a stable internet connection.
-2.  Depends on the availability and responsiveness of the SI-PNI Web
-    system.
-3.  Uses fast, direct HTTP requests via the `curl` package without
-    requiring Google Chrome or headless browsers.
+2.  Depends on the availability and responsiveness of the DATASUS SI-PNI
+    portals.
+3.  Uses direct HTTP requests (`1994`–`2023`) and Qlik Engine JSON-RPC
+    WebSocket queries (`2024`–present).
 
 No manual intervention is required from the user.
 
@@ -767,10 +770,11 @@ This approach can be useful when:
 
 ### 2.2. Manual download (2024 - present)
 
-From **2024 onwards**, vaccination data are published exclusively
-through the new DATASUS interactive dashboard. Due to technical and
-legal constraints, automated scraping is not supported for this
-platform.
+From **2024 onwards**, vaccination data are published through the new
+DATASUS interactive dashboard (`infoms.saude.gov.br`). Although
+`load_vaccines()` retrieves these data automatically, users may also
+choose to **manually download the `.xlsx` file and provide it via the
+`data` argument**.
 
 In this case, `load_vaccines()` will perform only the cleaning,
 harmonization, and standardization steps.
