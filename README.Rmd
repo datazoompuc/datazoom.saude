@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-<a href="https://github.com/datazoompuc/datazoom.saude"><img src="https://raw.githubusercontent.com/datazoompuc/datazoom.saude/master/hex_dzsaude.png" align="left" width="100" hspace="10" vspace="6"></a>
+<a href="https://github.com/datazoompuc/datazoom.saude"><img src="https://raw.githubusercontent.com/datazoompuc/datazoom.saude/main/hex_dzsaude.png" align="left" width="100" hspace="10" vspace="6"></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -18,20 +18,18 @@ knitr::opts_chunk$set(
 # datazoom.saude
 
 <!-- badges: start -->
-<!-- CRAN badges disabled until submission is approved on CRAN:
-[![Total de Downloads](https://cranlogs.r-pkg.org/badges/grand-total/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
-[![Downloads mensais](https://cranlogs.r-pkg.org/badges/datazoom.saude)](https://cran.r-project.org/package=datazoom.saude)
--->
 [![CRAN status](https://www.r-pkg.org/badges/version/datazoom.saude)](https://CRAN.R-project.org/package=datazoom.saude)
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/datazoom.saude?color=blue)](https://cran.r-project.org/package=datazoom.saude)
-[![CRAN downloads](https://cranlogs.r-pkg.org/badges/datazoom.saude?color=lightgrey)](https://cran.r-project.org/package=datazoom.saude)
-![Languages](https://img.shields.io/github/languages/count/datazoompuc/datazoom.saude?style=flat)
-![Commits](https://img.shields.io/github/commit-activity/y/datazoompuc/datazoom.saude?style=flat)
+[![CRAN monthly downloads](https://cranlogs.r-pkg.org/badges/datazoom.saude?color=lightgrey)](https://cran.r-project.org/package=datazoom.saude)
+[![r-universe](https://datazoompuc.r-universe.dev/badges/datazoom.saude)](https://datazoompuc.r-universe.dev/datazoom.saude)
+[![R-CMD-check](https://github.com/datazoompuc/datazoom.saude/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/datazoompuc/datazoom.saude/actions/workflows/R-CMD-check.yaml)
 ![Open Issues](https://img.shields.io/github/issues-raw/datazoompuc/datazoom.saude?style=flat)
-![Closed Issues](https://img.shields.io/github/issues-closed-raw/datazoompuc/datazoom.saude?style=flat)
-![Files](https://img.shields.io/github/directory-file-count/datazoompuc/datazoom.saude?style=flat)
-![Followers](https://img.shields.io/github/followers/datazoompuc?style=flat)
+![Commits](https://img.shields.io/github/commit-activity/y/datazoompuc/datazoom.saude?style=flat)
 <!-- badges: end -->
+
+**`datazoom.saude` is an R package that downloads, cleans and standardizes Brazilian public health microdata from DATASUS (SIM, SINASC, SIH, SIA, CNES, PO and SI-PNI) with a single function call.** It is developed by [Data Zoom](https://datazoom.com.br/en/dz_saude/), a research group at the Department of Economics of the Pontifical Catholic University of Rio de Janeiro (PUC-Rio), and is available on [CRAN](https://CRAN.R-project.org/package=datazoom.saude).
+
+> **Português:** o `datazoom.saude` é um pacote R que baixa, limpa e padroniza microdados de saúde pública do DATASUS (mortalidade, nascidos vivos, internações, procedimentos ambulatoriais, leitos, oncologia e vacinação), com nomes de variáveis em inglês ou português. Página do projeto: <https://datazoom.com.br/pt/dz_saude/>.
 
 ## Overview
 The `datazoom.saude` package provides simple, direct, and reliable functions to import, organize, and explore public health databases in Brazil. It is part of the **`datazoom`** ecosystem, designed to simplify access to and analysis of national data.
@@ -44,18 +42,23 @@ The `datazoom.saude` package streamlines access to these resources by:
 
 * Downloading multiple raw DATASUS datasets automatically;
 * Cleaning and standardizing selected datasets for easier analysis;
-* Providing consistent structures across data sources for seamless integration;
+* Decompressing DATASUS's `.dbc` files internally (see `dbc2dbf_wrapper()`);
+* Providing consistent structures across data sources for seamless integration, with variable names and labels in English or Portuguese.
 
 Each supported dataset is detailed in the sections below.
 
 ***
 ## Installation
 
-You can install the released version of `datazoom.saude` from CRAN, or the development version from GitHub.
+You can install the released version of `datazoom.saude` from CRAN, the latest build from r-universe, or the development version from GitHub.
 
 ``` {r, eval=FALSE}
 # From CRAN:
 install.packages("datazoom.saude")
+
+# From r-universe (binaries of the development version):
+install.packages("datazoom.saude",
+                 repos = c("https://datazoompuc.r-universe.dev", "https://cloud.r-project.org"))
 
 # Or the development version from GitHub:
 # Install the 'remotes' package if you don't have it yet
@@ -65,23 +68,31 @@ install.packages("remotes")
 remotes::install_github("datazoompuc/datazoom.saude")
 ```
 
+## Quick example
+
+``` {r, eval=FALSE}
+library(datazoom.saude)
+
+# Deaths (SIM) in Rio de Janeiro state in 2022, cleaned, with English labels
+deaths <- load_mortality(dataset = "general", time_period = 2022, states = "RJ")
+
+# Live births (SINASC) for São Paulo, 2020-2021, with Portuguese labels
+births <- load_births(time_period = 2020:2021, states = "SP", language = "pt")
+```
+
 ## Supported Databases
 
-For detailed usage examples and guides on each database, please refer to the vignettes below.
+| # | DATASUS system | Full name | Function | Guide |
+|---|---|---|---|---|
+| 1 | SIM | Mortality Information System (*Sistema de Informações sobre Mortalidade*) | `load_mortality()` | [Mortality](#mortality) |
+| 2 | SINASC | Live Birth Information System (*Sistema de Informações sobre Nascidos Vivos*) | `load_births()` | [Live Births](#live-births) |
+| 3 | SIH/SUS | Hospital Information System (*Sistema de Informações Hospitalares*) | `load_hospital_admissions()` | [Hospital Admissions](#hospital-admissions) |
+| 4 | CNES-LT | Hospital beds from the National Registry of Health Establishments (*Cadastro Nacional de Estabelecimentos de Saúde*) | `load_hospital_beds()` | [Hospital Beds](#hospital-beds) |
+| 5 | SIA/SUS | Outpatient Information System (*Sistema de Informações Ambulatoriais*) | `load_outpatient_procedures()` | [Outpatient Procedures](#outpatient-procedures) |
+| 6 | PO | Oncology Panel (*Painel de Oncologia*) | `load_oncology_case()` | [Oncology Cases](#oncology-cases) |
+| 7 | SI-PNI | National Immunization Program Information System (*Sistema de Informação do Programa Nacional de Imunizações*) | `load_vaccines()` | [Vaccines](#vaccines) |
 
-**[1 - Mortality (SIM)](#mortality)**
-
-**[2 - Live Births (SINASC)](#live-births)**
-
-**[3 - Hospital Admissions (SIH)](#hospital-admissions)**
-
-**[4 - Hospital Beds (CNES-LT)](#hospital-beds)**
-
-**[5 - Outpatient Procedures (SIASUS)](#outpatient-procedures)**
-
-**[6 - Oncology Cases (PO)](#oncology-cases)**
-
-**[7 - Vaccination (SI-PNI)](#vaccines)**
+For detailed usage examples and guides on each database, please refer to the sections (vignettes) below.
 
 <br>
 
@@ -122,26 +133,40 @@ For detailed usage examples and guides on each database, please refer to the vig
 
 <br>
 
+## Related packages
+
+`datazoom.saude` is part of the Data Zoom ecosystem of open tools for Brazilian microdata:
+
+* [`datazoom.amazonia`](https://datazoom.com.br/datazoom.amazonia/) (R, [CRAN](https://CRAN.R-project.org/package=datazoom.amazonia)): environmental, economic and social data on the Brazilian Amazon.
+* [`datazoom.social`](https://github.com/datazoompuc/datazoom.social) (R, [CRAN](https://CRAN.R-project.org/package=datazoom.social)): IBGE's PNAD Contínua microdata, with panel identification.
+* [`datazoom_social` for Stata](https://datazoom.com.br/en/dz_stata/) ([GitHub](https://github.com/datazoompuc/datazoom_social_Stata)): IBGE household surveys (PNAD, PNAD Contínua, Census, POF, PME and more).
+* Data Zoom website: <https://datazoom.com.br/en/> (English) and <https://datazoom.com.br/pt/> (Português).
+
 ## Contributing
 
 Thank you for your interest in contributing! If you have found a bug or have a suggestion for improvement, please open a [GitHub issue](https://github.com/datazoompuc/datazoom.saude/issues).
 
 ## Credits
 
-DataZoom is developed by a team at the Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio), Department of Economics. Our official website is: <https://datazoom.com.br/en/dz_saude/>.
+DataZoom is developed by a team at the Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio), Department of Economics. Project pages: <https://datazoom.com.br/en/dz_saude/> (English) and <https://datazoom.com.br/pt/dz_saude/> (Português).
 
-To cite the `datazoom.saude` package in publications, use:
+## Citation
 
-> Data Zoom (2023). Data Zoom: Simplifying Access To Brazilian Microdata.
-> https://datazoom.com.br/en/
+To cite `datazoom.saude` in publications, run `citation("datazoom.saude")` in R, or use:
+
+> Tavares Regadas L, Laport Santos L, dos Santos P. Barbosa JP, B. A. de Souza VA (2026). *datazoom.saude: Download Brazilian Public Health Microdata from DATASUS*. Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio). R package version 0.1.1. <https://CRAN.R-project.org/package=datazoom.saude>
 
 A BibTeX entry for LaTeX users is:
 
 ```
-@Unpublished{DataZoom2023,
-  author = {Data Zoom},
-  title = {Data Zoom: Simplifying Access To Brazilian Microdata},
-  url = {[https://datazoom.com.br/en/dz_saude/](https://datazoom.com.br/en/dz_saude/)},
-  year = {2023},
+@Manual{datazoom.saude,
+  title = {{datazoom.saude}: Download Brazilian Public Health Microdata from {DATASUS}},
+  author = {Laura {Tavares Regadas} and Luana {Laport Santos} and Jo{\~a}o Paulo {dos Santos P. Barbosa} and Vanndher Am{\'o}s {B. A. de Souza}},
+  organization = {Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio)},
+  year = {2026},
+  note = {R package version 0.1.1},
+  url = {https://CRAN.R-project.org/package=datazoom.saude},
 }
 ```
+
+GitHub users can also use the "Cite this repository" button, generated from [`CITATION.cff`](https://github.com/datazoompuc/datazoom.saude/blob/main/CITATION.cff).
