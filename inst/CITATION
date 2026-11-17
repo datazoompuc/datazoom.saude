@@ -1,0 +1,17 @@
+citHeader("To cite the 'datazoom.saude' package in publications, please use:")
+
+bibentry(
+  bibtype  = "Manual",
+  key      = "datazoom.saude",
+  title    = "{datazoom.saude}: Download Brazilian Public Health Microdata from {DATASUS}",
+  author   = c(
+    person("Laura", "Tavares Regadas"),
+    person("Luana", "Laport Santos"),
+    person("João Paulo", "dos Santos P. Barbosa"),
+    person("Vanndher Amós", "B. A. de Souza")
+  ),
+  organization = "Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio)",
+  year     = "2026",
+  note     = paste("R package version", meta$Version),
+  url      = "https://CRAN.R-project.org/package=datazoom.saude"
+)
