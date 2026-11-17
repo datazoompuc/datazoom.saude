@@ -20,6 +20,8 @@ Imports:
     dplyr,
     Hmisc,
     janitor,
+    jsonlite,
+    later,
     magrittr,
     purrr,
     readr,
@@ -30,7 +32,8 @@ Imports:
     lubridate,
     tidyselect,
     tidyr,
-    stats
+    stats,
+    websocket
 Suggests: 
     foreign,
     knitr,

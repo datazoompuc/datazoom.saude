@@ -15,7 +15,7 @@ load_vaccines(
 )
 }
 \arguments{
-\item{year}{A numeric value indicating the year of the data to be downloaded (Supported range: 1994-2023).}
+\item{year}{A numeric value indicating the year of the data to be downloaded (1994 to present).}
 
 \item{state}{A string indicating the Brazilian state abbreviation (e.g., "SP", "RJ", "AC").}
 
@@ -23,15 +23,15 @@ load_vaccines(
 If NULL and in an interactive session, a menu will appear.}
 
 \item{product}{A string identifying the specific vaccine product (e.g., "BCG - BCG", "Hepatite B - HB").
-Must be a valid product for the chosen strategy. If NULL and in an interactive session, a menu will appear.}
+For 2024 onwards, both legacy names (e.g., "BCG - BCG") and new dashboard names
+(e.g., "87 - vacina covid-19-RNAm, Pfizer (Comirnaty)") are accepted. If NULL and in an interactive session, a menu will appear.}
 
 \item{dose}{A character vector indicating the dose categories that were selected when downloading the data.
 This argument is only required when using manually downloaded files up to 2022.}
 
-\item{data}{An optional path to a local Excel (.xlsx) file downloaded manually from
-the official DATASUS vaccination dashboard. If provided, web scraping is skipped and
-the function performs only data cleaning and harmonization. This argument is mandatory
-for data from 2023 onwards.}
+\item{data}{An optional path to a local Excel (.xls/.xlsx) file downloaded manually from
+the official DATASUS vaccination dashboard. If provided, automated retrieval is skipped and
+the function performs only data cleaning and harmonization.}
 
 \item{language}{A string indicating the desired language for variable names and labels.
 Accepts "eng" (default) or "pt".}
@@ -43,15 +43,16 @@ municipality names, strategy, product, month, dose type, and the quantity of dos
 \description{
 Retrieves vaccination records from Brazil's official National Immunization Program
 Information System (SI-PNI), made available through DATASUS. This function supports
-two data ingestion modes. For historical data (1994-2023), it performs direct HTTP
-requests on the legacy SI-PNI Web portal to extract consolidated records of applied doses.
-For more recent years (2024 to present), the user must provide a locally downloaded file, in which case
-the function performs only data validation, cleaning, harmonization, and
+automated retrieval across all supported years: for historical data (1994-2023),
+it queries the legacy SI-PNI Web portal via HTTP; from 2024 onwards, it queries
+the new DATASUS interactive dashboard (\code{infoms.saude.gov.br}) directly.
+Alternatively, the user may provide a locally downloaded file via \code{data}, in which
+case the function performs only validation, cleaning, harmonization, and
 standardization.
 }
 \details{
 Regardless of the ingestion mode, the returned dataset is fully harmonized and
-consistent with the historical SI-PNI data structure.
+consistent across years (1994 to present).
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
