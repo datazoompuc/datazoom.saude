@@ -16,3 +16,5 @@
 ^\.gitignore$
 ^\.Rhistory$
 ^CITATION\.cff$
+^_pkgdown\.yml$
+^pkgdown$
