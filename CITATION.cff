@@ -1,0 +1,50 @@
+# CITATION.cff for the datazoom.saude R package.
+# Enables GitHub's "Cite this repository" button. Keep in sync with
+# DESCRIPTION and inst/CITATION when the version or authors change.
+cff-version: 1.2.0
+message: "If you use datazoom.saude in your research, please cite it as below."
+type: software
+title: "datazoom.saude: Download Brazilian Public Health Microdata from DATASUS"
+abstract: >-
+  R package to download, clean, and standardize Brazilian public health
+  microdata from DATASUS, the Department of Informatics of the Brazilian
+  Unified Health System (SUS). Covers mortality (SIM), live births (SINASC),
+  hospital admissions (SIH), outpatient procedures (SIA), hospital beds
+  (CNES), oncology cases (PO) and vaccination (SI-PNI), with variable names
+  and labels in English or Portuguese.
+authors:
+  - family-names: "Tavares Regadas"
+    given-names: "Laura"
+    affiliation: "Pontifical Catholic University of Rio de Janeiro (PUC-Rio)"
+  - family-names: "Laport Santos"
+    given-names: "Luana"
+    affiliation: "Pontifical Catholic University of Rio de Janeiro (PUC-Rio)"
+  - family-names: "dos Santos P. Barbosa"
+    given-names: "João Paulo"
+    affiliation: "Pontifical Catholic University of Rio de Janeiro (PUC-Rio)"
+  - family-names: "B. A. de Souza"
+    given-names: "Vanndher Amós"
+    affiliation: "Pontifical Catholic University of Rio de Janeiro (PUC-Rio)"
+  - name: "Data Zoom (PUC-Rio)"
+    email: "datazoom@econ.puc-rio.br"
+    website: "https://datazoom.com.br/"
+version: "0.1.1"
+date-released: "2026-10-06"
+license: MIT
+repository-code: "https://github.com/datazoompuc/datazoom.saude"
+repository-artifact: "https://CRAN.R-project.org/package=datazoom.saude"
+url: "https://datazoom.com.br/en/dz_saude/"
+keywords:
+  - R
+  - DATASUS
+  - SUS
+  - Brazil
+  - public health
+  - epidemiology
+  - microdata
+  - SIM
+  - SINASC
+  - SIH
+  - SIA
+  - CNES
+  - SI-PNI

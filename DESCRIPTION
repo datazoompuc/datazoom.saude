@@ -1,18 +1,32 @@
 Package: datazoom.saude
-Title: Download Brazilian Health Data from DATASUS
+Title: Download Brazilian Public Health Microdata from DATASUS
 Version: 0.1.1.9000
 Authors@R: c(
     person("Laura", "Tavares Regadas", , "lauratregadas@gmail.com", role = c("aut", "cre")),
     person("Luana", "Laport Santos", , "luanalaportsantos@icloud.com", role = "aut"),
     person("João Paulo", "dos Santos P. Barbosa", , "joao.3158129@gmail.com", role = "aut"),
-    person("DataZoom (PUC-Rio)", , , "datazoom@econ.puc-rio.br", role = "fnd"),
+    person("DataZoom (PUC-Rio)", , , "datazoom@econ.puc-rio.br", role = "fnd",
+           comment = c(ROR = "01dg47b60")),
     person("Vanndher Amós", "B. A. de Souza", , "vanndheramos@gmail.com", role = "aut"),
     person("Daniela", "Petruzalek", , "daniela.petruzalek@gmail.com", role = "ctb"),
     person("Mark", "Adler", role = "ctb")
   )
-Description: Provides a comprehensive set of functions to easily download, clean, and standardize various public health datasets from DATASUS <https://datasus.saude.gov.br/>, the Department of Informatics of the Brazilian Unified Health System (SUS). This package streamlines access to crucial health information, including mortality (SIM), hospital admissions (SIH), live births (SINASC), hospital beds (CNES-LT), and outpatient procedures (SIASUS), making the data ready for epidemiological and public health analyses.
+Description: Provides functions to download, clean, and standardize Brazilian
+    public health microdata from DATASUS <https://datasus.saude.gov.br/>, the
+    Department of Informatics of the Brazilian Unified Health System (SUS).
+    Supported sources are the Mortality Information System (SIM), the Live
+    Birth Information System (SINASC), the Hospital Information System (SIH),
+    the Outpatient Information System (SIA), hospital beds from the National
+    Registry of Health Establishments (CNES), oncology cases from the Oncology
+    Panel (PO), and vaccination doses from the National Immunization Program
+    Information System (SI-PNI). Data can be requested by state and year,
+    compressed '.dbc' files are decompressed internally, and variable names and
+    labels are available in English or Portuguese, so that the resulting data
+    frames are ready for epidemiological and public health analyses.
 License: MIT + file LICENSE
-URL: https://datazoom.com.br/en/dz_saude/
+URL: https://datazoom.com.br/datazoom.saude/,
+    https://github.com/datazoompuc/datazoom.saude,
+    https://datazoom.com.br/en/dz_saude/
 Depends: 
     R (>= 4.0)
 Imports:
@@ -43,6 +57,7 @@ LinkingTo:
     Rcpp
 VignetteBuilder: knitr
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
