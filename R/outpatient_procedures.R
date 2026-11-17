@@ -58,13 +58,11 @@
 #'   Home-based specialized care such as oxygen therapy and related services.}
 #' }
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf interactive()
 #' load_outpatient_procedures(dataset = "diverse_reports",
 #'                            time_period = 2016,
 #'                            states = "PI",
 #'                            language = "pt")
-#' }
 #'
 #' @export
 load_outpatient_procedures <- function(dataset,

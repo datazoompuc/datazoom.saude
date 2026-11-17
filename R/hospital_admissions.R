@@ -41,12 +41,10 @@
 #'
 #' @export
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf interactive()
 #' load_hospital_admissions(dataset = "professional_services",
 #'                          time_period = 2020,
 #'                          states = "AC")
-#' }
 load_hospital_admissions <- function(dataset,
                                      time_period,
                                      states = "all",
