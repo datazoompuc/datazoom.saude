@@ -1,9 +1,19 @@
 ---
 name: manifest-maintenance
-description: Maintain the datazoom.amazonia dataset manifest system — write new resolvers, verify or fix a broken source, handle a deprecated link, or finish activating the PR-only refresh pipeline. Use whenever the task touches inst/extdata/manifest/v1/datasets_link.csv, actions/scrapers/, actions/scripts/, R/manifest.R, or .github/workflows/update-manifest.yaml.
+description: Maintain the datazoom.saude dataset manifest system — write new resolvers, verify or fix a broken source, handle a deprecated link, or finish activating the PR-only refresh pipeline. Use whenever the task touches inst/extdata/manifest/v1/datasets_link.csv, actions/scrapers/, actions/scripts/, R/manifest.R, or .github/workflows/update-manifest.yaml.
 ---
 
 # Maintaining the dataset manifest
+
+> **Scope note (datazoom.saude).** This file was adapted from the sibling
+> package `datazoom.amazonia`, which uses the same manifest architecture.
+> The rules below apply to this package as written, but many *worked
+> examples* (MapBiomas, PRODES, DETER, DEGRAD, ANEEL, EPE, IPS, SEEG and
+> their `resolve_*.R` / `R/*.R` files) are historical incidents from
+> `datazoom.amazonia` and do not exist in this repository. Here the
+> resolvers are `actions/scrapers/resolve_datasus.R` and
+> `actions/scrapers/resolve_sipni.R`, and the manifest is fetched from
+> the `main` branch.
 
 Every download URL this package uses lives in one CSV —
 `inst/extdata/manifest/v1/datasets_link.csv` — fetched fresh at runtime with a
@@ -386,11 +396,11 @@ detect-only, not after.
   `resolve_via_dataverse()` for the pattern: a genuine sheet/column mismatch
   returns `NULL` and the walk continues; a download failure `stop()`s and
   the walk aborts for that config only, leaving its row exactly as it was).
-- **`manifest_url()` defaults to GitHub's `master` branch, not whatever
+- **`manifest_url()` defaults to GitHub's `main` branch, not whatever
   branch your local checkout is on.** `devtools::load_all(".")` loads your
   local R *code*, but `load_mapbiomas()` (and every other loader) still
-  fetches the *manifest* from `master` at runtime unless you also set
-  `options(datazoom.amazonia.use_remote_manifest = FALSE)` — these are two
+  fetches the *manifest* from `main` at runtime unless you also set
+  `options(datazoom.saude.use_remote_manifest = FALSE)` — these are two
   independent things, loading local code doesn't imply reading the local
   manifest. Live confusion this caused: `load_mapbiomas(dataset =
   "mapbiomas_cover", geo_level = "municipality")` returned a stale sheet
@@ -1175,8 +1185,8 @@ turn a healthy run red — the pipeline's actual pass/fail is driven only by
   raw-vs-treated row count match exactly; compare by `alert_id`, not row
   count.
 - **`load_degrad()`'s CRS fixed 2026-10-12 (same bug as DETER's above) — and,
-  2026-10-16, the 2 bugs found while verifying it (tracked in
-  [datazoompuc/datazoom.amazonia#350](https://github.com/datazoompuc/datazoom.amazonia/issues/350),
+  2026-10-16, the 2 bugs found while verifying it (tracked upstream, in the
+  sibling package, in [datazoompuc/datazoom.amazonia#350](https://github.com/datazoompuc/datazoom.amazonia/issues/350),
   related to the already-open #283) are now ALSO fixed, via one unified
   change.** `operation_crs` had the identical `+proj=poly ... +ellps=aust_SA`
   string as DETER's; replaced 2026-10-12 with the same IBGE Albers
