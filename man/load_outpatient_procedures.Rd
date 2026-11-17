@@ -77,11 +77,10 @@ Home-based specialized care such as oxygen therapy and related services.}
 }
 }
 \examples{
-\donttest{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 load_outpatient_procedures(dataset = "diverse_reports",
                            time_period = 2016,
                            states = "PI",
                            language = "pt")
-}
-
+\dontshow{\}) # examplesIf}
 }

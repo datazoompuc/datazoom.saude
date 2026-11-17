@@ -11,12 +11,10 @@
 #' @return A data frame containing birth records from SINASC for the specified period and states.
 #' @export
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf interactive()
 #' load_births(time_period = 2023,
 #'             states = "RJ",
 #'             raw_data = FALSE)
-#' }
 
 load_births <- function(time_period,
                         states = "all",
