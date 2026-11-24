@@ -60,8 +60,9 @@ assert_dbc_file <- function(file_path, source_url) {
     stop(sprintf("external_download(): received an unrecognized %s-byte file from %s", size, source_url))
   }
   raw_head <- readBin(file_path, what = "raw", n = min(256L, as.integer(size)))
-  txt_head <- trimws(rawToChar(raw_head[raw_head != as.raw(0)]))
-  if (grepl("^<(!doctype|html|head|body|\\?xml)", txt_head, ignore.case = TRUE)) {
+  raw_clean <- raw_head[raw_head != as.raw(0)]
+  txt_head <- iconv(rawToChar(raw_clean), from = "UTF-8", to = "UTF-8", sub = "?")
+  if (grepl("^[[:space:]]*<(!doctype|html|head|body|\\?xml)", txt_head, ignore.case = TRUE, useBytes = TRUE)) {
     stop(sprintf(
       "external_download(): received an unrecognized %d-byte HTML/XML response instead of a .dbc file from %s",
       as.integer(size), source_url

@@ -9,7 +9,8 @@ test_that("external_download() caches files on disk within the session", {
     datasets_link = function(...) "ftp://ftp.datasus.gov.br/Dados/$file_name$",
     download_file_once = function(url, destfile, source) {
       downloads <<- downloads + 1L
-      writeBin(as.raw(rep(3L, 64L)), destfile)
+      # Include non-UTF-8 binary bytes typical of real .dbc/DBF headers
+      writeBin(as.raw(c(0x83, 0xff, 0xfe, 0x80, rep(3L, 60L))), destfile)
       0L
     },
     read.dbc = function(file) data.frame(x = 1:3),
@@ -40,7 +41,8 @@ test_that("options(datazoom.saude.cache = FALSE) bypasses the session disk cache
     datasets_link = function(...) "ftp://ftp.datasus.gov.br/Dados/$file_name$",
     download_file_once = function(url, destfile, source) {
       downloads <<- downloads + 1L
-      writeBin(as.raw(rep(3L, 64L)), destfile)
+      # Include non-UTF-8 binary bytes typical of real .dbc/DBF headers
+      writeBin(as.raw(c(0x83, 0xff, 0xfe, 0x80, rep(3L, 60L))), destfile)
       0L
     },
     read.dbc = function(file) data.frame(x = 1:2),
@@ -92,7 +94,8 @@ test_that("external_download() does not cache files when read.dbc() fails", {
     datasets_link = function(...) "ftp://ftp.datasus.gov.br/Dados/$file_name$",
     download_file_once = function(url, destfile, source) {
       downloads <<- downloads + 1L
-      writeBin(as.raw(rep(3L, 64L)), destfile)
+      # Include non-UTF-8 binary bytes typical of real .dbc/DBF headers
+      writeBin(as.raw(c(0x83, 0xff, 0xfe, 0x80, rep(3L, 60L))), destfile)
       0L
     },
     read.dbc = function(file) {
