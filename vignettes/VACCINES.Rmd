@@ -181,7 +181,7 @@ data_fa_acre <- load_vaccines(
   state = "AC",
   strategy = "Bloqueio",
   product = "Influenza Trivalente - FLU3V",
-  doses = c("D1", "DU", "REV", "DI"), # required for data up to 2022
+  dose = c("D1", "DU", "REV", "DI"), # required for data up to 2022
   data = "C:/path/to/downloaded_file.xls", #.xls
   language = "eng"
 )
@@ -192,7 +192,7 @@ data_fa_acre <- load_vaccines(
   state = "MG",
   strategy = "Bloqueio",
   product = "Influenza Trivalente - FLU3V",
-  doses = NULL, # not required for data 2023 onwards
+  dose = NULL, # not required for data 2023 onwards
   data = "C:/path/to/downloaded_file.xls", #.xls
   language = "pt"
 )
