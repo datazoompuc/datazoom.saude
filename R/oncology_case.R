@@ -10,15 +10,13 @@
 #' @return A data table containing oncology case records from the Oncology Panel of all Brazilian states for the specified period.
 #' @export
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf interactive()
 #' # Download processed oncology data for the year 2023.
 #' # This will return data from the Oncology Panel for all Brazilian states.
 #' oncology_cases_treated <- load_oncology_case(time_period = 2023,
 #'                                              raw_data = FALSE,
 #'                                              language = "eng"
 #'                                              )
-#' }
 
 
 load_oncology_case <- function(time_period,

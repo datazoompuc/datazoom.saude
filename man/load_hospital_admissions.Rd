@@ -60,9 +60,9 @@ procedure incompatibility).}
 }
 }
 \examples{
-\donttest{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 load_hospital_admissions(dataset = "professional_services",
                          time_period = 2020,
                          states = "AC")
-}
+\dontshow{\}) # examplesIf}
 }

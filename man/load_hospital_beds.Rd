@@ -51,12 +51,11 @@ The \code{foreign} and \code{RCurl} packages must be installed to use this funct
 to avoid installing them by default.
 }
 \examples{
-\donttest{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Load beds data for RO in 2020
 beds <- load_hospital_beds(time_period = "2020",
                            states = "RO",
                            raw_data = FALSE,
                            language = "eng")
-}
-
+\dontshow{\}) # examplesIf}
 }

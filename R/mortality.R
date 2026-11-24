@@ -26,8 +26,7 @@
 #'
 #' @return A data frame containing the mortality records.
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf interactive()
 #' load_mortality(dataset = "general",
 #'                time_period = 2022,
 #'                states = "RJ")
@@ -36,7 +35,6 @@
 #'                time_period = 2020,
 #'                raw_data = FALSE,
 #'                language = "pt")
-#' }
 #'
 #' @export
 load_mortality <- function(dataset,
