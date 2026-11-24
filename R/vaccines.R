@@ -2,27 +2,28 @@
 #'
 #' Retrieves vaccination records from Brazil's official National Immunization Program
 #' Information System (SI-PNI), made available through DATASUS. This function supports
-#' two data ingestion modes. For historical data (1994-2023), it performs direct HTTP
-#' requests on the legacy SI-PNI Web portal to extract consolidated records of applied doses.
-#' For more recent years (2024 to present), the user must provide a locally downloaded file, in which case
-#' the function performs only data validation, cleaning, harmonization, and
+#' automated retrieval across all supported years: for historical data (1994-2023),
+#' it queries the legacy SI-PNI Web portal via HTTP; from 2024 onwards, it queries
+#' the new DATASUS interactive dashboard (`infoms.saude.gov.br`) directly.
+#' Alternatively, the user may provide a locally downloaded file via `data`, in which
+#' case the function performs only validation, cleaning, harmonization, and
 #' standardization.
 #'
 #' Regardless of the ingestion mode, the returned dataset is fully harmonized and
-#' consistent with the historical SI-PNI data structure.
+#' consistent across years (1994 to present).
 #'
-#' @param year A numeric value indicating the year of the data to be downloaded (Supported range: 1994-2023).
+#' @param year A numeric value indicating the year of the data to be downloaded (1994 to present).
 #' @param state A string indicating the Brazilian state abbreviation (e.g., "SP", "RJ", "AC").
 #' @param strategy A string identifying the vaccination strategy (e.g., "Rotina", "Especial", "Bloqueio").
 #' If NULL and in an interactive session, a menu will appear.
 #' @param product A string identifying the specific vaccine product (e.g., "BCG - BCG", "Hepatite B - HB").
-#' Must be a valid product for the chosen strategy. If NULL and in an interactive session, a menu will appear.
+#' For 2024 onwards, both legacy names (e.g., "BCG - BCG") and new dashboard names
+#' (e.g., "87 - vacina covid-19-RNAm, Pfizer (Comirnaty)") are accepted. If NULL and in an interactive session, a menu will appear.
 #' @param dose A character vector indicating the dose categories that were selected when downloading the data.
 #' This argument is only required when using manually downloaded files up to 2022.
-#' @param data An optional path to a local Excel (.xlsx) file downloaded manually from
-#' the official DATASUS vaccination dashboard. If provided, web scraping is skipped and
-#' the function performs only data cleaning and harmonization. This argument is mandatory
-#' for data from 2023 onwards.
+#' @param data An optional path to a local Excel (.xls/.xlsx) file downloaded manually from
+#' the official DATASUS vaccination dashboard. If provided, automated retrieval is skipped and
+#' the function performs only data cleaning and harmonization.
 #' @param language A string indicating the desired language for variable names and labels.
 #' Accepts "eng" (default) or "pt".
 #'
@@ -194,8 +195,12 @@ load_vaccines <- function(year,
 
 
   ## 2. INTERACTIVE SELECTION (Fallback if arguments are missing)
+  # For 2024+, allow any non-NULL strategy/product string (new vaccines/strategies
+  # on infoms.saude.gov.br are validated directly against the live Qlik fields).
+  allow_new_pni_names <- year >= 2024 && is.null(param$data)
+
   # ---- STRATEGY ----
-  if (is.null(strategy) || !strategy %in% names(pni_valid_combos)) {
+  if (is.null(strategy) || (!allow_new_pni_names && !strategy %in% names(pni_valid_combos))) {
 
     if (!interactive()) {
       message("Invalid or missing strategy.", call. = FALSE)
@@ -225,7 +230,7 @@ load_vaccines <- function(year,
   }
 
   # ---- PRODUCT ----
-  if (is.null(product) || !product %in% pni_valid_combos[[strategy]]) {
+  if (is.null(product) || (!allow_new_pni_names && !product %in% pni_valid_combos[[strategy]])) {
 
     if (!interactive()) {
       message("Invalid or missing product.", call. = FALSE)
@@ -259,10 +264,9 @@ load_vaccines <- function(year,
   }
 
   # 3. Internal Function Call and Data Processing
-  # Check if year is within the supported legacy range
   if (year < 1994) {
 
-    message("Please select a year between 1994 and 2023.")
+    message("Please select a year from 1994 onwards.")
     return(invisible(NULL))
 
   } else if (year >= 1994 && year <= 2023 && is.null(param$data)) {
@@ -275,6 +279,14 @@ load_vaccines <- function(year,
                     dose = param$dose,
                     data = NULL,
                     language = language)
+
+  } else if (year >= 2024 && is.null(param$data)) {
+
+    # Fetch raw data from the new SI-PNI Qlik Sense dashboard (2024+)
+    dat <- load_pni_2024(year = param$year,
+                         state = param$state,
+                         strategy = strategy,
+                         product = product)
 
   } else if (!is.null(param$data)) {
 
@@ -296,7 +308,7 @@ load_vaccines <- function(year,
 
   } else {
 
-    message("For data from 2024 onwards, please download the file manually and provide the file path via the 'data' argument.")
+    message("Please provide a valid year (1994 to present).")
     return(invisible(NULL))
 
   }
