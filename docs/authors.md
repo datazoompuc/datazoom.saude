@@ -3,6 +3,7 @@
 ## Authors
 
 - **Laura Tavares Regadas**. Author, maintainer.
+  [](https://orcid.org/0009-0002-8107-1806)
 
 - **Luana Laport Santos**. Author.
 
