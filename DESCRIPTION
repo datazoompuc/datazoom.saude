@@ -4,12 +4,13 @@ Version: 0.1.1.9000
 Authors@R: c(
     person("Laura", "Tavares Regadas", , "lauratregadas@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0009-0002-8107-1806")),
     person("Luana", "Laport Santos", , "luanalaportsantos@icloud.com", role = "aut"),
-    person("João Paulo", "dos Santos P. Barbosa", , "joao.3158129@gmail.com", role = "aut"),
+    person("João Paulo", "dos Santos P. Barbosa", , "joao.3158129@gmail.com", role = "ctb"),
     person("DataZoom (PUC-Rio)", , , "datazoom@econ.puc-rio.br", role = "fnd",
            comment = c(ROR = "01dg47b60")),
     person("Vanndher Amós", "B. A. de Souza", , "vanndheramos@gmail.com", role = "aut"),
     person("Daniela", "Petruzalek", , "daniela.petruzalek@gmail.com", role = "ctb"),
-    person("Mark", "Adler", role = "ctb")
+    person("Mark", "Adler", role = "ctb"),
+    person("Antonio Pedro", "Rodrigues Bergallo", role = "ctb", comment = c(ORCID = "0009-0004-6132-3070"))
   )
 Description: Provides functions to download, clean, and standardize Brazilian
     public health microdata from DATASUS <https://datasus.saude.gov.br/>, the

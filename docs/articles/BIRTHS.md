@@ -15,11 +15,11 @@ formulation.
 The `load_births` function offers the following parameters:
 
 1.  **time_period**: A numeric value or vector indicating the year(s) of
-    the data to be downloaded. For  
+    the data to be downloaded. For\
     example, `2020` or `2015:2020`. (since 1994 to present)
 
 2.  **states**: A string or array of strings indicating the Brazilian
-    state(s) for which data should be  
+    state(s) for which data should be\
     downloaded. Use “all” (by default) to download data for the entire
     country. For specific states, use abbreviations such as “SP”, “RJ”,
     or c(“SP”, “RJ”).
