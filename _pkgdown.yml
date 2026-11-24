@@ -1,0 +1,99 @@
+url: https://datazoom.com.br/datazoom.saude/
+
+lang: en
+
+template:
+  bootstrap: 5
+  bootswatch: cerulean
+  opengraph:
+    image:
+      src: https://raw.githubusercontent.com/datazoompuc/datazoom.saude/main/hex_dzsaude.png
+      alt: "datazoom.saude hex logo"
+    # twitter: add `creator`/`site` (e.g. "@handle") once Data Zoom has an
+    # official X/Twitter account; pkgdown requires one of them for this block.
+
+home:
+  title: "datazoom.saude: Download Brazilian Public Health Microdata from DATASUS in R"
+  description: >-
+    R package by Data Zoom (PUC-Rio) to download, clean and standardize
+    Brazilian public health microdata from DATASUS: mortality (SIM), live
+    births (SINASC), hospital admissions (SIH), outpatient procedures (SIA),
+    hospital beds (CNES), oncology cases (PO) and vaccination (SI-PNI).
+  links:
+  - text: Data Zoom website (DZ Saúde)
+    href: https://datazoom.com.br/en/dz_saude/
+  - text: Site em português
+    href: https://datazoom.com.br/pt/dz_saude/
+  - text: Install from r-universe
+    href: https://datazoompuc.r-universe.dev/datazoom.saude
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news, ecosystem]
+    right: [search, website, github]
+  components:
+    website:
+      icon: fa-globe
+      href: https://datazoom.com.br/en/dz_saude/
+      aria-label: Data Zoom website
+    ecosystem:
+      text: Data Zoom ecosystem
+      menu:
+      - text: datazoom.amazonia (R)
+        href: https://datazoom.com.br/datazoom.amazonia/
+      - text: datazoom.social (R)
+        href: https://github.com/datazoompuc/datazoom.social
+      - text: datazoom_social (Stata)
+        href: https://datazoom.com.br/en/dz_stata/
+      - text: Data Zoom (PUC-Rio)
+        href: https://datazoom.com.br/en/
+
+reference:
+- title: "Mortality (SIM)"
+  desc: "Mortality Information System: general, fetal, infant, maternal and external-cause deaths."
+  contents:
+  - load_mortality
+- title: "Live births (SINASC)"
+  desc: "Live Birth Information System."
+  contents:
+  - load_births
+- title: "Hospital admissions (SIH)"
+  desc: "Hospital Information System of SUS: AIH records, professional services and rejected AIHs."
+  contents:
+  - load_hospital_admissions
+- title: "Outpatient procedures (SIA)"
+  desc: "Outpatient Information System of SUS: ambulatory production and APAC sub-datasets."
+  contents:
+  - load_outpatient_procedures
+- title: "Hospital beds (CNES)"
+  desc: "Monthly hospital beds from the National Registry of Health Establishments (CNES-LT)."
+  contents:
+  - load_hospital_beds
+- title: "Oncology cases (PO)"
+  desc: "Oncology Panel (PAINEL-Oncologia)."
+  contents:
+  - load_oncology_case
+- title: "Vaccination (SI-PNI)"
+  desc: "National Immunization Program Information System."
+  contents:
+  - load_vaccines
+- title: "Utilities"
+  desc: "Helpers for DATASUS file formats and package documentation."
+  contents:
+  - dbc2dbf_wrapper
+  - datazoom.saude-package
+
+articles:
+- title: "DATASUS systems"
+  navbar: ~
+  contents:
+  - MORTALITY
+  - BIRTHS
+  - HOSPITAL_ADMISSIONS
+  - OUTPATIENT_PROCEDURES
+  - HOSPITAL_BEDS
+  - ONCOLOGY_CASES
+  - VACCINES
+- title: "Other"
+  contents:
+  - municipalities
