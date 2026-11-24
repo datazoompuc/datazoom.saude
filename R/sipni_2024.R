@@ -9,12 +9,26 @@
 # Produces the exact same 9-column schema as load_pni() (1994-2023) so users
 # can combine historical and recent years seamlessly.
 
-PNI_2024_BASE_URL <- "https://infoms.saude.gov.br"
-PNI_2024_APP_ID <- "eb8f8efd-114c-4c45-9c23-6faff35e28fd"
-PNI_2024_ENTRY_URL <- paste0(
-  PNI_2024_BASE_URL,
-  "/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/index.html"
-)
+# Resolve base URL, entry URL, and Qlik App ID dynamically from the manifest
+# (inst/extdata/manifest/v1/datasets_link.csv -> dataset == "datasus_sipni_2024")
+pni_2024_manifest_target <- function() {
+  manifest_url <- datasets_link(
+    source = "datasus",
+    dataset = "datasus_sipni_2024",
+    url = TRUE
+  )
+  if (length(manifest_url) != 1 || is.na(manifest_url) || !nzchar(manifest_url)) {
+    stop("Could not resolve URL for 'datasus_sipni_2024' from manifest.")
+  }
+  base_url <- sub("^(https?://[^/]+).*$", "\\1", manifest_url)
+  entry_url <- sub("\\?app=.*$", "", manifest_url)
+  app_id <- if (grepl("[?&]app=([^&]+)", manifest_url)) {
+    sub(".*[?&]app=([^&]+).*$", "\\1", manifest_url)
+  } else {
+    stop("Manifest URL for 'datasus_sipni_2024' is missing '?app=<app_id>' query parameter: ", manifest_url)
+  }
+  list(base_url = base_url, entry_url = entry_url, app_id = app_id)
+}
 
 # FRAGILE: Qlik field names and app/object IDs depend on the upstream dashboard
 # deployment (SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA).
@@ -175,19 +189,23 @@ pni_2024_parse_rows <- function(df, state, year, strategy, product) {
 }
 
 pni_2024_fetch_qlik_once <- function(year, state, strategy, product) {
-  h <- curl::new_handle(cookiefile = "", followlocation = TRUE, http_version = 2, timeout = 30)
-  invisible(curl::curl_fetch_memory(PNI_2024_ENTRY_URL, handle = h))
+  target <- pni_2024_manifest_target()
 
-  r_csrf <- curl::curl_fetch_memory(paste0(PNI_2024_BASE_URL, "/qps/csrftoken"), handle = h)
+  h <- curl::new_handle(cookiefile = "", followlocation = TRUE, http_version = 2, timeout = 30)
+  invisible(curl::curl_fetch_memory(target$entry_url, handle = h))
+
+  r_csrf <- curl::curl_fetch_memory(paste0(target$base_url, "/qps/csrftoken"), handle = h)
   csrf <- curl::parse_headers_list(r_csrf$headers)[["qlik-csrf-token"]]
   if (is.null(csrf) || !nzchar(csrf)) {
-    stop("Failed to obtain qlik-csrf-token from infoms.saude.gov.br")
+    stop("Failed to obtain qlik-csrf-token from ", target$base_url)
   }
 
   cks <- curl::handle_cookies(h)
   cookie_hdr <- paste0(cks$name, "=", cks$value, collapse = "; ")
+  ws_host <- sub("^https?://", "", target$base_url)
+  ws_scheme <- if (startsWith(target$base_url, "http://")) "ws://" else "wss://"
   ws_url <- paste0(
-    "wss://infoms.saude.gov.br/app/", PNI_2024_APP_ID,
+    ws_scheme, ws_host, "/app/", target$app_id,
     "?qlik-csrf-token=", curl::curl_escape(csrf)
   )
 
@@ -195,7 +213,7 @@ pni_2024_fetch_qlik_once <- function(year, state, strategy, product) {
     ws_url,
     headers = list(
       Cookie = cookie_hdr,
-      Origin = PNI_2024_BASE_URL,
+      Origin = target$base_url,
       "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     ),
     autoConnect = FALSE
@@ -242,7 +260,7 @@ pni_2024_fetch_qlik_once <- function(year, state, strategy, product) {
     stop("Timeout waiting for Qlik RPC method ", method)
   }
 
-  doc_res <- send_rpc(-1L, "OpenDoc", list(PNI_2024_APP_ID))
+  doc_res <- send_rpc(-1L, "OpenDoc", list(target$app_id))
   doc_h <- doc_res$result$qReturn$qHandle
   send_rpc(doc_h, "ClearAll", list(TRUE))
 

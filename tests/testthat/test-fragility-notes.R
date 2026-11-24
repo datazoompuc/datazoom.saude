@@ -26,6 +26,11 @@ test_that("collect_fragility_notes() extracts FRAGILE tags from treatment code",
   notes_pni <- collect_fragility_notes(pni_path, "R/sipni.R")
   expect_true(length(notes_pni) >= 1)
 
+  # sipni_2024.R
+  pni24_path <- file.path(root, "R", "sipni_2024.R")
+  notes_pni24 <- collect_fragility_notes(pni24_path, "R/sipni_2024.R")
+  expect_true(length(notes_pni24) >= 1)
+
   # hospital_beds.R
   cnes_path <- file.path(root, "R", "hospital_beds.R")
   notes_cnes <- collect_fragility_notes(cnes_path, "R/hospital_beds.R")

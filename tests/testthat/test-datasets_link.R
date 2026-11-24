@@ -40,11 +40,14 @@ expected$available_time[expected$dataset == "datasus_siasus_sad"] <- "2012-2018"
 # 6. SI-PNI Web URL added post-migration
 po_idx <- which(expected$survey == "datasus" & expected$dataset == "datasus_po")
 sipni_row <- tibble::tibble(
-  survey = "datasus",
-  dataset = "datasus_sipni",
-  available_time = "1994-2023",
-  available_geo = "State",
-  url = "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf"
+  survey = c("datasus", "datasus"),
+  dataset = c("datasus_sipni", "datasus_sipni_2024"),
+  available_time = c("1994-2023", "2023-2026"),
+  available_geo = c("State", "Municipality"),
+  url = c(
+    "https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf",
+    "https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/index.html?app=eb8f8efd-114c-4c45-9c23-6faff35e28fd"
+  )
 )
 expected <- dplyr::bind_rows(
   expected[1:po_idx, ],
