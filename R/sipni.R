@@ -107,7 +107,7 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL, l
   message("Retrieving SI-PNI vaccination data from DATASUS via HTTP...")
 
   # Handle environment isolation for temporary session cookies
-  withr::with_tempfile("cookie_jar", {
+  return(withr::with_tempfile("cookie_jar", {
 
     # Initialize curl handle with session cookies and forced HTTP/1.1 (prevents ALPN resets)
     h <- curl::new_handle(
@@ -329,7 +329,6 @@ load_pni <- function(year, state, strategy, product, dose = NULL, data = NULL, l
         )
       )
     }
-  })
-
-  return(parse_pni_table(dat, state, year, strategy, product, dose_labels))
+    parse_pni_table(dat, state, year, strategy, product, dose_labels)
+  }))
 }
