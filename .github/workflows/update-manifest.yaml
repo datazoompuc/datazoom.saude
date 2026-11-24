@@ -51,7 +51,7 @@ jobs:
           fi
 
           set +e
-          Rscript actions/scripts/build_manifest.R $CHECK_FLAG
+          Rscript --vanilla actions/scripts/build_manifest.R $CHECK_FLAG
           EXIT_CODE=$?
           set -e
 
@@ -165,7 +165,6 @@ jobs:
               bodyLines.push(`(Could not parse report file: ${err.message})`);
             }
 
-            const title = "[manifest] Automated scraper or validation failure";
             const { data: existing } = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -202,5 +201,5 @@ jobs:
           if-no-files-found: ignore
 
       - name: Fail the run if build_manifest.R signaled a problem
-        if: steps.build.outputs.exit_code != '0' && steps.build.outputs.exit_code != '10' && steps.build.outputs.exit_code != '11'
+        if: steps.build.outputs.exit_code != '0' && steps.build.outputs.exit_code != '10'
         run: exit 1

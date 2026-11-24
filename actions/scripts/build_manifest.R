@@ -291,11 +291,16 @@ pr_body_lines <- c(
 )
 
 if (changes$n_changed > 0) {
+  fmt_key <- function(k) {
+    parts <- strsplit(k, "\r", fixed = TRUE)[[1]]
+    parts <- parts[!is.na(parts) & nzchar(parts) & parts != "NA"]
+    paste(parts, collapse = " / ")
+  }
   pr_body_lines <- c(
     pr_body_lines,
     "",
     sprintf("**Changed dataset keys (%d):**", changes$n_changed),
-    paste0("- `", gsub("\r", " / ", changes$changed_keys), "`")
+    paste0("- `", vapply(changes$changed_keys, fmt_key, character(1)), "`")
   )
 }
 
