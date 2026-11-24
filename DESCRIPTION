@@ -2,7 +2,7 @@ Package: datazoom.saude
 Title: Download Brazilian Public Health Microdata from DATASUS
 Version: 0.1.1.9000
 Authors@R: c(
-    person("Laura", "Tavares Regadas", , "lauratregadas@gmail.com", role = c("aut", "cre")),
+    person("Laura", "Tavares Regadas", , "lauratregadas@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0009-0002-8107-1806")),
     person("Luana", "Laport Santos", , "luanalaportsantos@icloud.com", role = "aut"),
     person("João Paulo", "dos Santos P. Barbosa", , "joao.3158129@gmail.com", role = "aut"),
     person("DataZoom (PUC-Rio)", , , "datazoom@econ.puc-rio.br", role = "fnd",

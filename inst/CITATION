@@ -5,7 +5,7 @@ bibentry(
   key      = "datazoom.saude",
   title    = "{datazoom.saude}: Download Brazilian Public Health Microdata from {DATASUS}",
   author   = c(
-    person("Laura", "Tavares Regadas"),
+    person("Laura", "Tavares Regadas", comment = c(ORCID = "0009-0002-8107-1806")),
     person("Luana", "Laport Santos"),
     person("João Paulo", "dos Santos P. Barbosa"),
     person("Vanndher Amós", "B. A. de Souza")
