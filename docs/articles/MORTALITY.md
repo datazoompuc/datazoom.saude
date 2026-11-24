@@ -1,0 +1,130 @@
+# DATASUS - Mortality Data (SIM)
+
+The `load_mortality` function provides access to the **System of
+Mortality Information (SIM)** datasets, which contain detailed
+information about deaths in Brazil. Each original SIM data file includes
+rows corresponding to a declaration of death (DO) and columns with
+several characteristics of the person, the place of death, and the cause
+of death.
+
+------------------------------------------------------------------------
+
+The `load_mortality` function offers the following parameters:
+
+1.  **dataset**: Specifies the SIM dataset to download:
+
+    - SIM Datasets:
+      - `"general"` – Main Declarations of Death. (National dataset
+        available — `states = "all"`) Contains records of all non-fetal
+        Death Certificates (DO) in Brazil, including socio-demographic
+        data, location, and causes of death (ICD-10). It’s the base for
+        general mortality analysis. (since 1979 to present)
+      - `"fetal"` – Fetal mortality data. (National dataset not
+        available) Contains records of fetal deaths, with information on
+        the mother, pregnancy, and causes of fetal death. It’s essential
+        for maternal and child health. (since 1979 to present)
+      - `"external_causes"` – Mortality data from external causes.
+        (National dataset not available) Contains a subset of
+        `"general"` focusing on deaths due to accidents, violence, and
+        other unnatural causes. Used for safety and prevention studies.
+        (since 1979 to present)
+      - `"infant"` – Infant mortality data (children). (National dataset
+        not available) Contains a subset of `"general"` recording deaths
+        of children under 1 year old, detailing causes and birth-related
+        factors. Crucial for assessing child health. (since 1979 to
+        present)
+      - `"maternal"` – Maternal mortality data. (National dataset not
+        available) Contains a subset of `"general"` for deaths of women
+        during or shortly after pregnancy/childbirth, detailing
+        obstetric causes. Important for women’s health. (since 1996 to
+        present)
+
+2.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
+
+3.  **states**: (valid only for the `general` dataset) — a string or a
+    vector of strings indicating the Brazilian state(s) for which the
+    data should be downloaded. The default is `"all"`, which downloads
+    data for the entire country. For specific states, use the official
+    abbreviations such as `"SP"` (São Paulo), `"RJ"` (Rio de Janeiro),
+    or `c("SP", "RJ")`.
+
+4.  **raw_data**: Logical, default is `FALSE`.
+
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
+
+5.  **keep_all**: A boolean choosing whether to aggregate the data by
+    municipality, losing individual-level variables (`FALSE`) or to keep
+    all original variables (`TRUE`). Only applies when `raw_data` is
+    `FALSE`.
+
+6.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
+
+**Examples:**
+
+``` r
+
+library(datazoom.saude)
+
+# Download raw data for general mortality - State of Rio de Janeiro, 2022.
+raw_data_general_rj <- load_mortality(
+  dataset = "general",
+  time_period = 2022,
+  states = "RJ",
+  raw_data = TRUE
+)
+
+# Download treated data for general mortality - States of Rio and São Paulo, 2022.
+trated_data_general_rj <- load_mortality(
+  dataset = "general",
+  time_period = 2022,
+  states = c("RJ", "SP"),
+  raw_data = FALSE,
+  keep_all = FALSE # Explicitly stating default behavior
+)
+
+# Download treated data for Maternal Deaths - Brazil, 2020 to 2022.
+# Descriptions in Portuguese.
+# Note: `maternal` does not provide separate files by state.
+data_maternal_pt <- load_mortality(
+  dataset = "maternal",
+  time_period = 2020:2022,
+  states = "all",
+  raw_data = FALSE,
+  language = "pt"
+)
+
+# Download treated data for Infant Deaths - Brazil, 2017.
+# Keeping all individual variables (not aggregated).
+data_infant_full <- load_mortality(
+  dataset = "infant",
+  time_period = 2017,
+  states = "all",
+  raw_data = FALSE,
+  keep_all = TRUE,
+  language = "eng"
+)
+  
+# Download treated data for Fetal Deaths - State of Amazonas, 2000.
+data_infant_full <- load_mortality(
+  dataset = "fetal",
+  time_period = 2000,
+  states = "AM", 
+  raw_data = FALSE,
+  language = "eng"
+)
+
+# Download treated data for External Causes Deaths - State of Acre, 2022.
+data_infant_full <- load_mortality(
+  dataset = "fetal",
+  time_period = 2022,
+  states = "AC", 
+  raw_data = FALSE,
+  language = "eng"
+)
+```

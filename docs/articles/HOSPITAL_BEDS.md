@@ -1,0 +1,69 @@
+# DATASUS - Hospital Beds (CNES-LT)
+
+The `load_hospital_beds` function specifically focuses on the **CNES -
+LT (Beds)** dataset, part of the National Register of Health
+Establishments (CNES). This dataset provides information on the number
+of available hospital beds in health establishments across Brazil (since
+Out/2005 to present).
+
+------------------------------------------------------------------------
+
+The `load_hospital_beds` function offers the following parameters:
+
+1.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
+    (since Out/2005 to present)
+
+2.  **states**: a string or vector of strings indicating the Brazilian
+    state(s) for which the data should be downloaded. Use `"all"` to
+    download data for the entire country. For specific states (valid
+    only for the `general` dataset), use abbreviations like `"SP"` (São
+    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
+
+3.  **raw_data**: Logical, default is `FALSE`.
+
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
+
+4.  **keep_all**: A boolean choosing whether to aggregate the data by
+    municipality, losing individual-level variables (`FALSE`) or to keep
+    all original variables (`TRUE`). Only applies when `raw_data` is
+    `FALSE`.
+
+5.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
+
+**Examples:**
+
+``` r
+
+library(datazoom.saude)
+
+# Download treated data - States of Amazonas and Pará, 2010.
+data_beds_full <- load_hospital_beds(
+  time_period = 2010,
+  states = c("AM", "PA"),
+  raw_data = FALSE,
+  language = "eng"
+)
+
+# Download treated data - Brrazil, 2010 to 2022.
+# Descriptions in Portuguese.
+data_beds_full <- load_hospital_beds(
+  time_period = 2010:2022,
+  states = "all",
+  raw_data = FALSE,
+  language = "pt"
+)
+
+# Download raw data - States of Rio de Janeiro, 2015.
+data_beds_raw <- load_hospital_beds(
+  time_period = 2015,
+  states = "RJ",
+  raw_data = TRUE,
+  language = "eng"
+)
+```
