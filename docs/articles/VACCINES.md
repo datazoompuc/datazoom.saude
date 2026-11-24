@@ -1,0 +1,262 @@
+# DATASUS - Vaccination Data (SI-PNI)
+
+The
+[`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+function provides access to the **National Immunization Program
+Information System (SI-PNI)**. This dataset contains records of vaccine
+doses applied across Brazil, allowing for the analysis of immunization
+coverage and public health strategies.
+
+------------------------------------------------------------------------
+
+The `load_vaccines` function offers the following parameters:
+
+1.  **year**: A numeric value indicating the year of the data to be
+    downloaded.
+    - Currently supported range: `1994` to present.
+    - Note: You must input only one year at a time.
+2.  **state**: A string indicating the Brazilian state abbreviation for
+    which the data should be downloaded (e.g., `"SP"`, `"RJ"`, `"AC"`).
+    - Note: You must input only one state at a time.
+3.  **strategy**: Specifies the vaccination strategy.
+    - Common strategies include:
+      - `"Rotina"` – Routine vaccination schedule.
+      - `"Especial"` – Special immunobiologicals.
+      - `"Bloqueio"` – Blocking vaccination in outbreak areas.
+      - `"Intensificação"` – Intensification campaigns.
+      - `"Serviço Privado"` – Data from private clinics.
+    - Note: If set to `NULL`, a selection menu will appear.
+4.  **product**: Specifies the specific vaccine or immunobiological
+    product (e.g., `"BCG - BCG"`, `"Febre amarela - FA"`,
+    `"Hepatite B - HB"`).
+    - The valid options for product depend strictly on the chosen
+      **strategy**.
+    - Note: If set to `NULL`, a selection menu will appear.
+5.  **dose**: A character vector indicating the dose categories that
+    were selected when downloading the data.
+    - This argument is **only required when using manually downloaded
+      files** up to 2023.
+      - The values must correspond to the **“Dose”** filter used (e.g.,
+        `"D1"`, `c("D1", "2")`, `"Única"`, etc.).
+6.  **data**: Optional path to a local `.xls` or `.xlsx` file downloaded
+    manually.
+    - If provided,
+      [`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+      will **skip HTTP retrieval** and only perform data cleaning and
+      harmonization.
+    - This argument is optional for data up to 2023, but **required for
+      data from 2024 onwards**.
+7.  **language**: A string indicating the desired language of variable
+    names and labels.
+    - Accepts `"eng"` (default) for English or `"pt"` for Portuguese.
+
+------------------------------------------------------------------------
+
+## Data ingestion modes
+
+The function supports **two distinct data ingestion modes**, depending
+on the availability and stability of the official SI-PNI portals:
+
+1.  **Automated retrieval** for all supported years:
+    - `1994`–`2023`: via direct HTTP requests to the legacy SI-PNI Web
+      system.
+    - `2024`–present: via direct Qlik Engine queries to the new DATASUS
+      interactive dashboard (`infoms.saude.gov.br`).
+2.  **Manual data ingestion** (optional), where the user downloads the
+    data directly from the official DATASUS dashboard and provides it
+    via `data`, in which case the function performs only cleaning,
+    harmonization, and standardization.
+
+Both modes produce a **fully harmonized output**, consistent with the
+historical SI-PNI data structure.
+
+### 1. Automated retrieval (1994 - present)
+
+[`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+can automatically retrieve consolidated vaccination data across the
+entire historical and recent series (`1994` to present) without
+requiring Google Chrome or headless browsers.
+
+This mode:
+
+1.  Requires a stable internet connection.
+2.  Depends on the availability and responsiveness of the DATASUS SI-PNI
+    portals.
+3.  Uses direct HTTP requests (`1994`–`2023`) and Qlik Engine JSON-RPC
+    WebSocket queries (`2024`–present).
+
+No manual intervention is required from the user.
+
+### 2.1. Manual download (1994 - 2023)
+
+From **1994 to 2023**, vaccination data are available through the
+**legacy SI-PNI Web system**. Although
+[`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+can retrieve these data automatically via direct HTTP requests, users
+may also choose to **manually download the data and provide the file to
+the function for harmonization**.
+
+In this case,
+[`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+will perform only the cleaning, harmonization, and standardization
+steps, ensuring that the resulting dataset follows the same structure as
+the automatically collected data.
+
+This approach can be useful when:
+
+1.  The SI-PNI website is unstable or slow
+2.  The user already possesses previously downloaded data
+3.  The user prefers manual control over the data retrieval process
+
+#### Step-by-step instructions for manual download
+
+1.  Access the DATASUS vaccination dashboard:  
+    *<https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf>*
+
+2.  In the filter panel, **fill only the following fields**:
+
+- **UF**
+- **Ano**
+- **Estratégia**
+- **Produto**
+- **Dose**
+
+(Do not apply any additional filters)
+
+3.  Select the option **“Totalizar por Município”**.
+
+4.  Click **“Pesquisar”** and wait for the table to be generated.
+
+5.  Below the table, locate the section **“Exportar Para o Formato”**
+    and click on the first icon (`.xls`) to download the data.
+
+6.  Provide the downloaded file to
+    [`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+    using the `data` argument.
+
+### 2.2. Manual download (2024 - present)
+
+From **2024 onwards**, vaccination data are published through the new
+DATASUS interactive dashboard (`infoms.saude.gov.br`). Although
+[`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+retrieves these data automatically, users may also choose to **manually
+download the `.xlsx` file and provide it via the `data` argument**.
+
+In this case,
+[`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+will perform only the cleaning, harmonization, and standardization
+steps.
+
+#### Step-by-step instructions for manual download
+
+1.  Access the DATASUS vaccination dashboard:  
+    *<https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA.html>*
+
+2.  In the filter panel, **fill only the following fields**:
+
+- **UF Ocorrência**
+- **Ano Vacina**
+- **Estratégia de Vacinação**
+- **Imunobiológico**
+- **Doses**
+
+(Do not apply any additional filters)
+
+3.  Switch to the **“Tabelas”** tab.
+
+4.  In the table configuration:
+
+- Add the variable **“Tipo Dose”** (at the left side) to the table.
+- Expand all rows to display the full table.
+
+5.  Click **“Baixar Dados”** and save the file in `.xlsx` format.
+
+6.  Provide the downloaded file to
+    [`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+    using the `data` argument.
+
+------------------------------------------------------------------------
+
+**Interactive Mode:**
+
+If you are unsure of the exact strings for `strategy` or `product`, you
+can run the function providing only the `year` and `state`. The function
+will provide an interactive menu in the R console for you to choose from
+valid combinations. (The interactive mode is only valid for data between
+`1994` and `2022`)
+
+------------------------------------------------------------------------
+
+**Examples:**
+
+``` r
+
+library(datazoom.saude)
+
+# Download data for Yellow Fever via web scraping (Routine strategy) - State of Acre, 2020
+data_fa_acre <- load_vaccines(
+  year = 2020,
+  state = "AC",
+  strategy = "Rotina",
+  product = "Febre amarela - FA",
+  language = "eng"
+)
+
+# Download data for BCG via web scraping (Private Service strategy) - State of São Paulo, 2018
+data_bcg_sp <- load_vaccines(
+  year = 2018,
+  state = "SP",
+  strategy = "Serviço Privado",
+  product = "BCG - BCG",
+  language = "pt"
+)
+
+# Download data for Trivalent Influenza using a manually downloaded file (Blockade strategy) - State of Acre, 2018
+data_fa_acre <- load_vaccines(
+  year = 2018,
+  state = "AC",
+  strategy = "Bloqueio",
+  product = "Influenza Trivalente - FLU3V",
+  dose = c("D1", "DU", "REV", "DI"), # required for data up to 2022
+  data = "C:/path/to/downloaded_file.xls", #.xls
+  language = "eng"
+)
+
+# Download data for Trivalent Influenza using a manually downloaded file (Blockade strategy) - State of Minas Gerais, 2024
+data_fa_acre <- load_vaccines(
+  year = 2024,
+  state = "MG",
+  strategy = "Bloqueio",
+  product = "Influenza Trivalente - FLU3V",
+  dose = NULL, # not required for data 2023 onwards
+  data = "C:/path/to/downloaded_file.xls", #.xls
+  language = "pt"
+)
+
+# Example of calling the function to trigger interactive selection - State of Minas Gerais, 2010
+data_interactive <- load_vaccines(
+  year = 2010,
+  state = "MG",
+  language = "pt")
+```
+
+------------------------------------------------------------------------
+
+**Technical Note:**
+
+1.  Automated retrieval relies on the legacy SI-PNI Web system and is
+    subject to instability, timeouts, and unexpected failures on the
+    DATASUS side.
+2.  For recent years (2024 onwards), manual download via the DATASUS
+    dashboard is the supported data source.
+3.  Regardless of the ingestion mode,
+    [`load_vaccines()`](https://datazoom.com.br/datazoom.saude/reference/load_vaccines.md)
+    always returns a harmonized dataset with consistent variable names,
+    dose categories, and structure.
+
+**Important:** For the automated retrieval mode, please be aware that
+the **SI-PNI** website
+(*<https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf>*)
+can experience temporary server-side instability. The function includes
+built-in retries to handle connection resets. If the function fails, it
+is recommended to wait a few minutes and try again.

@@ -1,0 +1,128 @@
+# DATASUS - Outpatient Procedures (SIASUS)
+
+The `load_outpatient_procedures` function provides access to various
+**SIASUS (Ambulatory Information System)** datasets, covering a broad
+spectrum of outpatient services funded by the public health system
+(SUS). Each row in these datasets corresponds to a procedure performed
+at an outpatient level, including clinical, administrative, and
+financial details. The data is organized by type of service or procedure
+group.
+
+> **Note:** In all SIASUS datasets, variables related to the *Cadastro
+> Nacional de Saúde* (CNS – National Health Card number) are
+> **encrypted** by DATASUS.  
+> This ensures patient confidentiality and means that individual-level
+> CNS identifiers cannot be directly used for linkage across datasets.
+> Because of this, this variable is removed when `raw_data = FALSE`.
+
+------------------------------------------------------------------------
+
+The `load_outpacient_procedures` function offers the following
+parameters:
+
+1.  **dataset**: Specifies the SIASUS dataset to download:
+
+    - `"ambulatory_production"` – Consolidated Outpatient Procedures
+      (Procedimentos Ambulatoriais). Contains records of approved
+      outpatient procedures across all specialties. This is the most
+      comprehensive SIASUS dataset and is often used for general
+      outpatient service analysis. (since Jul/1994 to present)
+    - `"bariatric_surgery"` – Pre-Bariatric Surgery (Pré Cirurgia
+      Bariátrica). Records related to bariatric surgery procedures
+      performed in outpatient settings. (Jan/2008 to Mar/2013)
+    - `"bariatric_surgery_follow_up"` – Bariatric Surgery Follow-Up
+      (Acompanhamento Bariátrico). Includes follow-up care for patients
+      who have undergone bariatric surgery, focusing on long-term
+      monitoring and outcomes. (since Apr/2013 to present)
+    - `"fistula_confection"` – Vascular Access for Dialysis (Fístula
+      Arteriovenosa). Documents procedures involving the creation or
+      maintenance of arteriovenous fistulas, essential for hemodialysis
+      treatment. (since Jun/2014 to present)
+    - `"diverse_reports"` – Miscellaneous Specialized Procedures (Laudos
+      Diversos) Covers less frequent or highly specialized outpatient
+      procedures not classified in other datasets. (since Jan/2008 to
+      present)
+    - `"medicines"` – High-Cost Medications (Medicamentos) Tracks the
+      distribution and usage of outpatient medications that are
+      high-cost and part of specific therapeutic programs. (since
+      Jan/2008 to present)
+    - `"nephrology"` – Nephrology / Dialysis (Nefrologia) Contains
+      outpatient nephrology procedures, particularly related to the care
+      and monitoring of patients with chronic kidney disease. (Jan/2008
+      to Out/2024)
+    - `"dialytic_treatment"` – Dialysis Treatment (Tratamento Dialítico)
+      Includes outpatient dialysis treatment sessions for patients with
+      kidney failure. (since Jun/2014 to present)
+    - `"psychosocial"` – RAAS Psychosocial Care (RAAS Psicossocial) Part
+      of the Specialized Outpatient Mental Health Services. Records care
+      provided through Psychosocial Care Centers (CAPS), including
+      treatments for severe mental disorders and substance use. (since
+      Jan/2013 to present)
+    - `"home_care"` – RAAS Home Care (RAAS Atenção Domiciliar) Focuses
+      on outpatient care provided at patients’ homes, often involving
+      chronic condition management, palliative care, and
+      multi-professional follow-ups. (since Nov/2012 to present)
+
+2.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
+
+3.  **states**: a string or vector of strings indicating the Brazilian
+    state(s) for which the data should be downloaded. Use `"all"` to
+    download data for the entire country. For specific states (valid
+    only for the `general` dataset), use abbreviations like `"SP"` (São
+    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
+
+4.  **raw_data**: Logical, default is `FALSE`.
+
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
+
+5.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
+
+**Examples:**
+
+``` r
+
+library(datazoom.saude)
+
+# Download processed data for Post-Bariatric Surgery Follow-Up (ABO) – State of Acre, 2012.
+bariatric_surgery_follow_up <- load_outpatient_procedures(
+  dataset = "bariatric_surgery_follow_up",
+  time_period = 2012,
+  states = "AC",
+  raw_data = FALSE,
+  language = "eng"
+)
+
+# Download processed data for Consolidated Outpatient Procedures (PA) – State of Acre, 2022.
+# Descriptions in Portuguese.
+ambulatory_production <- load_outpatient_procedures(
+  dataset = "ambulatory_production",
+  time_period = 2022,
+  states = "AC",
+  raw_data = FALSE,
+  language = "pt"
+)
+
+# Download raw data for High-Cost Medications (AM) - State of Pernambuco, 2021.
+medicines_raw <- load_outpatient_procedures(
+  dataset = "medicines",
+  time_period = 2021,
+  states = "PE",
+  raw_data = TRUE,
+  language = "eng"
+)
+
+# Download processed data for Psychosocial Care (PS) - State of Acre, 2022 to 2023.
+psychosocial <- load_outpatient_procedures(
+  dataset = "psychosocial",
+  time_period = 2022:2023,
+  states = "AC",
+  raw_data = FALSE,
+  language = "eng"
+)
+```

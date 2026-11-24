@@ -1,0 +1,101 @@
+# DATASUS - Hospital Admissions (SIH)
+
+The `load_hospital_admissions` function provides access to multiple
+datasets from the **Hospital Information System (SIH)**, which record
+detailed information about hospital admissions funded by Brazil’s public
+health system (SUS). Each row corresponds to a Hospital Admission
+Authorization (AIH), and the files are organized by the type of
+information they contain.
+
+------------------------------------------------------------------------
+
+The `load_hospital_admissions` function offers the following parameters:
+
+1.  **dataset**: Specifies the SIH dataset to download:
+
+    - SIH hospitalization data is split across four datasets (since
+      Jan/2008 to present):
+      - `"reduced_aih"` – Reduced AIHs (summary of hospitalizations).
+        Contains consolidated information about approved and processed
+        AIHs, including the main procedure performed, related diagnoses,
+        and total costs. This is the most commonly used dataset for
+        statistical and epidemiological analyses.
+      - `"professional_services"` – Professional Services performed
+        during hospitalization. Provides detailed records of the
+        professional services carried out during hospital stays,
+        including procedures performed, professionals involved
+        (CBO/CNS), and amounts paid for medical and hospital services.
+      - `"rejected_aih"` – Rejected AIHs (general reason). Includes
+        consolidated records of AIHs that were rejected, specifying the
+        general reason for the rejection but without detailed error
+        codes. Useful for analyzing the volume and impact of rejections.
+      - `"rejected_aih_error"` – Rejected AIHs with specific error
+        codes. Contains AIHs that were rejected due to inconsistencies
+        found during processing. Each rejection includes a specific
+        error code indicating the reason (e.g., invalid patient data,
+        procedure incompatibilities).
+
+2.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
+
+3.  **states**: a string or vector of strings indicating the Brazilian
+    state(s) for which the data should be downloaded. Use `"all"` to
+    download data for the entire country. For specific states (valid
+    only for the `general` dataset), use abbreviations like `"SP"` (São
+    Paulo), `"RJ"` (Rio de Janeiro), or `c("SP", "RJ")`.
+
+4.  **raw_data**: Logical, default is `FALSE`.
+
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
+
+5.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
+
+**Examples:**
+
+``` r
+
+library(datazoom.saude)
+
+# Download raw data for Reduced AIHs (AIHs Reduzida) – All country, 2010.
+data_rd_raw <- load_hospital_admissions(
+  dataset = "reduced_aih",
+  time_period = 2010,
+  states = "all",
+  raw_data = TRUE,
+  language = "eng"
+)
+
+# Download processed data for Rejected AIHs with Error Codes – State of Amazonas, 2010 to 2020.
+# Descriptions in Portuguese.
+data_er_processed <- load_hospital_admissions(
+  dataset = "rejected_aih_error",
+  time_period = 2010:2020,
+  states = "AM",
+  raw_data = FALSE,
+  language = "pt"
+)
+
+# Download raw data for Professional Services – States of Rio and São Paulo, 2022.
+data_sp_raw <- load_hospital_admissions(
+  dataset = "professional_services",
+  time_period = 2022,
+  states = C("RJ","SP"),
+  raw_data = TRUE,
+  language = "eng"
+)
+
+# Download processed data for Professional Services – Federal District, 2020 to 2022.
+# Descriptions in Portuguese.
+data_sp_processed <- load_hospital_admissions(
+  dataset = "professional_services",
+  time_period = 2020:2022,
+  states = "DF",
+  raw_data = FALSE,
+  language = "pt"
+)
+```

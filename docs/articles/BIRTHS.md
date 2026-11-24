@@ -1,0 +1,74 @@
+# DATASUS - Live Births (SINASC)
+
+The `load_births` function provides access to the **Live Birth
+Information System (SINASC)** dataset, which collects and records
+detailed information about births in Brazil. This data is extracted from
+Live Birth Certificates (DNVs) and includes information about the
+newborn, such as sex, weight, and gestational age, as well as data about
+the mother, such as age, number of children and health conditions (since
+1994 to present). SINASC is essential for monitoring maternal and child
+health and generating relevant indicators for public health policy
+formulation.
+
+------------------------------------------------------------------------
+
+The `load_births` function offers the following parameters:
+
+1.  **time_period**: A numeric value or vector indicating the year(s) of
+    the data to be downloaded. For  
+    example, `2020` or `2015:2020`. (since 1994 to present)
+
+2.  **states**: A string or array of strings indicating the Brazilian
+    state(s) for which data should be  
+    downloaded. Use “all” (by default) to download data for the entire
+    country. For specific states, use abbreviations such as “SP”, “RJ”,
+    or c(“SP”, “RJ”).
+
+3.  **raw_data**: Logical, default is `FALSE`.
+
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
+
+4.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts “eng” (default) for English or “pt” for
+    Portuguese.
+
+**Examples:**
+
+``` r
+
+library(datazoom.saude)
+
+# Download raw birth data for 2023 in the state of Rio de Janeiro (RJ).
+data_raw_births <- load_births(
+  time_period = 2023,
+  states = "RJ"
+)
+
+# Download raw birth data for 2020 in the states of Rio de Janeiro (RJ) and São Paulo (SP),
+# keeping the original raw format.
+data_raw_births2 <- load_births(
+  time_period = 2020,
+  states = c("RJ","SP"),
+  raw_data = TRUE
+)
+
+# Download raw birth data for 2014 in the state of Amazonas (AM),
+# with variable labels in Portuguese.
+data_raw_births3 <- load_births(
+  time_period = 2014,
+  states = "AM",
+  language = "pt"
+)
+
+# Download processed birth data for 2015 in the state of Amazonas (AM),
+# with variable labels in Portuguese for easier analysis.
+data_processed_births <- load_births(
+  time_period = 2015,
+  states = "AM",
+  raw_data = FALSE,
+  language = "pt"
+)
+```

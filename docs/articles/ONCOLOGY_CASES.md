@@ -1,0 +1,47 @@
+# DATASUS - Oncology Cases (Oncology Panel)
+
+The `load_oncology_case` function downloads and organizes data from the
+**Oncology Panel (Painel de Oncologia)**, part of DATASUS. This dataset
+is widely used in public health and epidemiological analyses related to
+cancer cases in Brazil (since 2013 to present).
+
+------------------------------------------------------------------------
+
+The `load_oncology_case` function offers the following parameters:
+
+1.  **time_period**: a numeric value or vector indicating the year(s) of
+    the data to be downloaded. For example, `2020` or `2015:2020`.
+    (since 2013 to present)
+
+2.  **raw_data**: Logical, default is `FALSE`.
+
+    - `TRUE`: If TRUE, returns the raw data exactly as provided by
+      DATASUS.
+    - `FALSE`: If FALSE (default), returns a cleaned and standardized
+      version of the dataset.
+
+3.  **language**: A string indicating the desired language of variable
+    names and labels. Accepts `"eng"` (default) for English or `"pt"`
+    for Portuguese (only when `raw_data = FALSE`).
+
+**Examples:**
+
+``` r
+
+library(datazoom.saude)
+
+# Download processed oncology data for the year 2023.
+# This will return data from the Oncology Panel for all Brazilian states.
+oncology_cases_treated <- load_oncology_case(
+  time_period = 2023,
+  raw_data = FALSE,
+  language = "eng"
+)
+
+# Download raw oncology data for the years 2021 to 2022 with labels in portuguese.
+oncology_cases_raw <- load_oncology_case(
+  time_period = 2021:2022,
+  raw_data = TRUE,
+  language = "pt"
+)
+```
