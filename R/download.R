@@ -75,8 +75,56 @@ download_file_once <- function(url, destfile, source) {
   if (identical(source, "datasus")) {
     utils::download.file(url = url, destfile = destfile, method = "curl", quiet = TRUE)
   } else {
-    utils::download.file(url = url, destfile = destfile, mode = "wb")
+    utils::download.file(url = url, destfile = destfile, mode = "wb", quiet = TRUE)
   }
+}
+
+# DATASUS FTP intermittently drops connections mid-transfer. Retry up to
+# `max_retries` times with linear backoff, cleaning up partial files between
+# attempts.
+perform_download <- function(path, temp, source, max_retries = 3L, retry_wait = 1.5) {
+  last_err <- NULL
+
+  for (attempt in seq_len(max_retries)) {
+    if (file.exists(temp)) unlink(temp)
+
+    res <- tryCatch(
+      suppressWarnings(download_file_once(url = path, destfile = temp, source = source)),
+      error = function(e) e
+    )
+
+    ok <- !inherits(res, "error") &&
+      identical(as.integer(res), 0L) &&
+      file.exists(temp) &&
+      isTRUE(file.info(temp)$size > 0)
+
+    if (ok) {
+      return(invisible(TRUE))
+    }
+
+    last_err <- if (inherits(res, "error")) {
+      conditionMessage(res)
+    } else if (!identical(as.integer(res), 0L)) {
+      sprintf("download.file returned status %s", as.character(res))
+    } else {
+      "downloaded file is missing or empty"
+    }
+
+    if (file.exists(temp)) unlink(temp)
+
+    if (attempt < max_retries) {
+      message(sprintf(
+        "Download attempt %d/%d failed for %s (%s). Retrying in %.1fs...",
+        attempt, max_retries, basename(path), last_err, retry_wait * attempt
+      ))
+      Sys.sleep(retry_wait * attempt)
+    }
+  }
+
+  stop(sprintf(
+    "Failed to download %s after %d attempts: %s",
+    path, max_retries, last_err
+  ))
 }
 
 external_download <- function(dataset = NULL, source = NULL, file_name = NULL) {
@@ -131,10 +179,10 @@ external_download <- function(dataset = NULL, source = NULL, file_name = NULL) {
     on.exit(unlink(temp), add = TRUE)
   }
 
-  ## Downloading file (skipped on a session cache hit)
+  ## Downloading file (skipped on a session cache hit; 3-attempt retry on miss)
 
   if (!file_cache_hit) {
-    download_file_once(url = path, destfile = temp, source = source)
+    perform_download(path = path, temp = temp, source = source)
     assert_dbc_file(temp, path)
   }
 
@@ -144,12 +192,6 @@ external_download <- function(dataset = NULL, source = NULL, file_name = NULL) {
 
   dat <- read.dbc(temp)
 
-  ###################################
-  ## Register in the session cache ##
-  ###################################
-
-  # Registered only after read.dbc() succeeds so a corrupt/truncated file
-  # is never cached across retries in the same R session.
   if (!file_cache_hit && use_cache) {
     file_cache_set(cache_key, dir = dir, temp = temp)
     registered <- TRUE

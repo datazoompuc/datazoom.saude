@@ -52,6 +52,10 @@ Each supported dataset is detailed in the sections below.
 
 Downloaded `.dbc` files are cached on disk in temporary session directories (`tempdir()`) for the lifetime of the current R session. Re-running a query for the same file (for example, switching `language` or `raw_data`) reuses the local cached file instead of hitting DATASUS FTP again. Cached files are never persisted across sessions and are removed automatically when R exits. Set `options(datazoom.saude.cache = FALSE)` to disable caching.
 
+### Connection Reliability & Automatic Retries
+
+The official DATASUS FTP server (`ftp.datasus.gov.br`) intermittently drops connections mid-transfer. To prevent transient network failures from interrupting multi-year or multi-state queries, every FTP file transfer is automatically retried up to **3 times** with backoff when a connection drops or a partial file is received.
+
 ***
 ## Installation
 

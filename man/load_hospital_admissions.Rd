@@ -59,6 +59,12 @@ specific error codes indicating why the rejection occurred (e.g., patient data i
 procedure incompatibility).}
 }
 }
+\section{Connection Reliability}{
+
+The DATASUS FTP server (\code{ftp.datasus.gov.br}) intermittently drops connections
+mid-transfer. Downloads are automatically retried up to 3 times.
+}
+
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 load_hospital_admissions(dataset = "professional_services",

@@ -62,6 +62,14 @@ FTP again. Cached files are never persisted across sessions and are
 removed automatically when R exits. Set
 `options(datazoom.saude.cache = FALSE)` to disable caching.
 
+### Connection Reliability & Automatic Retries
+
+The official DATASUS FTP server (`ftp.datasus.gov.br`) intermittently
+drops connections mid-transfer. To prevent transient network failures
+from interrupting multi-year or multi-state queries, every FTP file
+transfer is automatically retried up to **3 times** with backoff when a
+connection drops or a partial file is received.
+
 ------------------------------------------------------------------------
 
 ## Installation
