@@ -51,6 +51,25 @@ file_cache_set <- function(key, dir, temp) {
   assign(key, list(dir = dir, temp = temp), envir = download_cache_files_env())
 }
 
+assert_dbc_file <- function(file_path, source_url) {
+  if (!file.exists(file_path)) {
+    stop(sprintf("external_download(): downloaded file is missing for %s", source_url))
+  }
+  size <- file.info(file_path)$size
+  if (is.na(size) || size < 32) {
+    stop(sprintf("external_download(): received an unrecognized %s-byte file from %s", size, source_url))
+  }
+  raw_head <- readBin(file_path, what = "raw", n = min(256L, as.integer(size)))
+  txt_head <- trimws(rawToChar(raw_head[raw_head != as.raw(0)]))
+  if (grepl("^<(!doctype|html|head|body|\\?xml)", txt_head, ignore.case = TRUE)) {
+    stop(sprintf(
+      "external_download(): received an unrecognized %d-byte HTML/XML response instead of a .dbc file from %s",
+      as.integer(size), source_url
+    ))
+  }
+  invisible(TRUE)
+}
+
 download_file_once <- function(url, destfile, source) {
   if (identical(source, "datasus")) {
     utils::download.file(url = url, destfile = destfile, method = "curl", quiet = TRUE)
@@ -115,6 +134,7 @@ external_download <- function(dataset = NULL, source = NULL, file_name = NULL) {
 
   if (!file_cache_hit) {
     download_file_once(url = path, destfile = temp, source = source)
+    assert_dbc_file(temp, path)
   }
 
   ###############
