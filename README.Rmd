@@ -162,14 +162,14 @@ DataZoom is developed by a team at the Pontifícia Universidade Católica do Rio
 
 To cite `datazoom.saude` in publications, run `citation("datazoom.saude")` in R, or use:
 
-> Tavares Regadas L, Laport Santos L, dos Santos P. Barbosa JP, B. A. de Souza VA (2026). *datazoom.saude: Download Brazilian Public Health Microdata from DATASUS*. Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio). R package version 0.1.1. <https://CRAN.R-project.org/package=datazoom.saude>
+> Tavares Regadas L, Laport Santos L, B. A. de Souza VA (2026). *datazoom.saude: Download Brazilian Public Health Microdata from DATASUS*. Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio). R package version 0.1.1. <https://CRAN.R-project.org/package=datazoom.saude>
 
 A BibTeX entry for LaTeX users is:
 
 ```
 @Manual{datazoom.saude,
   title = {{datazoom.saude}: Download Brazilian Public Health Microdata from {DATASUS}},
-  author = {Laura {Tavares Regadas} and Luana {Laport Santos} and Jo{\~a}o Paulo {dos Santos P. Barbosa} and Vanndher Am{\'o}s {B. A. de Souza}},
+  author = {Laura {Tavares Regadas} and Luana {Laport Santos} and Vanndher Am{\'o}s {B. A. de Souza}},
   organization = {Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio)},
   year = {2026},
   note = {R package version 0.1.1},

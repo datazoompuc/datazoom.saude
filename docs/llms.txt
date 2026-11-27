@@ -112,7 +112,7 @@ births <- load_births(time_period = 2020:2021, states = "SP", language = "pt")
 For detailed usage examples and guides on each database, please refer to
 the sections (vignettes) below.
 
-  
+\
 
 # Mortality
 
@@ -262,11 +262,11 @@ formulation.
 The `load_births` function offers the following parameters:
 
 1.  **time_period**: A numeric value or vector indicating the year(s) of
-    the data to be downloaded. For  
+    the data to be downloaded. For\
     example, `2020` or `2015:2020`. (since 1994 to present)
 
 2.  **states**: A string or array of strings indicating the Brazilian
-    state(s) for which data should be  
+    state(s) for which data should be\
     downloaded. Use “all” (by default) to download data for the entire
     country. For specific states, use abbreviations such as “SP”, “RJ”,
     or c(“SP”, “RJ”).
@@ -504,7 +504,7 @@ group.
 
 > **Note:** In all SIASUS datasets, variables related to the *Cadastro
 > Nacional de Saúde* (CNS – National Health Card number) are
-> **encrypted** by DATASUS.  
+> **encrypted** by DATASUS.\
 > This ensures patient confidentiality and means that individual-level
 > CNS identifiers cannot be directly used for linkage across datasets.
 > Because of this, this variable is removed when `raw_data = FALSE`.
@@ -781,7 +781,7 @@ This approach can be useful when:
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:  
+1.  Access the DATASUS vaccination dashboard:\
     *<https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf>*
 
 2.  In the filter panel, **fill only the following fields**:
@@ -820,7 +820,7 @@ steps.
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:  
+1.  Access the DATASUS vaccination dashboard:\
     *<https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA.html>*
 
 2.  In the filter panel, **fill only the following fields**:
@@ -932,7 +932,7 @@ can experience temporary server-side instability. The function includes
 built-in retries to handle connection resets. If the function fails, it
 is recommended to wait a few minutes and try again.
 
-  
+\
 
 ## Related packages
 
@@ -969,18 +969,18 @@ do Rio de Janeiro (PUC-Rio), Department of Economics. Project pages:
 To cite `datazoom.saude` in publications, run
 `citation("datazoom.saude")` in R, or use:
 
-> Tavares Regadas L, Laport Santos L, dos Santos P. Barbosa JP, B. A. de
-> Souza VA (2026). *datazoom.saude: Download Brazilian Public Health
-> Microdata from DATASUS*. Data Zoom, Department of Economics,
-> Pontifical Catholic University of Rio de Janeiro (PUC-Rio). R package
-> version 0.1.1. <https://CRAN.R-project.org/package=datazoom.saude>
+> Tavares Regadas L, Laport Santos L, B. A. de Souza VA (2026).
+> *datazoom.saude: Download Brazilian Public Health Microdata from
+> DATASUS*. Data Zoom, Department of Economics, Pontifical Catholic
+> University of Rio de Janeiro (PUC-Rio). R package version 0.1.1.
+> <https://CRAN.R-project.org/package=datazoom.saude>
 
 A BibTeX entry for LaTeX users is:
 
 ``` R
 @Manual{datazoom.saude,
   title = {{datazoom.saude}: Download Brazilian Public Health Microdata from {DATASUS}},
-  author = {Laura {Tavares Regadas} and Luana {Laport Santos} and Jo{\~a}o Paulo {dos Santos P. Barbosa} and Vanndher Am{\'o}s {B. A. de Souza}},
+  author = {Laura {Tavares Regadas} and Luana {Laport Santos} and Vanndher Am{\'o}s {B. A. de Souza}},
   organization = {Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio)},
   year = {2026},
   note = {R package version 0.1.1},

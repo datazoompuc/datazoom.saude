@@ -32,14 +32,18 @@ Authors:
 
 - Luana Laport Santos <luanalaportsantos@icloud.com>
 
-- João Paulo dos Santos P. Barbosa <joao.3158129@gmail.com>
-
 - Vanndher Amós B. A. de Souza <vanndheramos@gmail.com>
 
 Other contributors:
+
+- João Paulo dos Santos P. Barbosa <joao.3158129@gmail.com>
+  \[contributor\]
 
 - DataZoom (PUC-Rio) <datazoom@econ.puc-rio.br> \[funder\]
 
 - Daniela Petruzalek <daniela.petruzalek@gmail.com> \[contributor\]
 
 - Mark Adler \[contributor\]
+
+- Antonio Pedro Rodrigues Bergallo
+  ([ORCID](https://orcid.org/0009-0004-6132-3070)) \[contributor\]

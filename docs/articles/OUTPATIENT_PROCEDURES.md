@@ -10,7 +10,7 @@ group.
 
 > **Note:** In all SIASUS datasets, variables related to the *Cadastro
 > Nacional de Saúde* (CNS – National Health Card number) are
-> **encrypted** by DATASUS.  
+> **encrypted** by DATASUS.\
 > This ensures patient confidentiality and means that individual-level
 > CNS identifiers cannot be directly used for linkage across datasets.
 > Because of this, this variable is removed when `raw_data = FALSE`.

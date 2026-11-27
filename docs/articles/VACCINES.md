@@ -110,7 +110,7 @@ This approach can be useful when:
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:  
+1.  Access the DATASUS vaccination dashboard:\
     *<https://sipni.datasus.gov.br/si-pni-web/faces/relatorio/consolidado/dosesAplicadasMensal.jsf>*
 
 2.  In the filter panel, **fill only the following fields**:
@@ -149,7 +149,7 @@ steps.
 
 #### Step-by-step instructions for manual download
 
-1.  Access the DATASUS vaccination dashboard:  
+1.  Access the DATASUS vaccination dashboard:\
     *<https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA/SEIDIGI_DEMAS_VACINACAO_CALENDARIO_NACIONAL_OCORRENCIA.html>*
 
 2.  In the filter panel, **fill only the following fields**:

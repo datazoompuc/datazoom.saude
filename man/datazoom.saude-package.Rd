@@ -33,15 +33,16 @@ Authors:
 \itemize{
   \item Laura Tavares Regadas \email{lauratregadas@gmail.com}
   \item Luana Laport Santos \email{luanalaportsantos@icloud.com}
-  \item João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com}
   \item Vanndher Amós B. A. de Souza \email{vanndheramos@gmail.com}
 }
 
 Other contributors:
 \itemize{
+  \item João Paulo dos Santos P. Barbosa \email{joao.3158129@gmail.com} [contributor]
   \item DataZoom (PUC-Rio) \email{datazoom@econ.puc-rio.br} [funder]
   \item Daniela Petruzalek \email{daniela.petruzalek@gmail.com} [contributor]
   \item Mark Adler [contributor]
+  \item Antonio Pedro Rodrigues Bergallo (\href{https://orcid.org/0009-0004-6132-3070}{ORCID}) [contributor]
 }
 
 }

@@ -7,7 +7,6 @@ bibentry(
   author   = c(
     person("Laura", "Tavares Regadas", comment = c(ORCID = "0009-0002-8107-1806")),
     person("Luana", "Laport Santos"),
-    person("João Paulo", "dos Santos P. Barbosa"),
     person("Vanndher Amós", "B. A. de Souza")
   ),
   organization = "Data Zoom, Department of Economics, Pontifical Catholic University of Rio de Janeiro (PUC-Rio)",
